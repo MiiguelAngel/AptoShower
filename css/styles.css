@@ -31,7 +31,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-height: 80vh;
+    max-height: 85vh;
     overflow-x: hidden;
     padding-top: 0rem;
   }
