@@ -29,9 +29,9 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-height: 100vh;
+    min-height: 90vh;
     overflow-x: hidden;
-    padding-top: 3rem;
+    padding-top: 0rem;
   }
 
   
