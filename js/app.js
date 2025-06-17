@@ -136,9 +136,12 @@ function goToGifts() {
 }
 
 function toggleScreens(id) {
-  document.querySelectorAll('.screen').forEach(screen => screen.classList.remove('visible'));
-  document.getElementById(id).classList.add('visible');
-}
+    document.querySelectorAll('.screen').forEach(screen => {
+      screen.classList.remove('visible');
+    });
+    document.getElementById(id).classList.add('visible');
+    window.scrollTo(0, 0); // opcional: volver arriba al cambiar screen
+  }
 
 function filterNames() {
     const input = document.getElementById("nombre").value.toLowerCase();
