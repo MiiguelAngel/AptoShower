@@ -762,6 +762,7 @@
   @media (max-width: 600px) {
     .regalos-grid {
       grid-template-columns: 1fr;
+      padding-bottom: 5rem; /* Espacio extra al final en móvil */
     }
   }
   
