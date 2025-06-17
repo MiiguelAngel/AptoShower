@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Apartashower</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+</head>
+<body>
+  
+  <!-- Background -->  
+  <div class="blob-background">
+    <div class="blob blob1"></div>
+    <div class="blob blob2"></div>
+    <div class="blob blob3"></div>
+    <div class="blob blob4"></div>
+    <div class="blob blob5"></div>
+    <div class="blob blob6"></div>
+    <div class="blob blob7"></div>
+    <div class="blob blob8"></div>
+  </div>
+  
+  
+
+  <!-- Primera parte: introducción -->
+  <section id="screen" class="screen visible welcome-section">
+    <h1 id="mainTitle1" class="main-title">Bienvenidos a mi</h1>
+    <h1 id="mainTitle2" class="main-title hidden">ApartaShower!</h1>
+
+
+    <p id="subTitle" class="hidden sub-title" style="animation-delay: 1s;">¡Celebremos juntos este momento especial!</p>
+    
+    <div id="additionalContent" class="hidden">
+      <h2 class="white-text">Cedro Novaterra</h2>
+      <!--<img src="assets/images/Cedro_logo.png" alt="Cedro Novaterra" class="hero-image corner-logo" />-->
+      <p class="address-text">
+        📍 Carrera 3A # 17 sur 99<br />
+        📍 Mosquera-La Mesa #Km 1<br />
+        📍 Mosquera, Cundinamarca
+      </p>
+      <button class="gradient-border-btn" onclick="goToNameInput()"><span>Continuar</span></button>
+    </div>
+  </section>
+  
+  
+
+  <!-- Segunda parte: selección del nombre -->
+  <section id="screen2" class="screen">
+    <div class="card-gif">
+        <img src="assets\gif\Join_us.gif" alt="Animación bienvenida" id="gifIntro" class="gif-intro" />
+    </div>
+    
+    <div class="card fade-in-delayed">
+
+        
+        
+        <div class="card">
+        
+            <div class="fade-in-delayed">
+                <p id = "mensajeGuia" class="asistencia-titulo">¡Queremos saber si vienes! <span class="emoji">💌</span></p>
+            </div>
+      
+        <!-- Contenido que se mostrará después -->
+        <div id="restoContenido" class="fade-in-delayed">
+            <label for="nombre" class="black-text">
+                Ingresa tu nombre <span class="emoji">😊</span>
+              </label>
+          <input type="text" id="nombre" oninput="filterNames()" placeholder="Tu nombre..." autocomplete="off"
+            class="fade-in-up" style="animation-delay: 0.2s;" />
+            <ul id="suggestions"></ul>
+
+            <div id="confirmacion" class="asistencia-opciones hidden fade-in-up" style="animation-delay: 0.5s;">
+                <div class="opciones-asistencia">
+                  <button class="asiste-btn" onclick="confirmarAsistencia(true)">
+                    <span class="emoji">🎉</span> Sí asistiré
+                  </button>
+                  <button class="no-asiste-btn" onclick="confirmarAsistencia(false)">
+                    <span class="emoji">😔</span> No podré asistir
+                  </button>
+                </div>
+
+              </div>
+              
+
+            <p id="mensajeRespuesta" class="mensaje-personalizado hidden fade-in-up" style="animation-delay: 0.8s;"></p>
+
+            <button id="verRegalosBtn" class="btn-personalizado hidden fade-in-up" style="animation-delay: 1s;" onclick="goToGifts()">
+            Ver regalos
+            </button>
+
+        </div>
+      </div>      
+      </div>
+
+      <!-- Mensaje personalizado -->
+      <p id="mensajeRespuesta" class="mensaje-personalizado hidden"></p>
+
+      <button id="verRegalosBtn" class="hidden" onclick="goToGifts()">Elige tu regalo perfecto</button>
+    </div>
+  </section>
+
+  <!-- Tercera parte: lista de regalos -->
+  <section id="screen3" class="screen">
+    <h2 class="gradient-title">Lista de Regalos</h2>
+  
+    <!-- Filtros -->
+    <div class="filtros-container">
+      <select id="filtroPrecio" onchange="filtrarRegalos()">
+        <option value="">Filtrar por precio</option>
+        <option value="-50">Menos de $50.000</option>
+        <option value="50-100">Entre $50.000 y $100.000</option>
+        <option value="100+">Más de $100.000</option>
+      </select>
+  
+      <select id="filtroLugar" onchange="filtrarRegalos()">
+        <option value="">Filtrar por lugar</option>
+        <option value="Sala">Sala</option>
+        <option value="Cocina">Cocina</option>
+        <option value="Habitación">Habitación</option>
+        <option value="Decoración">Decoración</option>
+      </select>
+    </div>
+  
+    <!-- Grilla de regalos -->
+    <div id="listaRegalos" class="regalos-grid"></div>
+  </section>
+  
+  </section>
+  
+
+  <script src="js/app.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/particles.js"></script>
+  <div id="particles-js"></div>
+
+</body>
+
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+      const title = document.getElementById('mainTitle');
+      const subTitle = document.getElementById('subTitle');
+      const additional = document.getElementById('additionalContent');
+  
+      // Aparece el título
+      setTimeout(() => {
+        title.classList.add('shrink');
+      }, 1400);
+  
+      // Aparece el subtítulo
+      setTimeout(() => {
+        subTitle.classList.remove('hidden');
+        subTitle.classList.add('visible-content');
+      }, 2500);
+  
+      // Aparece el resto del contenido
+      setTimeout(() => {
+        additional.classList.remove('hidden');
+        additional.classList.add('visible-content');
+      }, 3100);
+    });
+
+  </script>
+  
+  <script>
+    const blobs = document.querySelectorAll('.blob');
+    const speed = 1.5; // mayor número = más rápido
+  
+    blobs.forEach(blob => {
+      let x = Math.random() * window.innerWidth;
+      let y = Math.random() * window.innerHeight;
+      let dx = (Math.random() - 0.5) * speed * 4;
+      let dy = (Math.random() - 0.5) * speed * 4;
+  
+      function move() {
+        x += dx;
+        y += dy;
+  
+        // rebote en los bordes
+        if (x < 0 || x > window.innerWidth - 0) dx *= -1;
+        if (y < 0 || y > window.innerHeight - 0) dy *= -1;
+
+        blob.style.transform = `translate(${x}px, ${y}px)`;
+  
+        requestAnimationFrame(move);
+      }
+  
+      move();
+    });
+  </script>
+  
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      const title1 = document.getElementById('mainTitle1');
+      const title2 = document.getElementById('mainTitle2');
+  
+      // Paso 1: mostrar título 1
+      setTimeout(() => {
+        title1.classList.remove('hidden');
+      }, 200);
+  
+      // Paso 2: achicar título 1
+      setTimeout(() => {
+        title1.classList.add('shrink');
+      }, 1800);
+  
+      // Paso 3: mostrar título 2
+      setTimeout(() => {
+        title2.classList.remove('hidden');
+        title2.classList.add('visible');
+      }, 2000);
+  
+      // Paso 4: agrandar título 2
+      setTimeout(() => {
+        title2.classList.add('grow');
+      }, 3600);
+    });
+  </script>
+  
+  <script>
+    particlesJS("particles-js", {
+      particles: {
+        number: { value: 40 },
+        color: { value: "#ffffff" },
+        size: { value: 3 },
+        line_linked: { enable: true, distance: 150, color: "#ffffff", opacity: 0.2 },
+        move: { enable: true, speed: 1 }
+      },
+      interactivity: { detect_on: "canvas", events: { onhover: { enable: true, mode: "repulse" } } }
+    });
+    </script>
+    
+</html>
