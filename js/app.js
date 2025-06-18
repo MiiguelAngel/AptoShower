@@ -280,4 +280,12 @@ function filterNames() {
     }, 500);
   }
   
+  window.goToNameInput = goToNameInput;
+  window.goToNameInput = filtrarRegalos;
+  window.goToNameInput = goToGifts;
+  window.goToNameInput = filterNames;
+  window.goToNameInput = reserveGift;
+  window.goToNameInput = confirmarAsistencia;
+  
+  
   
