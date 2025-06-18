@@ -1,6 +1,4 @@
-import { fetchGuestList } from "./api/guests.js";
-
-export async function fetchGuestList() {
+async function fetchGuestList() {
     try {
       const res = await fetch('/.netlify/functions/getGuests');
       const invitados = await res.json();
@@ -281,11 +279,8 @@ function filterNames() {
   }
   
   window.goToNameInput = goToNameInput;
-  window.goToNameInput = filtrarRegalos;
-  window.goToNameInput = goToGifts;
-  window.goToNameInput = filterNames;
-  window.goToNameInput = reserveGift;
-  window.goToNameInput = confirmarAsistencia;
-  
-  
-  
+  window.filtrarRegalos = filtrarRegalos;
+  window.goToGifts = goToGifts;
+  window.filterNames = filterNames;
+  window.reserveGift = reserveGift;
+  window.confirmarAsistencia = confirmarAsistencia;
