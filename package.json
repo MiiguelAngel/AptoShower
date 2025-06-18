@@ -1,0 +1,14 @@
+{
+    "name": "apartashower",
+    "version": "1.0.0",
+    "description": "Proyecto de ApartaShower con integración a Google Sheets desde Netlify Functions",
+    "main": "index.js",
+    "type": "module",
+    "scripts": {
+      "start": "netlify dev"
+    },
+    "dependencies": {
+      "googleapis": "^118.0.0"
+    }
+  }
+  
