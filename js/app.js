@@ -1,3 +1,5 @@
+let guestList = [];
+
 async function fetchGuestList() {
     try {
       const res = await fetch('/.netlify/functions/getGuests');
@@ -9,10 +11,10 @@ async function fetchGuestList() {
     }
   }
   
-  let guestList = [];
   
   document.addEventListener("DOMContentLoaded", async () => {
     guestList = await fetchGuestList();
+    console.log("Lista de invitados cargada:", guestList);
   });
   
   
@@ -162,6 +164,7 @@ function toggleScreens(id) {
   }
 
 function filterNames() {
+    console.log("Ejecutando filterNames");
     const input = document.getElementById("nombre").value.toLowerCase();
     const suggestions = guestList
       .filter(n => n.toLowerCase().startsWith(input))
