@@ -1,5 +1,4 @@
 const { google } = require('googleapis');
-require('dotenv').config(); // solo necesario si usas `.env` localmente
 
 exports.handler = async function (event, context) {
   try {
