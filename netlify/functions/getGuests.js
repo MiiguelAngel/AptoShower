@@ -19,6 +19,7 @@ exports.handler = async function () {
     const credentials = JSON.parse(credentialsJSON);
 
     console.log("🔐 Credenciales parseadas con éxito");
+    console.log(credentials);
 
     const spreadsheetId = process.env.SHEET_ID;
     const sheetName = 'Invitados';
