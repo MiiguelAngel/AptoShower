@@ -1,17 +1,20 @@
 async function fetchGuestList() {
     try {
       const res = await fetch('/.netlify/functions/getGuests');
-      const invitados = await res.json();
-      return invitados;
+      const data = await res.json();
+      return Array.isArray(data) ? data : [];
     } catch (err) {
       console.error("Error al cargar invitados:", err);
       return [];
     }
-  }  
-
+  }
+  
+  let guestList = [];
+  
   document.addEventListener("DOMContentLoaded", async () => {
     guestList = await fetchGuestList();
   });
+  
   
 
 const regalos = [

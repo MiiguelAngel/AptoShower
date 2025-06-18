@@ -1,11 +1,12 @@
 const { google } = require('googleapis');
+require('dotenv').config(); // solo necesario si usas `.env` localmente
 
 exports.handler = async function (event, context) {
-  const credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS_JSON);
-  const spreadsheetId = process.env.SHEET_ID;
-  const sheetName = 'Invitados'; // cambia si tu hoja tiene otro nombre
-
   try {
+    const credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS_JSON);
+    const spreadsheetId = process.env.SHEET_ID;
+    const sheetName = 'Invitados'; // <- asegúrate de que el nombre coincide con el de tu hoja de cálculo
+
     const auth = new google.auth.GoogleAuth({
       credentials,
       scopes: ['https://www.googleapis.com/auth/spreadsheets.readonly'],
@@ -15,16 +16,21 @@ exports.handler = async function (event, context) {
 
     const response = await sheets.spreadsheets.values.get({
       spreadsheetId,
-      range: `${sheetName}!A:A`, // primera columna con los invitados
+      range: `${sheetName}!A:A`, // ← columna A con nombres
     });
 
     const values = response.data.values || [];
-    const invitados = values.map(row => row[0]);
+
+    // Filtramos filas vacías y nos quedamos con los valores
+    const invitados = values
+      .map(row => row[0])
+      .filter(nombre => typeof nombre === 'string' && nombre.trim() !== '');
 
     return {
       statusCode: 200,
       body: JSON.stringify(invitados),
     };
+
   } catch (error) {
     console.error("Error en getGuests:", error);
     return {
