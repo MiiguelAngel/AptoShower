@@ -1,0 +1,3 @@
+# Oculta variables sensibles
+.env
+credentials.json

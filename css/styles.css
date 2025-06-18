@@ -629,6 +629,11 @@
     padding-bottom: 1rem;
   }
   
+  .gift-item.selected {
+    border: 2px solid #b388ff;
+    box-shadow: 0 0 10px rgba(179, 136, 255, 0.3);
+  }
+  
   .gift-item img {
     width: 60px;
     height: 60px;

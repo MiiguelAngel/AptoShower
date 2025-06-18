@@ -1,4 +1,21 @@
-const guestList = ["Ana", "Carlos", "Camila", "Juan", "Lucía", "Pedro"];
+import { fetchGuestList } from "./api/guests.js";
+
+export async function fetchGuestList() {
+    try {
+      const res = await fetch('/.netlify/functions/getGuests');
+      const invitados = await res.json();
+      return invitados;
+    } catch (err) {
+      console.error("Error al cargar invitados:", err);
+      return [];
+    }
+  }  
+
+  document.addEventListener("DOMContentLoaded", async () => {
+    guestList = await fetchGuestList();
+  });
+  
+
 const regalos = [
     {
       nombre: "Portavasos decorativos",
@@ -167,27 +184,27 @@ function filterNames() {
   let regaloSeleccionado = null; // nueva variable global
 
   function reserveGift(button) {
-    // Si ya había un botón seleccionado, lo reactivamos
     if (regaloSeleccionado && regaloSeleccionado !== button) {
       regaloSeleccionado.textContent = "Apartar";
       regaloSeleccionado.disabled = false;
       regaloSeleccionado.style.backgroundColor = "";
+      regaloSeleccionado.parentElement.classList.remove("selected"); // 👈 importante también
     }
   
-    // Si el usuario hace clic sobre el mismo botón, deselecciona
     if (regaloSeleccionado === button) {
       button.textContent = "Apartar";
       button.disabled = false;
       button.style.backgroundColor = "";
+      button.parentElement.classList.remove("selected"); // 👈 quitar borde si se deselecciona
       regaloSeleccionado = null;
     } else {
-      // Selecciona nuevo regalo
       button.textContent = "Apartado ✅";
       button.disabled = false;
       button.style.backgroundColor = "#aaa";
+      button.parentElement.classList.add("selected"); // 👈 AQUÍ VA TU LÍNEA
+  
       regaloSeleccionado = button;
   
-      // Efecto de confeti
       confetti({
         particleCount: 200,
         spread: 70,
@@ -195,6 +212,7 @@ function filterNames() {
       });
     }
   }
+  
   
 
 function filterNames() {
