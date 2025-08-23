@@ -183,7 +183,7 @@ function filterNames() {
       .filter(n => n.toLowerCase().startsWith(input))
       .slice(0, 3); // Limita a 3 resultados
 
-    if (matches.length === 0) {
+    if (suggestions.length === 0) {
       noMatchMessage.classList.remove("hidden");
       document.getElementById("addGuestBtn").classList.remove("hidden");
       return;
