@@ -184,16 +184,16 @@ function filterNames() {
       .slice(0, 3); // Limita a 3 resultados
 
     if (suggestions.length === 0) {
-      noMatchMessage.classList.remove("hidden");
+      document.getElementById("noMatchMessage").classList.remove("hidden");
       document.getElementById("addGuestBtn").classList.remove("hidden");
-      suggestions.classList.add("hidden");
+      document.getElementById("suggestions").classList.add("hidden");
       return;
     }
   
 
-    noMatchMessage.classList.add("hidden");
+    document.getElementById("noMatchMessage").classList.add("hidden");
     document.getElementById("addGuestBtn").classList.add("hidden");
-    suggestions.classList.remove("hidden");
+    document.getElementById("suggestions").classList.remove("hidden");
     const list = document.getElementById("suggestions");
     list.innerHTML = "";
   
