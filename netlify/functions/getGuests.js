@@ -19,7 +19,6 @@ exports.handler = async function () {
     const credentials = JSON.parse(credentialsJSON);
 
     console.log("🔐 Credenciales parseadas con éxito");
-    console.log(credentials);
 
     const spreadsheetId = process.env.SHEET_ID;
     const sheetName = 'Invitados';
@@ -27,7 +26,7 @@ exports.handler = async function () {
     // Configura autenticación
     const auth = new google.auth.GoogleAuth({
       credentials,
-      scopes: ['https://www.googleapis.com/auth/spreadsheets.readonly'],
+      scopes: ['https://www.googleapis.com/auth/spreadsheets'],
     });
 
     console.log("🔑 Autenticación configurada");
@@ -51,7 +50,6 @@ exports.handler = async function () {
       .filter(nombre => typeof nombre === 'string' && nombre.trim() !== '');
 
     console.log(`🎉 Lista final procesada (${invitados.length} nombres):`);
-    console.log(invitados);
 
     return {
       statusCode: 200,

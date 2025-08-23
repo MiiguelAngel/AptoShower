@@ -16,8 +16,6 @@ async function fetchGuestList() {
     guestList = await fetchGuestList();
     console.log("Lista de invitados cargada:", guestList);
   });
-  
-  
 
 const regalos = [
     {
@@ -156,19 +154,40 @@ function goToGifts() {
 }
 
 function toggleScreens(id) {
-    document.querySelectorAll('.screen').forEach(screen => {
-      screen.classList.remove('visible');
-    });
-    document.getElementById(id).classList.add('visible');
-    window.scrollTo(0, 0); // opcional: volver arriba al cambiar screen
-  }
+  document.querySelectorAll('.screen').forEach(screen => {
+    screen.classList.remove('visible');
+  });
+  document.getElementById(id).classList.add('visible');
+
+  // 🟣 Actualiza progreso visual
+  const stepMap = {
+    screen1: "step1",
+    screen2: "step2",
+    screen3: "step3"
+  };
+
+  document.querySelectorAll('.progress-bubble .step-icon').forEach(step => {
+    step.classList.remove("active");
+  }); 
+
+  const stepId = stepMap[id];
+  if (stepId) document.getElementById(stepId).classList.add("active");
+}
+
 
 function filterNames() {
     console.log("Ejecutando filterNames");
+    document.getElementById("addGuestBtn").classList.add("hidden");
     const input = document.getElementById("nombre").value.toLowerCase();
     const suggestions = guestList
       .filter(n => n.toLowerCase().startsWith(input))
       .slice(0, 3); // Limita a 3 resultados
+
+    if (matches.length === 0) {
+      noMatchMessage.classList.remove("hidden");
+      document.getElementById("addGuestBtn").classList.remove("hidden");
+      return;
+    }
   
     const list = document.getElementById("suggestions");
     list.innerHTML = "";
@@ -192,20 +211,23 @@ function filterNames() {
       regaloSeleccionado.textContent = "Apartar";
       regaloSeleccionado.disabled = false;
       regaloSeleccionado.style.backgroundColor = "";
-      regaloSeleccionado.parentElement.classList.remove("selected"); // 👈 importante también
+      regaloSeleccionado.parentElement.classList.remove("selected");
     }
   
     if (regaloSeleccionado === button) {
       button.textContent = "Apartar";
       button.disabled = false;
       button.style.backgroundColor = "";
-      button.parentElement.classList.remove("selected"); // 👈 quitar borde si se deselecciona
+      button.parentElement.classList.remove("selected");
       regaloSeleccionado = null;
+  
+      // Oculta mensaje final si se deselecciona
+      document.getElementById("mensajeFinal").classList.remove("visible");
     } else {
       button.textContent = "Apartado ✅";
       button.disabled = false;
       button.style.backgroundColor = "#aaa";
-      button.parentElement.classList.add("selected"); // 👈 AQUÍ VA TU LÍNEA
+      button.parentElement.classList.add("selected");
   
       regaloSeleccionado = button;
   
@@ -214,31 +236,14 @@ function filterNames() {
         spread: 70,
         origin: { y: 0.6 }
       });
+  
+      // 🥳 Mostrar mensaje de cierre
+      setTimeout(() => {
+        const mensajeFinal = document.getElementById("mensajeFinal");
+        mensajeFinal.classList.remove("hidden");
+        mensajeFinal.classList.add("visible");
+      }, 500);
     }
-  }
-  
-  
-
-function filterNames() {
-    const input = document.getElementById("nombre").value.toLowerCase();
-    const suggestions = guestList
-      .filter(n => n.toLowerCase().startsWith(input))
-      .slice(0, 3);
-  
-    const list = document.getElementById("suggestions");
-    list.innerHTML = "";
-  
-    suggestions.forEach(nombre => {
-      const li = document.createElement("li");
-      li.textContent = nombre;
-      li.onclick = () => {
-        document.getElementById("nombre").value = nombre;
-        nombreSeleccionado = nombre;
-        list.innerHTML = "";
-        document.getElementById("confirmacion").classList.remove("hidden");
-      };
-      list.appendChild(li);
-    });
   }
   
   function confirmarAsistencia(asistira) {
@@ -283,6 +288,33 @@ function filterNames() {
         setTimeout(() => boton.classList.remove("flash"), 1000);
     }, 500);
   }
+
+  async function agregarInvitado() {
+    const input = document.getElementById("nombre").value.trim();
+    if (!input) return;
+  
+    const btn = document.getElementById("addGuestBtn");
+    btn.disabled = true;
+    btn.textContent = "Agregando...";
+  
+    const res = await fetch("/.netlify/functions/addGuest", {
+      method: "POST",
+      body: JSON.stringify({ nombre: input }),
+    });
+  
+    if (res.ok) {
+      btn.textContent = "¡Agregado!";
+      guestList.push(input); // Agrega a la lista local también
+      setTimeout(() => {
+        selectName(input);
+      }, 800);
+    } else {
+      btn.textContent = "Error al agregar";
+      console.error(await res.text());
+    }
+  
+    btn.disabled = false;
+  }  
   
   window.goToNameInput = goToNameInput;
   window.filtrarRegalos = filtrarRegalos;

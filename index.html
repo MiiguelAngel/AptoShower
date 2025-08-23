@@ -6,6 +6,7 @@
   <title>Apartashower</title>
   <link rel="stylesheet" href="css/styles.css" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="icon" href="assets\images\Cedro_logo.png" type="image/png" />
 </head>
 <body>
   
@@ -20,7 +21,22 @@
     <div class="blob blob7"></div>
     <div class="blob blob8"></div>
   </div>
+
+  <div id="progressBar" class="progress-bubble">
+    <span class="step-wrapper">
+      <span id="step1" class="step-icon active" title="Inicio">🏠</span>
+    </span>
+    <span class="arrow">➔</span>
+    <span class="step-wrapper">
+      <span id="step2" class="step-icon" title="Asistencia">✅</span>
+    </span>
+    <span class="arrow">➔</span>
+    <span class="step-wrapper">
+      <span id="step3" class="step-icon" title="Regalos">🎁</span>
+    </span>
+  </div>
   
+   
   
 
   <!-- Primera parte: introducción -->
@@ -69,6 +85,12 @@
           <input type="text" id="nombre" oninput="filterNames()" placeholder="Tu nombre..." autocomplete="off"
             class="fade-in-up" style="animation-delay: 0.2s;" />
             <ul id="suggestions"></ul>
+            <p id="noMatchMessage" class="no-match hidden">
+              ❌ Nombre no encontrado. Prueba con tu primer nombre.
+            </p>
+            
+            <button id="addGuestBtn" class="add-guest hidden" onclick="agregarInvitado()">No estoy en la lista. Agregar mi nombre</button>
+
 
             <div id="confirmacion" class="asistencia-opciones hidden fade-in-up" style="animation-delay: 0.5s;">
                 <div class="opciones-asistencia">
@@ -128,6 +150,11 @@
     <div style="height: 3rem;"></div>
 
 </section>
+
+<div id="mensajeFinal" class="mensaje-final hidden">
+  🎉 ¡Gracias por tu elección, nos vemos pronto! 🥳
+</div>
+
   
   </section>
   
