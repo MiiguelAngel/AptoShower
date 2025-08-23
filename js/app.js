@@ -300,32 +300,51 @@ function filterNames() {
     }, 500);
   }
 
-  async function agregarInvitado() {
+  function agregarInvitado() {
     const input = document.getElementById("nombre").value.trim();
-    if (!input) return;
+    document.getElementById("modalAgregarInvitado").classList.remove("hidden");
   
-    const btn = document.getElementById("addGuestBtn");
-    btn.disabled = true;
-    btn.textContent = "Agregando...";
+    // (Opcional) prellenar el campo nombre en el modal
+    if (input) {
+      document.getElementById("inputNombreNuevo").value = input;
+      document.getElementById("inputApellidoNuevo").focus();
+    } else {
+      document.getElementById("inputNombreNuevo").value = "";
+      document.getElementById("inputApellidoNuevo").value = "";
+      document.getElementById("inputNombreNuevo").focus();
+    }
+  }
   
+
+  function cerrarModal() {
+    document.getElementById("modalAgregarInvitado").classList.add("hidden");
+  }
+  
+  async function enviarNuevoInvitado() {
+    const nombre = document.getElementById("inputNombreNuevo").value.trim();
+    const apellido = document.getElementById("inputApellidoNuevo").value.trim();
+  
+    if (!nombre || !apellido) {
+      alert("Por favor ingresa nombre y apellido.");
+      return;
+    }
+  
+    const nombreCompleto = `${nombre} ${apellido}`;
     const res = await fetch("/.netlify/functions/addGuest", {
       method: "POST",
-      body: JSON.stringify({ nombre: input }),
+      body: JSON.stringify({ nombre: nombreCompleto }),
     });
   
     if (res.ok) {
-      btn.textContent = "¡Agregado!";
-      guestList.push(input); // Agrega a la lista local también
-      setTimeout(() => {
-        selectName(input);
-      }, 800);
+      guestList.push(nombreCompleto);
+      document.getElementById("nombre").value = nombreCompleto;
+      cerrarModal();
+      selectName(nombreCompleto);
     } else {
-      btn.textContent = "Error al agregar";
-      console.error(await res.text());
+      alert("No se pudo agregar. Intenta más tarde.");
     }
+  }
   
-    btn.disabled = false;
-  }  
   
   window.goToNameInput = goToNameInput;
   window.filtrarRegalos = filtrarRegalos;
