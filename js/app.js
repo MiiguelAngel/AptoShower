@@ -186,9 +186,14 @@ function filterNames() {
     if (suggestions.length === 0) {
       noMatchMessage.classList.remove("hidden");
       document.getElementById("addGuestBtn").classList.remove("hidden");
+      suggestions.classList.add("hidden");
       return;
     }
   
+
+    noMatchMessage.classList.add("hidden");
+    document.getElementById("addGuestBtn").classList.add("hidden");
+    suggestions.classList.remove("hidden");
     const list = document.getElementById("suggestions");
     list.innerHTML = "";
   
@@ -199,6 +204,12 @@ function filterNames() {
         document.getElementById("nombre").value = nombre;
         nombreSeleccionado = nombre; // <-- guarda el nombre
         list.innerHTML = "";
+          // Mostrar opciones de confirmación de asistencia
+        document.getElementById("confirmacion").classList.remove("hidden");
+
+        // También podrías ocultar mensaje de error por si quedó abierto
+        document.getElementById("noMatchMessage").classList.add("hidden");
+        document.getElementById("addGuestBtn").classList.add("hidden");
       };
       list.appendChild(li);
     });
