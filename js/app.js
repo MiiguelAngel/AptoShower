@@ -377,7 +377,10 @@ function filterNames() {
       guestList.push(nombreCompleto);
       document.getElementById("nombre").value = nombreCompleto;
       cerrarModal();
-      selectName(nombreCompleto);
+      nombreSeleccionado = nombreCompleto;
+      mostrarConfirmacion(nombreCompleto);
+
+      mostrarToast("Nombre agregado correctamente ✅", "success");
     } else {
       mostrarToast("No se pudo agregar. Por favor comunicate con el organizador.", "error");
     }
