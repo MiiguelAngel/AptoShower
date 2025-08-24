@@ -24,15 +24,15 @@
 
   <div id="progressBar" class="progress-bubble">
     <span class="step-wrapper">
-      <span id="step1" class="step-icon active" title="Inicio">🏠</span>
+      <span id="step1" onclick="toggleScreens('screen')" class="step-icon active" title="Inicio">🏠</span>
     </span>
     <span class="arrow">➔</span>
     <span class="step-wrapper">
-      <span id="step2" class="step-icon" title="Asistencia">✅</span>
+      <span id="step2" onclick="toggleScreens('screen2')" class="step-icon" title="Asistencia">✅</span>
     </span>
     <span class="arrow">➔</span>
     <span class="step-wrapper">
-      <span id="step3" class="step-icon" title="Regalos">🎁</span>
+      <span id="step3" onclick="toggleScreens('screen3')" class="step-icon" title="Regalos">🎁</span>
     </span>
   </div>
   
@@ -89,7 +89,7 @@
               ❌ Nombre no encontrado. Prueba con tu primer nombre.
             </p>
             
-            <button id="addGuestBtn" class="add-guest hidden" onclick="agregarInvitado()">No estoy en la lista. Agregar mi nombre</button>
+            <button id="addGuestBtn" class="add-guest hidden" onclick="agregarInvitado()">Agregar mi nombre</button>
 
 
             <div id="confirmacion" class="asistencia-opciones hidden fade-in-up" style="animation-delay: 0.5s;">
@@ -111,7 +111,7 @@
             Ver regalos
             </button>
 
-            <div id="modalAgregarInvitado" class="modal hidden">
+            <div id="modalAgregarInvitado" class="modal">
               <div class="modal-content">
                 <h3>Agregar tu nombre</h3>
                 <input type="text" id="inputNombreNuevo" placeholder="Nombre" />
@@ -120,8 +120,12 @@
                   <button onclick="enviarNuevoInvitado()">Agregar</button>
                   <button onclick="cerrarModal()">Cancelar</button>
                 </div>
+
               </div>
-            </div>            
+
+            </div>
+            
+            <div id="toast" class="toast"></div>
 
         </div>
       </div>      
@@ -268,6 +272,6 @@
       interactivity: { detect_on: "canvas", events: { onhover: { enable: true, mode: "repulse" } } }
     });
     </script>
-   
+
 </body>
 </html>

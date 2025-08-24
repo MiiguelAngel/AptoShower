@@ -17,6 +17,15 @@ async function fetchGuestList() {
     console.log("Lista de invitados cargada:", guestList);
   });
 
+  document.getElementById("nombre").addEventListener("focus", () => {
+    setTimeout(() => {
+      document.getElementById("nombre").scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+      });
+    }, 300); // espera a que aparezca el teclado
+  });
+  
 const regalos = [
     {
       nombre: "Portavasos decorativos",
@@ -174,46 +183,49 @@ function toggleScreens(id) {
   if (stepId) document.getElementById(stepId).classList.add("active");
 }
 
+function mostrarConfirmacion(nombre) {
+  document.getElementById("confirmacion").classList.remove("hidden");
+  document.getElementById("nombre").value = nombre;
+  nombreSeleccionado = nombre;
+}
+
 
 function filterNames() {
-    console.log("Ejecutando filterNames");
-    document.getElementById("addGuestBtn").classList.add("hidden");
-    const input = document.getElementById("nombre").value.toLowerCase();
-    const suggestions = guestList
-      .filter(n => n.toLowerCase().startsWith(input))
-      .slice(0, 3); // Limita a 3 resultados
 
-    if (suggestions.length === 0) {
-      document.getElementById("noMatchMessage").classList.remove("hidden");
-      document.getElementById("addGuestBtn").classList.remove("hidden");
-      document.getElementById("suggestions").classList.add("hidden");
-      return;
-    }
-  
+  console.log("Ejecutando filterNames");
 
-    document.getElementById("noMatchMessage").classList.add("hidden");
-    document.getElementById("addGuestBtn").classList.add("hidden");
-    document.getElementById("suggestions").classList.remove("hidden");
-    const list = document.getElementById("suggestions");
-    list.innerHTML = "";
-  
-    suggestions.forEach(nombre => {
-      const li = document.createElement("li");
-      li.textContent = nombre;
-      li.onclick = () => {
-        document.getElementById("nombre").value = nombre;
-        nombreSeleccionado = nombre; // <-- guarda el nombre
-        list.innerHTML = "";
-          // Mostrar opciones de confirmación de asistencia
-        document.getElementById("confirmacion").classList.remove("hidden");
+  const input = document.getElementById("nombre").value.toLowerCase();
+  const suggestionsList = document.getElementById("suggestions"); // <-- usa otro nombre
 
-        // También podrías ocultar mensaje de error por si quedó abierto
-        document.getElementById("noMatchMessage").classList.add("hidden");
-        document.getElementById("addGuestBtn").classList.add("hidden");
-      };
-      list.appendChild(li);
-    });
-  }  
+  const matches = guestList
+    .filter(n => n.toLowerCase().startsWith(input))
+    .slice(0, 3);
+
+  if (matches.length === 0) {
+    noMatchMessage.classList.remove("hidden");
+    document.getElementById("addGuestBtn").classList.remove("hidden");
+    suggestionsList.classList.add("hidden");
+    return;
+  }
+
+  noMatchMessage.classList.add("hidden");
+  document.getElementById("addGuestBtn").classList.add("hidden");
+  suggestionsList.classList.remove("hidden");
+  suggestionsList.innerHTML = "";
+
+  matches.forEach(nombre => {
+    const li = document.createElement("li");
+    li.textContent = nombre;
+    li.onclick = () => {
+      document.getElementById("nombre").value = nombre;
+      nombreSeleccionado = nombre;
+      suggestionsList.innerHTML = "";
+      mostrarConfirmacion(nombre);
+    };
+    suggestionsList.appendChild(li);
+  });
+}
+ 
 
   let regaloSeleccionado = null; // nueva variable global
 
@@ -302,7 +314,8 @@ function filterNames() {
 
   function agregarInvitado() {
     const input = document.getElementById("nombre").value.trim();
-    document.getElementById("modalAgregarInvitado").classList.remove("hidden");
+    const modal = document.getElementById("modalAgregarInvitado");
+    document.getElementById("modalAgregarInvitado").classList.add("show");
   
     // (Opcional) prellenar el campo nombre en el modal
     if (input) {
@@ -317,19 +330,44 @@ function filterNames() {
   
 
   function cerrarModal() {
-    document.getElementById("modalAgregarInvitado").classList.add("hidden");
+    document.getElementById("modalAgregarInvitado").classList.remove("show");
   }
+
+  function capitalizarNombre(nombre) {
+    return nombre
+      .trim()
+      .toLowerCase()
+      .split(" ")
+      .map(palabra => palabra.charAt(0).toUpperCase() + palabra.slice(1))
+      .join(" ");
+  }
+  
   
   async function enviarNuevoInvitado() {
     const nombre = document.getElementById("inputNombreNuevo").value.trim();
     const apellido = document.getElementById("inputApellidoNuevo").value.trim();
   
     if (!nombre || !apellido) {
-      alert("Por favor ingresa nombre y apellido.");
+      mostrarToast("Por favor ingresa nombre y apellido.","warning");
       return;
     }
   
-    const nombreCompleto = `${nombre} ${apellido}`;
+    const nombreCompleto = capitalizarNombre(`${nombre} ${apellido}`);
+  
+    // ✅ Verifica si ya está en la lista
+    const yaExiste = guestList.some(
+      invitado => invitado.toLowerCase() === nombreCompleto.toLowerCase()
+    );
+  
+    if (yaExiste) {
+      mostrarToast(`El nombre "${nombreCompleto}" ya está registrado.`,"warning");
+      cerrarModal();
+      document.getElementById("nombre").value = nombreCompleto;
+      selectName(nombreCompleto);
+      return;
+    }
+  
+    // ✅ Si no está, lo guarda
     const res = await fetch("/.netlify/functions/addGuest", {
       method: "POST",
       body: JSON.stringify({ nombre: nombreCompleto }),
@@ -341,9 +379,27 @@ function filterNames() {
       cerrarModal();
       selectName(nombreCompleto);
     } else {
-      alert("No se pudo agregar. Intenta más tarde.");
+      mostrarToast("No se pudo agregar. Por favor comunicate con el organizador.", "error");
     }
+  }  
+
+  function mostrarToast(mensaje, tipo = "info", duracion = 3000) {
+    const toast = document.getElementById("toast");
+  
+    let icono = "ℹ️";
+    if (tipo === "success") icono = "✅";
+    else if (tipo === "error") icono = "❌";
+    else if (tipo === "warning") icono = "⚠️";
+  
+    toast.innerHTML = `<span>${icono}</span><span>${mensaje}</span>`;
+    toast.classList.add("show");
+  
+    setTimeout(() => {
+      toast.classList.remove("show");
+    }, duracion);
   }
+  
+  
   
   
   window.goToNameInput = goToNameInput;
