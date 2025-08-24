@@ -15,9 +15,9 @@
   html, body {
     margin: 0;
     padding: 0;
-    overflow: visible;
+    overflow: hidden;
     height: 100%;
-    overflow-y: auto;
+    overflow-y: hidden;
     overscroll-behavior-y: auto; /* permite pull to refresh en móviles */
     -webkit-overflow-scrolling: touch; /* mejora para iOS */
   }
@@ -73,7 +73,7 @@
     0 10px 20px rgba(0, 0, 0, 0.4),
     0 4px 6px rgba(0, 0, 0, 0.3);
     height: 90vh;
-    min-height: 90vh;
+    min-height: 76vh;
     overflow: hidden;
     display: none;
     flex-direction: column;
@@ -93,16 +93,16 @@
     background-color: #ffffff;
     position: relative;
     z-index: 1;
-    margin: 1rem auto;               /* ← centra horizontalmente */
-    border-radius: 10px;
+    margin: 6rem auto;               /* ← centra horizontalmente */
+    border-radius: 30px;
     flex-direction: column;
     align-items: center;
     scroll-behavior: smooth;
     padding: 1.5rem 1rem;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-    max-width: 1024px; /* ← controla el ancho máximo */
     width: 90%;                     /* ocupa el ancho máximo permitido */
     align-self: center; /* ← centra el contenido horizontalmente */
+    height: 76vh;;
 
 
     /* Scroll local */
@@ -509,6 +509,7 @@
     display: none;
   }
   
+  /*-----------------------------------------------------------------------------*/
   .mensaje-personalizado {
     margin: 1.5rem 0 1rem;
     text-align: center;
@@ -523,11 +524,65 @@
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     text-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+    animation: fadeInUp 0.6s ease forwards;
+  }
+
+  .nombre-resaltado {
+    display: inline-block;
+    margin-top: 0.3rem;
+    font-size: 1.6rem;
+    font-weight: bold;
+    background: linear-gradient(90deg, #ff80b5, #9089fc);
+
+    background-clip: text;             /* <- estándar */
+    -webkit-background-clip: text;     /* <- WebKit compatible */
+
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
   
   .mensaje-personalizado.visible {
     opacity: 1;
   }
+
+  /*-----------------------------------------------------------------------------*/
+
+  /* Estilo base */
+.btn-regalo {
+  margin-top: 2rem;
+  padding: 1rem 2rem;
+  border-radius: 40px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  background: linear-gradient(90deg, #ff80b5, #9089fc);
+  color: white;
+  border: none;
+  box-shadow: 0 8px 20px rgba(255, 128, 181, 0.4);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+.btn-regalo:hover {
+  transform: scale(1.04);
+  box-shadow: 0 12px 28px rgba(255, 128, 181, 0.6);
+}
+
+/* Animación elegante */
+.animate-in {
+  animation: fadeInScale 0.6s ease forwards;
+}
+
+@keyframes fadeInScale {
+  0% {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+/*-----------------------------------------------------------------------------*/
   
   .btn-personalizado {
     background: linear-gradient(90deg, #ff80ab, #b388ff);

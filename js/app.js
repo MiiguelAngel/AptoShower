@@ -292,23 +292,38 @@ function filterNames() {
               origin: { y: 0.6 }
             });
           }          
-        mensaje.innerHTML = asistira
-        ? `¡Qué alegría que puedas acompañarnos, ${nombreSeleccionado}! <span class="emoji">🎉</span>`
-        : `¡Gracias, ${nombreSeleccionado}! Te tendremos presente <span class="emoji">💌</span>`;        
+          mensaje.innerHTML = asistira
+          ? `
+            <p class="mensaje-personalizado">
+              ¡Qué alegría que puedas acompañarnos <span class="emoji">🎉</span><br>
+              <strong class="nombre-resaltado">${nombreSeleccionado}</strong>!
+            </p>
+          `
+          : `
+            <p class="mensaje-personalizado">
+              ¡Gracias por avisarnos, <strong class="nombre-resaltado">${nombreSeleccionado}</strong>!<br>
+              Te tendremos presente <span class="emoji">💌</span>
+            </p>
+          `;       
   
       mensaje.classList.remove("hidden");
       mensaje.classList.add("visible");
   
       // Personaliza botón
       boton.textContent = asistira
-        ? "Elige el regalo perfecto 🎁"
-        : "Elige un regalo si deseas enviarnos uno 💝";
-  
-      boton.classList.remove("hidden");
+      ? "Elige el regalo perfecto 🎁"
+      : "Elige un regalo si deseas enviarnos uno 💝";
 
-        // 🔥 Agrega la animación flash aquí:
-        boton.classList.add("flash");
-        setTimeout(() => boton.classList.remove("flash"), 1000);
+    boton.classList.remove("hidden");
+
+    // 🧼 Elimina clases previas de animación si las tuviera
+    boton.classList.remove("animate-in");
+    // 🔥 Reaplica animación con timeout para reiniciar clase
+    
+    setTimeout(() => {
+      boton.classList.add("animate-in");
+      }, 50);
+    
     }, 500);
   }
 
@@ -381,7 +396,7 @@ function filterNames() {
       mostrarConfirmacion(nombreCompleto);
       noMatchMessage.classList.add("hidden");
       document.getElementById("addGuestBtn").classList.add("hidden");
-      mostrarToast("Nombre agregado correctamente ✅", "success");
+      mostrarToast("Nombre agregado correctamente", "success");
     } else {
       mostrarToast("No se pudo agregar. Por favor comunicate con el organizador.", "error");
     }
