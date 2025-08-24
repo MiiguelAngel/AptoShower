@@ -190,6 +190,11 @@ function mostrarConfirmacion(nombre) {
   nombreSeleccionado = nombre;
 }
 
+function corregirNombre() {
+  document.getElementById("nombre").value = "";
+  document.getElementById("confirmacion").classList.add("hidden");
+  document.getElementById("nombre").focus();
+}
 
 function filterNames() {
 
