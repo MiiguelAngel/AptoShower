@@ -508,6 +508,23 @@
   .hidden {
     display: none;
   }
+
+  /*-----------------------------------------------------------------------------*/
+
+  .corregir-nombre-btn {
+    background: none;
+    border: none;
+    color: #aaa;
+    font-size: 0.9rem;
+    margin-top: 10px;
+    text-decoration: underline;
+    cursor: pointer;
+    transition: color 0.3s ease;
+  }
+  
+  .corregir-nombre-btn:hover {
+    color: #fff;
+  }  
   
   /*-----------------------------------------------------------------------------*/
   .mensaje-personalizado {

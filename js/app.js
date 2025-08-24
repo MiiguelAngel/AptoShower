@@ -185,6 +185,7 @@ function toggleScreens(id) {
 
 function mostrarConfirmacion(nombre) {
   document.getElementById("confirmacion").classList.remove("hidden");
+  document.getElementById("btnCorregirNombre").classList.remove("hidden");
   document.getElementById("nombre").value = nombre;
   nombreSeleccionado = nombre;
 }
@@ -221,6 +222,7 @@ function filterNames() {
       nombreSeleccionado = nombre;
       suggestionsList.innerHTML = "";
       mostrarConfirmacion(nombre);
+    
     };
     suggestionsList.appendChild(li);
   });
