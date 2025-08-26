@@ -832,9 +832,11 @@
   .blob5 { background: #536dfe; animation-delay: 3.5s; top: 70%; left: 70%; opacity: 0.3; }     /* azul iOS */
   .blob6 { background: #ab47bc; animation-delay: 2.5s; top: 40%; left: 30%; opacity: 0.4; }     /* púrpura suave */
   .blob7 { background: #00e5ff; animation-delay: 5s; top: 80%; left: 10%; opacity: 0.3; }       /* cian eléctrico */
+  .blob8 {  background: #ff4081;  /* rosa intenso */  animation-delay: 1s;  top: 15%;  left: 85%;  opacity: 0.35;}
+  .blob9 {  background: #7c4dff;  /* púrpura eléctrico */  animation-delay: 3s;  top: 50%;  left: 60%;  opacity: 0.4;}
+  .blob10 {  background: #1de9b6;  /* verde menta */  animation-delay: 4.5s;  top: 75%;  left: 40%;  opacity: 0.3;}
+  .blob11 {  background: #ff6ec4;  /* rosa degradado suave */  animation-delay: 6s;  top: 25%;  left: 10%;  opacity: 0.35;}
 
-
-  
   #particles-js {
     position: fixed;
     top: 0;

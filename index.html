@@ -20,6 +20,9 @@
     <div class="blob blob6"></div>
     <div class="blob blob7"></div>
     <div class="blob blob8"></div>
+    <div class="blob blob9"></div>
+    <div class="blob blob10"></div>
+    <div class="blob blob11"></div>
   </div>
 
   <div id="progressBar" class="progress-bubble">
@@ -101,7 +104,7 @@
                     <span class="emoji">😔</span> No podré asistir
                   </button>
                   <button id="btnCorregirNombre" class="corregir-nombre-btn hidden" onclick="corregirNombre()">
-                    <span class="emoji">✏️</span> <span class="texto">Editar nombre ingresado</span>
+                    <span class="emoji">✏️</span> <span class="texto">Editar nombre</span>
                   </button>                                   
                 </div>
 
@@ -210,13 +213,13 @@
   
   <script>
     const blobs = document.querySelectorAll('.blob');
-    const speed = 1.5; // mayor número = más rápido
+    const speed = 2; // mayor número = más rápido
   
     blobs.forEach(blob => {
-      let x = Math.random() * window.innerWidth;
-      let y = Math.random() * window.innerHeight;
-      let dx = (Math.random() - 0.5) * speed * 4;
-      let dy = (Math.random() - 0.5) * speed * 4;
+      let x = Math.random() * window.innerWidth - 200;
+      let y = Math.random() * window.innerHeight - 150;
+      let dx = (Math.random() ) * speed * 4;
+      let dy = (Math.random() ) * speed * 4;
   
       function move() {
         x += dx;
