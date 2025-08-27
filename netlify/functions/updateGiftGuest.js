@@ -49,7 +49,7 @@ exports.handler = async function (event) {
     }
 
     const estado = reservado ? "Reservado" : "Disponible";
-    const invitadoFinal = reservado ? invitado : ""; // si libera, vacía la columna I
+    const invitadoFinal = reservado ? (invitado || "") : "";
     const ESTADO_COLUMN = "H";
     const INVITADO_COLUMN = "I";
 

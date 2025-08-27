@@ -45,7 +45,8 @@ async function fetchGuestList() {
         lugar: r.lugar,
         descripcion: r.descripcion,
         link : r.link || "",
-        imagen: r.img || "https://via.placeholder.com/60?text=Regalo"
+        imagen: r.img || "https://via.placeholder.com/60?text=Regalo",
+        estado: r.estado || ""
       }));
 
       console.log("🎁 Regalos cargados:", regalos);
