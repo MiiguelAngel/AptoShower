@@ -252,11 +252,6 @@ function filterNames() {
   function reserveGift(button) {
       // 1. Leer datos del botón seleccionado
     const id = button.dataset.id;
-    const nombre = button.dataset.nombre;
-    const precio = button.dataset.precio;
-    const imagen = button.dataset.imagen;
-    const lugar = button.dataset.lugar;
-    const descripcion = button.dataset.descripcion;
 
     async function actualizarEstadoRegalo(id, reservado, Invitado) {
       // ✅ Guardar en Google Sheets
