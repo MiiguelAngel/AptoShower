@@ -204,8 +204,15 @@ function filterNames() {
   const suggestionsList = document.getElementById("suggestions"); // <-- usa otro nombre
 
   const matches = guestList
-    .filter(n => n.toLowerCase().startsWith(input))
+    .filter(n => n.toLowerCase().includes(input))
     .slice(0, 3);
+
+  if (input === "") {
+    noMatchMessage.classList.add("hidden");
+    document.getElementById("addGuestBtn").classList.add("hidden");
+    suggestionsList.classList.add("hidden");
+    return;
+  }
 
   if (matches.length === 0) {
     noMatchMessage.classList.remove("hidden");
@@ -338,6 +345,7 @@ function filterNames() {
     const input = document.getElementById("nombre").value.trim();
     const modal = document.getElementById("modalAgregarInvitado");
     document.getElementById("modalAgregarInvitado").classList.add("show");
+    //document.getElementById("mainCard").classList.add("blur-behind");
   
     // (Opcional) prellenar el campo nombre en el modal
     if (input) {
@@ -353,6 +361,7 @@ function filterNames() {
 
   function cerrarModal() {
     document.getElementById("modalAgregarInvitado").classList.remove("show");
+    //document.getElementById("mainCard").classList.remove("blur-behind");
   }
 
   function capitalizarNombre(nombre) {

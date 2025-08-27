@@ -74,7 +74,7 @@
 
         
         
-        <div class="card">
+        <div class="card" id="mainCard">
         
             <div class="fade-in-delayed">
                 <p id = "mensajeGuia" class="asistencia-titulo">¡Queremos saber si vienes! <span class="emoji">💌</span></p>
@@ -82,17 +82,20 @@
       
         <!-- Contenido que se mostrará después -->
         <div id="restoContenido" class="fade-in-delayed">
-            <label for="nombre" class="black-text">
-                Ingresa tu nombre <span class="emoji">😊</span>
-              </label>
-          <input type="text" id="nombre" oninput="filterNames()" placeholder="Tu nombre..." autocomplete="off"
-            class="fade-in-up" style="animation-delay: 0.2s;" />
+          <!--   <label for="nombre" class="secondary-text">
+                👤 Escribe tu nombre aquí ✨ <span class="emoji">😊</span>
+              </label> -->
+          <div class="input-wrapper">
+            <span class="input-icon">👤</span>
+            <input type="text" id="nombre" placeholder="Escribe tu nombre ✨" autocomplete="off" oninput="filterNames()" />
+          </div>
+
             <ul id="suggestions"></ul>
             <p id="noMatchMessage" class="no-match hidden">
-              ❌ Nombre no encontrado. Prueba con tu primer nombre.
+              ✨ Ups, parece que aún no te tenemos registrado.
             </p>
             
-            <button id="addGuestBtn" class="add-guest hidden" onclick="agregarInvitado()">Agregar mi nombre</button>
+            <button id="addGuestBtn" class="add-guest hidden" onclick="agregarInvitado()">¡Aparta mi lugar ✨!</button>
 
 
             <div id="confirmacion" class="asistencia-opciones hidden fade-in-up" style="animation-delay: 0.5s;">
@@ -119,9 +122,9 @@
 
             <div id="modalAgregarInvitado" class="modal">
               <div class="modal-content">
-                <h3>Agregar tu nombre</h3>
-                <input type="text" id="inputNombreNuevo" placeholder="Nombre" />
-                <input type="text" id="inputApellidoNuevo" placeholder="Apellido" />
+                <h3>✨ Regístrate para unirte a la celebración</h3>
+                <input type="text" id="inputNombreNuevo" placeholder="Tu nombre ✨" />
+                <input type="text" id="inputApellidoNuevo" placeholder="Tu apellido 💫" />
                 <div class="modal-buttons">
                   <button onclick="enviarNuevoInvitado()">Agregar</button>
                   <button onclick="cerrarModal()">Cancelar</button>
@@ -216,8 +219,8 @@
     const speed = 2; // mayor número = más rápido
   
     blobs.forEach(blob => {
-      let x = Math.random() * window.innerWidth - 200;
-      let y = Math.random() * window.innerHeight - 150;
+      let x = Math.random() * window.innerWidth;
+      let y = Math.random() * window.innerHeight;
       let dx = (Math.random() ) * speed * 4;
       let dy = (Math.random() ) * speed * 4;
   
