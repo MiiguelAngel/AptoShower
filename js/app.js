@@ -274,6 +274,7 @@ function filterNames() {
       regaloSeleccionado.disabled = false;
       regaloSeleccionado.style.backgroundColor = "";
       regaloSeleccionado.parentElement.classList.remove("selected");
+      console.log("Nombre:", nombreSeleccionado);
       actualizarEstadoRegalo(id, false, nombreSeleccionado); // libera el regalo previo
     }
   
@@ -283,6 +284,7 @@ function filterNames() {
       button.style.backgroundColor = "";
       button.parentElement.classList.remove("selected");
       regaloSeleccionado = null;
+      console.log("Nombre:", nombreSeleccionado);
       actualizarEstadoRegalo(id, false, nombreSeleccionado); // libera el regalo previo
       
     } else {
@@ -291,6 +293,7 @@ function filterNames() {
       button.style.backgroundColor = "#aaa";
       button.parentElement.classList.add("selected");
       regaloSeleccionado = button;
+      console.log("Nombre:", nombreSeleccionado);
       actualizarEstadoRegalo(id, true, nombreSeleccionado); // marca como reservado
   
       confetti({

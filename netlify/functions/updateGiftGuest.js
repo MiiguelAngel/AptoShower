@@ -53,6 +53,8 @@ exports.handler = async function (event) {
     const ESTADO_COLUMN = "H";
     const INVITADO_COLUMN = "I";
 
+    console.log("Formateado:", invitadoFinal, "Original:", invitado);
+
     // ✍️ Actualizar columna H en la fila encontrada
     await sheets.spreadsheets.values.update({
       spreadsheetId,
