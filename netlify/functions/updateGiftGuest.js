@@ -1,4 +1,4 @@
-// updateAttendance.js
+// updateGiftGuest.js
 const { google } = require("googleapis");
 
 exports.handler = async function (event) {
@@ -7,20 +7,21 @@ exports.handler = async function (event) {
       return { statusCode: 405, body: "Método no permitido" };
     }
 
-    const { nombre, asistencia } = JSON.parse(event.body || "{}");
+    const { id, reservado, invitado } = JSON.parse(event.body || "{}");
 
-    if (!nombre || typeof nombre !== "string") {
-      return { statusCode: 400, body: "Nombre inválido" };
+    const idStr = (id ?? "").toString().trim();
+    if (!idStr) {
+      return { statusCode: 400, body: "Id inválido" };
     }
-    if (typeof asistencia !== "boolean") {
-      return { statusCode: 400, body: "Asistencia inválida" };
+    if (typeof reservado !== "boolean") {
+      return { statusCode: 400, body: "Reserva inválida" };
     }
 
     // Credenciales
     const credentialsJSON = Buffer.from(process.env.GOOGLE_CREDENTIALS_BASE64, "base64").toString("utf-8");
     const credentials = JSON.parse(credentialsJSON);
     const spreadsheetId = process.env.SHEET_ID;
-    const sheetName = "Invitados";
+    const sheetName = "Regalos";
 
     const auth = new google.auth.GoogleAuth({
       credentials,
@@ -38,31 +39,36 @@ exports.handler = async function (event) {
     const rows = resp.data.values || [];
     let fila = -1;
     rows.forEach((row, i) => {
-      if (row[0] && row[0].toLowerCase().trim() === nombre.toLowerCase().trim()) {
+      if (row[0] && row[0].toLowerCase().trim() === idStr.toLowerCase().trim()) {
         fila = i + 1; // Google Sheets es 1-based
       }
     });
 
     if (fila === -1) {
-      return { statusCode: 404, body: "Nombre no encontrado en la lista" };
+      return { statusCode: 404, body: "Id no encontrado en la lista" };
     }
 
-    // ✍️ Actualizar columna B en la fila encontrada
+    const estado = reservado ? "Reservado" : "Disponible";
+    const invitadoFinal = reservado ? (invitado || "") : ""; // si libera, vacía la columna I
+    const ESTADO_COLUMN = "H";
+    const INVITADO_COLUMN = "I";
+
+    // ✍️ Actualizar columna H en la fila encontrada
     await sheets.spreadsheets.values.update({
       spreadsheetId,
-      range: `${sheetName}!C${fila}`,
+      range: `${sheetName}!${ESTADO_COLUMN}${fila}:${INVITADO_COLUMN}${fila}`,
       valueInputOption: "USER_ENTERED",
       requestBody: {
-        values: [[asistencia ? "Sí Asistira" : "No Asistira"]],
+        values: [[estado, invitadoFinal]],
       },
     });
 
     return {
       statusCode: 200,
-      body: JSON.stringify({ message: "Asistencia registrada", fila }),
+      body: JSON.stringify({ message: "Reserva actualizada", fila, estado, invitado: invitadoFinal }),
     };
   } catch (error) {
-    console.error("❌ Error en updateAttendance:", error.message);
+    console.error("❌ Error en updateGiftGuest:", error.message);
     return { statusCode: 500, body: JSON.stringify({ error: error.message }) };
   }
 };

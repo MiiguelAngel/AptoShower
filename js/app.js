@@ -83,6 +83,7 @@ async function fetchGuestList() {
       const descripcion = item.descripcion || "";
       const img = item.img || "";
       const link = item.link || "";
+      const estado = item.estado || "";
 
       // Decide si el link es imagen o un enlace a tienda
       const esImagen = esUrlImagen(img);
@@ -98,7 +99,7 @@ async function fetchGuestList() {
       <img src="${link || "https://via.placeholder.com/60?text=Regalo"}" alt="${nombre}" />
       <strong>${nombre}</strong>
       <small>${descripcion}</small>
-      <span class="gift-price">$${precioNum}</span>
+      <span class="gift-price">${precioNum}K COP</span>
     `;
 
       // botón creado por JS
@@ -115,6 +116,13 @@ async function fetchGuestList() {
       button.setAttribute("data-lugar", lugar);
       button.setAttribute("data-descripcion", descripcion);
 
+      if (estado.toLowerCase() === "reservado") {
+        button.textContent = "Apartado ✅";
+        button.disabled = false;
+        card.classList.add("selected");
+        button.style.backgroundColor = "#aaa";
+      }
+
       card.appendChild(button);
       contenedor.appendChild(card);
     });
@@ -129,9 +137,9 @@ async function fetchGuestList() {
   
     if (precio) {
       filtrados = filtrados.filter(item => {
-        if (precio === "-50") return item.precio < 50000;
-        if (precio === "50-100") return item.precio >= 50000 && item.precio <= 100000;
-        if (precio === "100+") return item.precio > 100000;
+        if (precio === "-50") return item.precio < 50;
+        if (precio === "50-100") return item.precio >= 50 && item.precio <= 100;
+        if (precio === "100+") return item.precio > 100;
       });
     }
   
@@ -241,16 +249,36 @@ function filterNames() {
 
   let regaloSeleccionado = null; // nueva variable global
 
-  async function reserveGift(button) {
-    const gift_name = button.dataset.nombre;
-    const gift_price = button.dataset.precio;
-    const gift_imag = button.dataset.imagen;
+  function reserveGift(button) {
+      // 1. Leer datos del botón seleccionado
+    const id = button.dataset.id;
+    const nombre = button.dataset.nombre;
+    const precio = button.dataset.precio;
+    const imagen = button.dataset.imagen;
+    const lugar = button.dataset.lugar;
+    const descripcion = button.dataset.descripcion;
+
+    async function actualizarEstadoRegalo(id, reservado) {
+      // ✅ Guardar en Google Sheets
+      try {
+        const res = await fetch("/.netlify/functions/updateGiftGuest", {
+          method: "POST",
+          body: JSON.stringify({ id: id, reservado: reservado }),
+        });
+        const data = await res.json();
+        console.log("📌 Respuesta Sheets:", data);
+        } 
+      catch (err) {
+          console.error("❌ Error al guardar asistencia:", err);
+        }
+    }
 
     if (regaloSeleccionado && regaloSeleccionado !== button) {
       regaloSeleccionado.textContent = "Apartar";
       regaloSeleccionado.disabled = false;
       regaloSeleccionado.style.backgroundColor = "";
       regaloSeleccionado.parentElement.classList.remove("selected");
+      actualizarEstadoRegalo(id, false); // libera el regalo previo
     }
   
     if (regaloSeleccionado === button) {
@@ -259,15 +287,15 @@ function filterNames() {
       button.style.backgroundColor = "";
       button.parentElement.classList.remove("selected");
       regaloSeleccionado = null;
-
+      actualizarEstadoRegalo(id, false); // libera el regalo previo
       
     } else {
       button.textContent = "Apartado ✅";
       button.disabled = false;
       button.style.backgroundColor = "#aaa";
       button.parentElement.classList.add("selected");
-  
       regaloSeleccionado = button;
+      actualizarEstadoRegalo(id, true); // marca como reservado
   
       confetti({
         particleCount: 200,

@@ -25,7 +25,7 @@ exports.handler = async function () {
     // Lee todas las filas y columnas A..F (id_regalo, nombre, precio, lugar, descripcion, link)
     const resp = await sheets.spreadsheets.values.get({
       spreadsheetId,
-      range: `${sheetName}!A:G`,
+      range: `${sheetName}!A:H`,
     });
 
     const rows = resp.data.values || [];
@@ -33,7 +33,7 @@ exports.handler = async function () {
     // Mapea por índice de columna (sin encabezados)
     const data = rows
       .map((row) => {
-        const [id_regalo, nombre, precio, lugar, descripcion, link, img] = row;
+        const [id_regalo, nombre, precio, lugar, descripcion, link, img, estado] = row;
         return {
           id_regalo: (id_regalo || "").toString().trim(),
           nombre: (nombre || "").toString().trim(),
@@ -42,6 +42,7 @@ exports.handler = async function () {
           descripcion: (descripcion || "").toString().trim(),
           link: (link || "").toString().trim(),
           img: (img || "").toString().trim(),
+          estado: (estado || "").toString().trim(),
         };
       })
       // Filtra filas vacías o sin nombre
