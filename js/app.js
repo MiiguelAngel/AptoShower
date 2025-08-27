@@ -95,27 +95,27 @@ async function fetchGuestList() {
       card.className = "gift-item";
 
       card.innerHTML = `
-        <img src="${imagenSrc}" alt="${nombre}" />
-        <strong>${nombre}</strong>
-        <small>${descripcion || (lugar ? `Lugar: ${lugar}` : "")}</small>
-        <div class="gift-meta">
-          <span class="gift-price">${formatearCOP(precioNum)}</span>
-          ${!esImagen && link ? `<a href="${link}" target="_blank" rel="noopener noreferrer" class="gift-link">Ver</a>` : ""}
-        </div>
-        <button
-          class="gift-reserve-btn"
-          onclick="reserveGift(this)"
-          data-id="${id}"
-          data-nombre="${nombre}"
-          data-precio="${precioNum}"
-          data-imagen="${link}"   <!-- si no es imagen, queda el link para que lo uses -->
-          data-lugar="${lugar}"
-          data-descripcion='${descripcion.replace(/'/g, "\\'")}'
-        >
-          Apartar
-        </button>
-      `;
+      <img src="${link || "https://via.placeholder.com/60?text=Regalo"}" alt="${nombre}" />
+      <strong>${nombre}</strong>
+      <small>${descripcion}</small>
+      <span class="gift-price">$${precioNum}</span>
+    `;
 
+      // botón creado por JS
+      const button = document.createElement("button");
+      button.textContent = "Apartar";
+      button.className = "gift-reserve-btn";
+      button.onclick = () => reserveGift(button);
+
+      // ✅ ahora sí, los atributos data-* reales
+      button.setAttribute("data-id", id);
+      button.setAttribute("data-nombre", nombre);
+      button.setAttribute("data-precio", precioNum);
+      button.setAttribute("data-imagen", link);
+      button.setAttribute("data-lugar", lugar);
+      button.setAttribute("data-descripcion", descripcion);
+
+      card.appendChild(button);
       contenedor.appendChild(card);
     });
   }
