@@ -258,7 +258,7 @@ function filterNames() {
     const lugar = button.dataset.lugar;
     const descripcion = button.dataset.descripcion;
 
-    async function actualizarEstadoRegalo(id, reservado) {
+    async function actualizarEstadoRegalo(id, reservado, Invitado) {
       // ✅ Guardar en Google Sheets
       try {
         const res = await fetch("/.netlify/functions/updateGiftGuest", {
@@ -278,7 +278,7 @@ function filterNames() {
       regaloSeleccionado.disabled = false;
       regaloSeleccionado.style.backgroundColor = "";
       regaloSeleccionado.parentElement.classList.remove("selected");
-      actualizarEstadoRegalo(id, false); // libera el regalo previo
+      actualizarEstadoRegalo(id, false, nombreSeleccionado); // libera el regalo previo
     }
   
     if (regaloSeleccionado === button) {
@@ -287,7 +287,7 @@ function filterNames() {
       button.style.backgroundColor = "";
       button.parentElement.classList.remove("selected");
       regaloSeleccionado = null;
-      actualizarEstadoRegalo(id, false); // libera el regalo previo
+      actualizarEstadoRegalo(id, false, nombreSeleccionado); // libera el regalo previo
       
     } else {
       button.textContent = "Apartado ✅";
@@ -295,7 +295,7 @@ function filterNames() {
       button.style.backgroundColor = "#aaa";
       button.parentElement.classList.add("selected");
       regaloSeleccionado = button;
-      actualizarEstadoRegalo(id, true); // marca como reservado
+      actualizarEstadoRegalo(id, true, nombreSeleccionado); // marca como reservado
   
       confetti({
         particleCount: 200,
