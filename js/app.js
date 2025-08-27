@@ -407,12 +407,14 @@ function filterNames() {
     if (res.ok) {
       guestList.push(nombreCompleto);
       document.getElementById("nombre").value = nombreCompleto;
+      mostrarToast("Nombre agregado correctamente", "success");
+      // espera de 1 segundo antes de cerrar el modal
+      await new Promise(resolve => setTimeout(resolve, 1000));
       cerrarModal();
       nombreSeleccionado = nombreCompleto;
       mostrarConfirmacion(nombreCompleto);
       noMatchMessage.classList.add("hidden");
       document.getElementById("addGuestBtn").classList.add("hidden");
-      mostrarToast("Nombre agregado correctamente", "success");
     } else {
       mostrarToast("No se pudo agregar. Por favor comunicate con el organizador.", "error");
     }

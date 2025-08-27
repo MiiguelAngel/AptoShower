@@ -547,17 +547,28 @@
     font-size: 1rem;
     cursor: pointer;
     transition: all 0.3s ease;
+    box-shadow: 2px 2px 6px #0b3d91;
+    width: 15rem;
+    max-width: 15rem;
+    margin: 0rem;
+
   }
   
   .asiste-btn {
-    background-color: #d1ffe5;
-    color: #065f46;
+    background-color: #258560;
+    color: white;
   }
+
+  .asiste-btn:hover { filter: brightness(1.1); transform: scale(1.03); }
+  .asiste-btn:active { transform: scale(0.96); }
   
   .no-asiste-btn {
-    background-color: #ffe4e1;
-    color: #991b1b;
+    background-color: #9B1C1C;
+    color: white;
   }
+
+  .no-asiste-btn:hover { filter: brightness(1.1); transform: scale(1.03); }
+  .no-asiste-btn:active { transform: scale(0.96); }
   
   .hidden {
     display: none;
@@ -574,7 +585,7 @@
     display: flex;
     align-items: center;
     gap: 6px;
-    margin-top: 18px;
+    margin : 0rem;
     cursor: pointer;
     transition: all 0.3s ease;
     justify-content: center;
