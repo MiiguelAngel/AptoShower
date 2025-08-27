@@ -50,7 +50,7 @@ exports.handler = async function (event) {
     // ✍️ Actualizar columna B en la fila encontrada
     await sheets.spreadsheets.values.update({
       spreadsheetId,
-      range: `${sheetName}!B${fila}`,
+      range: `${sheetName}!C${fila}`,
       valueInputOption: "USER_ENTERED",
       requestBody: {
         values: [[asistencia ? "Sí Asistira" : "No Asistira"]],

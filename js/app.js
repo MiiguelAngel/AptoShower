@@ -15,6 +15,8 @@ async function fetchGuestList() {
   document.addEventListener("DOMContentLoaded", async () => {
     guestList = await fetchGuestList();
     console.log("Lista de invitados cargada:", guestList);
+
+    await fetchGifts();
   });
 
   document.getElementById("nombre").addEventListener("focus", () => {
@@ -26,100 +28,95 @@ async function fetchGuestList() {
     }, 300); // espera a que aparezca el teclado
   });
   
-const regalos = [
-    {
-      nombre: "Portavasos decorativos",
-      lugar: "Sala",
-      precio: 30000,
-      descripcion: "Perfectos para proteger tus muebles con estilo",
-      imagen: "https://via.placeholder.com/60?text=Portavasos"
-    },
-    {
-      nombre: "Lámpara LED de ambiente",
-      lugar: "Sala",
-      precio: 75000,
-      descripcion: "Ilumina con calidez cualquier rincón",
-      imagen: "https://via.placeholder.com/60?text=Lámpara"
-    },
-    {
-      nombre: "Juego de cucharas medidoras",
-      lugar: "Cocina",
-      precio: 28000,
-      descripcion: "Para que cada receta te salga perfecta",
-      imagen: "https://via.placeholder.com/60?text=Cucharas"
-    },
-    {
-      nombre: "Freidora de aire",
-      lugar: "Cocina",
-      precio: 180000,
-      descripcion: "Cocina saludable y rápida sin aceite",
-      imagen: "https://via.placeholder.com/60?text=Freidora"
-    },
-    {
-      nombre: "Organizador de cajones",
-      lugar: "Habitación",
-      precio: 42000,
-      descripcion: "Ordena tu ropa con facilidad",
-      imagen: "https://via.placeholder.com/60?text=Organizador"
-    },
-    {
-      nombre: "Set de sábanas 300 hilos",
-      lugar: "Habitación",
-      precio: 95000,
-      descripcion: "Suavidad y confort para un mejor descanso",
-      imagen: "https://via.placeholder.com/60?text=Sábanas"
-    },
-    {
-      nombre: "Cuadro abstracto",
-      lugar: "Decoración",
-      precio: 65000,
-      descripcion: "Dale un toque moderno a tu pared",
-      imagen: "https://via.placeholder.com/60?text=Cuadro"
-    },
-    {
-      nombre: "Plantas artificiales",
-      lugar: "Decoración",
-      precio: 48000,
-      descripcion: "Verde eterno sin cuidados",
-      imagen: "https://via.placeholder.com/60?text=Plantas"
-    },
-    {
-      nombre: "Cafetera básica",
-      lugar: "Cocina",
-      precio: 99000,
-      descripcion: "Comienza el día con energía",
-      imagen: "https://via.placeholder.com/60?text=Cafetera"
-    },
-    {
-      nombre: "Portarretratos múltiple",
-      lugar: "Decoración",
-      precio: 38000,
-      descripcion: "Muestra tus mejores recuerdos",
-      imagen: "https://via.placeholder.com/60?text=Fotos"
-    },
-    {
-      nombre: "Almohadas viscoelásticas",
-      lugar: "Habitación",
-      precio: 120000,
-      descripcion: "Comodidad y soporte para dormir mejor",
-      imagen: "https://via.placeholder.com/60?text=Almohadas"
+  
+
+  let regalos = [];
+
+  async function fetchGifts() {
+    try {
+      const res = await fetch("/.netlify/functions/getGifts");
+      const data = await res.json();
+
+      // Normaliza al formato que ya usa tu UI
+      regalos = data.map(r => ({
+        id: r.id_regalo,
+        nombre: r.nombre,
+        precio: Number(r.precio) || 0,
+        lugar: r.lugar,
+        descripcion: r.descripcion,
+        link : r.link || "",
+        imagen: r.img || "https://via.placeholder.com/60?text=Regalo"
+      }));
+
+      console.log("🎁 Regalos cargados:", regalos);
+      mostrarRegalos(regalos);
+    } catch (err) {
+      console.error("❌ Error cargando regalos:", err);
     }
-  ];
+  }
+
   
   function mostrarRegalos(lista) {
+
+    function esUrlImagen(url = "") {
+      return /\.(png|jpe?g|webp|gif|bmp|svg)(\?.*)?$/i.test(url);
+    }
+
+    function formatearCOP(valor) {
+      try {
+        // asume número; si recibes string, conviértelo antes
+        return new Intl.NumberFormat("es-CO", { style: "currency", currency: "COP", maximumFractionDigits: 0 }).format(valor || 0);
+      } catch {
+        return `$${valor}`;
+      }
+    }
+
     const contenedor = document.getElementById("listaRegalos");
     contenedor.innerHTML = "";
   
     lista.forEach(item => {
-      const div = document.createElement("div");
-      div.className = "gift-item";
-      div.innerHTML = `
-        <img src="${item.imagen}" alt="${item.nombre}" />
-        <strong>${item.nombre}</strong>
-        <small>${item.descripcion}</small>
-        <button onclick="reserveGift(this)">Apartar</button>
+      // Normaliza campos esperados
+      const id = item.id || item.id_regalo || "";
+      const nombre = item.nombre || "Regalo";
+      const precioNum = typeof item.precio === "number" ? item.precio : Number(item.precio) || 0;
+      const lugar = item.lugar || "";
+      const descripcion = item.descripcion || "";
+      const img = item.img || "";
+      const link = item.link || "";
+
+      // Decide si el link es imagen o un enlace a tienda
+      const esImagen = esUrlImagen(img);
+      const esLink = esUrlImagen(link);
+      const imagenSrc = esImagen ? link : "https://via.placeholder.com/60?text=Regalo";
+      const linkSrc = esLink ? link : "";
+
+      // Tarjeta
+      const card = document.createElement("div");
+      card.className = "gift-item";
+
+      card.innerHTML = `
+        <img src="${imagenSrc}" alt="${nombre}" />
+        <strong>${nombre}</strong>
+        <small>${descripcion || (lugar ? `Lugar: ${lugar}` : "")}</small>
+        <div class="gift-meta">
+          <span class="gift-price">${formatearCOP(precioNum)}</span>
+          ${!esImagen && link ? `<a href="${link}" target="_blank" rel="noopener noreferrer" class="gift-link">Ver</a>` : ""}
+        </div>
+        <button
+          class="gift-reserve-btn"
+          onclick="reserveGift(this)"
+          data-id="${id}"
+          data-nombre="${nombre}"
+          data-precio="${precioNum}"
+          data-imagen="${link}"   <!-- si no es imagen, queda el link para que lo uses -->
+          data-lugar="${lugar}"
+          data-descripcion='${descripcion.replace(/'/g, "\\'")}'
+        >
+          Apartar
+        </button>
       `;
-      contenedor.appendChild(div);
+
+      contenedor.appendChild(card);
     });
   }
   
@@ -244,7 +241,11 @@ function filterNames() {
 
   let regaloSeleccionado = null; // nueva variable global
 
-  function reserveGift(button) {
+  async function reserveGift(button) {
+    const gift_name = button.dataset.nombre;
+    const gift_price = button.dataset.precio;
+    const gift_imag = button.dataset.imagen;
+
     if (regaloSeleccionado && regaloSeleccionado !== button) {
       regaloSeleccionado.textContent = "Apartar";
       regaloSeleccionado.disabled = false;
@@ -258,9 +259,8 @@ function filterNames() {
       button.style.backgroundColor = "";
       button.parentElement.classList.remove("selected");
       regaloSeleccionado = null;
-  
-      // Oculta mensaje final si se deselecciona
-      document.getElementById("mensajeFinal").classList.remove("visible");
+
+      
     } else {
       button.textContent = "Apartado ✅";
       button.disabled = false;
@@ -275,12 +275,6 @@ function filterNames() {
         origin: { y: 0.6 }
       });
   
-      // 🥳 Mostrar mensaje de cierre
-      setTimeout(() => {
-        const mensajeFinal = document.getElementById("mensajeFinal");
-        mensajeFinal.classList.remove("hidden");
-        mensajeFinal.classList.add("visible");
-      }, 500);
     }
   }
   
@@ -295,8 +289,9 @@ function filterNames() {
     document.getElementById("mensajeGuia").style.display = "none";
     document.getElementById("nombre").style.display = "none";
     document.getElementById("suggestions").style.display = "none";
+    document.querySelector(".input-wrapper").style.display = "none";
 
-      // ✅ Guardar en Google Sheets
+    // ✅ Guardar en Google Sheets
     try {
       const res = await fetch("/.netlify/functions/updateAttendance", {
         method: "POST",

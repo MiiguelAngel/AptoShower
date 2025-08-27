@@ -617,11 +617,11 @@
     font-size: 1.3rem;
     line-height: 1.6;  /* mejora legibilidad */
     font-weight: 600;
-    background: linear-gradient(90deg, #fff, #d6d6d6);
+    /*background: linear-gradient(90deg, #fff, #d6d6d6);
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    text-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+    text-shadow: 0 0 5px rgba(0, 0, 0, 0.3);*/
     animation: fadeInUp 0.6s ease forwards;
   }
 
