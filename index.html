@@ -9,188 +9,230 @@
   <link rel="icon" href="assets\images\Cedro_logo.png" type="image/png" />
 </head>
 <body>
-  
+  <script src="js/app.js" defer></script>
   <!-- Background -->  
   <div class="blob-background">
-    <div class="blob blob1"></div>
-    <div class="blob blob2"></div>
-    <div class="blob blob3"></div>
-    <div class="blob blob4"></div>
-    <div class="blob blob5"></div>
-    <div class="blob blob6"></div>
-    <div class="blob blob7"></div>
-    <div class="blob blob8"></div>
-    <div class="blob blob9"></div>
-    <div class="blob blob10"></div>
-    <div class="blob blob11"></div>
+        <div class="blob blob1"></div>
+        <div class="blob blob2"></div>
+        <div class="blob blob3"></div>
+        <div class="blob blob4"></div>
+        <div class="blob blob5"></div>
+        <div class="blob blob6"></div>
+        <div class="blob blob7"></div>
+        <div class="blob blob8"></div>
+        <div class="blob blob9"></div>
+        <div class="blob blob10"></div>
+        <div class="blob blob11"></div>
   </div>
 
+  <!-- Barra de progreso -->
   <div id="progressBar" class="progress-bubble">
-    <span class="step-wrapper">
-      <span id="step1" onclick="toggleScreens('screen')" class="step-icon active" title="Inicio">🏠</span>
-    </span>
-    <span class="arrow">➔</span>
-    <span class="step-wrapper">
-      <span id="step2" onclick="toggleScreens('screen2')" class="step-icon" title="Asistencia">✅</span>
-    </span>
-    <span class="arrow">➔</span>
-    <span class="step-wrapper">
-      <span id="step3" onclick="toggleScreens('screen3')" class="step-icon" title="Regalos">🎁</span>
-    </span>
+          <span class="step-wrapper">
+            <span id="step1" onclick="toggleScreens('screen')" class="step-icon active" title="Inicio">🏠</span>
+          </span>
+          <span class="arrow">➔</span>
+          <span class="step-wrapper">
+            <span id="step2" onclick="toggleScreens('screen2')" class="step-icon" title="Asistencia">✅</span>
+          </span>
+          <span class="arrow">➔</span>
+          <span class="step-wrapper">
+            <span id="step3" onclick="toggleScreens('screen3')" class="step-icon" title="Regalos">🎁</span>
+          </span>
+          <span class="arrow">➔</span>
+          <span class="step-wrapper">
+            <span id="step4" onclick="toggleScreens('screen4')" class="step-icon" title="Invitacion">📩</span>
+          </span>
   </div>
   
-   
-  
-
   <!-- Primera parte: introducción -->
   <section id="screen" class="screen visible welcome-section">
-    <h1 id="mainTitle1" class="main-title">Bienvenidos a mi</h1>
-    <h1 id="mainTitle2" class="main-title hidden">ApartaShower!</h1>
-
-
-    <p id="subTitle" class="hidden sub-title" style="animation-delay: 1s;">¡Celebremos juntos este momento especial!</p>
-    
-    <div id="additionalContent" class="hidden">
-      <h2 class="white-text">Cedro Novaterra</h2>
-      <!--<img src="assets/images/Cedro_logo.png" alt="Cedro Novaterra" class="hero-image corner-logo" />-->
-      <p class="address-text">
-        📍 Carrera 3A # 17 sur 99<br />
-        📍 Mosquera-La Mesa #Km 1<br />
-        📍 Mosquera, Cundinamarca
-      </p>
-      <button class="gradient-border-btn" onclick="goToNameInput()"><span>Continuar</span></button>
-    </div>
+        <h1 id="mainTitle1" class="main-title">Bienvenidos a mi</h1>
+        <h1 id="mainTitle2" class="main-title hidden">ApartaShower!</h1>
+        <p id="subTitle" class="hidden sub-title" style="animation-delay: 1s;">¡Celebremos juntos este momento especial!</p>
+        
+        <div id="additionalContent" class="hidden">
+              <h2 class="white-text">Cedro Novaterra</h2>
+              <!--<img src="assets/images/Cedro_logo.png" alt="Cedro Novaterra" class="hero-image corner-logo" />-->
+              <p class="address-text">
+                📍 Carrera 3A # 17 sur 99<br />
+                📍 Mosquera-La Mesa #Km 1<br />
+                📍 Mosquera, Cundinamarca
+              </p>
+              <button class="gradient-border-btn" onclick="goToNameInput()"><span>Continuar</span></button>
+        </div>
   </section>
-  
-  
 
   <!-- Segunda parte: selección del nombre -->
   <section id="screen2" class="screen">
-    <div class="card-gif">
-        <img src="assets\gif\Join_us.gif" alt="Animación bienvenida" id="gifIntro" class="gif-intro" />
-    </div>
-    
-    <div class="card fade-in-delayed">
-
-        
-        
-        <div class="card" id="mainCard">
-        
-            <div class="fade-in-delayed">
-                <p id = "mensajeGuia" class="asistencia-titulo">¡Queremos saber si vienes! <span class="emoji">💌</span></p>
-            </div>
-      
-        <!-- Contenido que se mostrará después -->
-        <div id="restoContenido" class="fade-in-delayed">
-          <!--   <label for="nombre" class="secondary-text">
-                👤 Escribe tu nombre aquí ✨ <span class="emoji">😊</span>
-              </label> -->
-          <div class="input-wrapper">
-            <span class="input-icon">👤</span>
-            <input type="text" id="nombre" placeholder="Escribe tu nombre ✨" autocomplete="off" oninput="filterNames()" />
+          <div class="card-gif">
+              <img src="assets\gif\Join_us.gif" alt="Animación bienvenida" id="gifIntro" class="gif-intro" />
           </div>
-
-            <ul id="suggestions"></ul>
-            <p id="noMatchMessage" class="no-match hidden">
-              ✨ Ups, parece que aún no te tenemos registrado, intenta de nuevo o toca el botón para registrarte.
-            </p>
-            
-            <button id="addGuestBtn" class="add-guest hidden" onclick="agregarInvitado()">¡Aparta mi lugar ✨!</button>
-
-
-            <div id="confirmacion" class="asistencia-opciones hidden fade-in-up" style="animation-delay: 0.5s;">
-                <div class="opciones-asistencia">
-                  <button class="asiste-btn" onclick="confirmarAsistencia(true)">
-                    <span class="emoji">🎉</span> Sí asistiré
-                  </button>
-                  <button class="no-asiste-btn" onclick="confirmarAsistencia(false)">
-                    <span class="emoji">😔</span> No podré asistir
-                  </button>
-                  <button id="btnCorregirNombre" class="corregir-nombre-btn hidden" onclick="corregirNombre()">
-                    <span class="emoji">✏️</span> <span class="texto">Editar nombre</span>
-                  </button>                                   
-                </div>
-
-              </div>
+          
+          <div class="card fade-in-delayed">
+ 
+              <div class="card" id="mainCard">
               
+                  <div class="fade-in-delayed">
+                      <p id = "mensajeGuia" class="asistencia-titulo">¡Queremos saber si vienes! <span class="emoji">💌</span></p>
+                  </div>
+            
+                    <!-- Contenido que se mostrará después -->
+                    <div id="restoContenido" class="fade-in-delayed">
+                        <!--   <label for="nombre" class="secondary-text">
+                              👤 Escribe tu nombre aquí ✨ <span class="emoji">😊</span>
+                            </label> -->
+                        <div class="input-wrapper">
+                          <span class="input-icon">👤</span>
+                          <input type="text" id="nombre" placeholder="Escribe tu nombre ✨" autocomplete="off" oninput="filterNames()" />
+                        </div>
 
-            <p id="mensajeRespuesta" class="mensaje-personalizado hidden fade-in-up" style="animation-delay: 0.8s;"></p>
+                        <ul id="suggestions"></ul>
+                        <p id="noMatchMessage" class="no-match hidden">
+                          ✨ Ups, parece que aún no te tenemos registrado, intenta de nuevo o toca el botón para registrarte.
+                        </p>
+                      
+                        <button id="addGuestBtn" class="add-guest hidden" onclick="agregarInvitado()">¡Aparta mi lugar ✨!</button>
 
-            <button id="verRegalosBtn" class="btn-personalizado hidden fade-in-up" style="animation-delay: 1s;" onclick="goToGifts()">
-            Ver regalos
-            </button>
 
-            <div id="modalAgregarInvitado" class="modal">
-              <div class="modal-content">
-                <h3>✨ Regístrate para unirte a la celebración</h3>
-                <input type="text" id="inputNombreNuevo" placeholder="Tu nombre ✨" />
-                <input type="text" id="inputApellidoNuevo" placeholder="Tu apellido 💫" />
-                <div class="modal-buttons">
-                  <button onclick="enviarNuevoInvitado()">Agregar</button>
-                  <button onclick="cerrarModal()">Cancelar</button>
-                </div>
+                        <div id="confirmacion" class="asistencia-opciones hidden fade-in-up" style="animation-delay: 0.5s;">
+                            <div class="opciones-asistencia">
+                              <button class="asiste-btn" onclick="confirmarAsistencia(true)">
+                                <span class="emoji">🎉</span> Sí asistiré
+                              </button>
+                              <button class="no-asiste-btn" onclick="confirmarAsistencia(false)">
+                                <span class="emoji">😔</span> No podré asistir
+                              </button>
+                              <button id="btnCorregirNombre" class="corregir-nombre-btn hidden" onclick="corregirNombre()">
+                                <span class="emoji">✏️</span> <span class="texto">Editar nombre</span>
+                              </button>                                   
+                            </div>
 
+                        </div>
+                        
+
+                        <p id="mensajeRespuesta" class="mensaje-personalizado hidden fade-in-up" style="animation-delay: 0.8s;"></p>
+
+                        <button id="verRegalosBtn" class="btn-personalizado hidden fade-in-up" style="animation-delay: 1s;" onclick="goToGifts()">
+                        Ver regalos
+                        </button>
+
+                        <div id="modalAgregarInvitado" class="modal">
+                          <div class="modal-content">
+                            <h3>✨ Regístrate para unirte a la celebración</h3>
+                            <input type="text" id="inputNombreNuevo" placeholder="Tu nombre ✨" />
+                            <input type="text" id="inputApellidoNuevo" placeholder="Tu apellido 💫" />
+                            <div class="modal-buttons">
+                              <button onclick="enviarNuevoInvitado()">Agregar</button>
+                              <button onclick="cerrarModal()">Cancelar</button>
+                            </div>
+
+                          </div>
+
+                        </div>
+                      
+                        <div id="toast" class="toast"></div>
+
+                    </div>
+                  </div>      
               </div>
 
-            </div>
-            
-            <div id="toast" class="toast"></div>
+              <!-- Mensaje personalizado -->
+              <p id="mensajeRespuesta" class="mensaje-personalizado hidden"></p>
 
-        </div>
-      </div>      
-      </div>
-
-      <!-- Mensaje personalizado -->
-      <p id="mensajeRespuesta" class="mensaje-personalizado hidden"></p>
-
-      <button id="verRegalosBtn" class="hidden" onclick="goToGifts()">Elige tu regalo perfecto</button>
-    </div>
+              <button id="verRegalosBtn" class="hidden" onclick="goToGifts()">Elige tu regalo perfecto</button>
+          </div>
   </section>
 
   <!-- Tercera parte: lista de regalos -->
   <section id="screen3" class="screen">
-    <h2 class="gradient-title">Lista de Regalos</h2>
-  
-    <!-- Filtros -->
-    <div class="filtros-container">
-      <select id="filtroPrecio" onchange="filtrarRegalos()">
-        <option value="">Filtrar por precio</option>
-        <option value="-50">Menos de $50.000</option>
-        <option value="50-100">Entre $50.000 y $100.000</option>
-        <option value="100+">Más de $100.000</option>
-      </select>
-  
-      <select id="filtroLugar" onchange="filtrarRegalos()">
-        <option value="">Filtrar por lugar</option>
-        <option value="Sala">Sala</option>
-        <option value="Cocina">Cocina</option>
-        <option value="Habitación">Habitación</option>
-        <option value="Decoración">Decoración</option>
-      </select>
-    </div>
-  
-    <!-- Grilla de regalos -->
-    <div id="listaRegalos" class="regalos-grid"></div>
-    
-    <div style="height: 3rem;"></div>
+        <h2 class="gradient-title">Lista de Regalos</h2>
+      
+        <!-- Filtros -->
+        <div class="filtros-container">
+          <select id="filtroPrecio" onchange="filtrarRegalos()">
+            <option value="">Filtrar por precio</option>
+            <option value="-50">Menos de $50.000</option>
+            <option value="50-100">Entre $50.000 y $100.000</option>
+            <option value="100+">Más de $100.000</option>
+          </select>
+      
+          <select id="filtroLugar" onchange="filtrarRegalos()">
+            <option value="">Filtrar por lugar</option>
+            <option value="Sala">Sala</option>
+            <option value="Cocina">Cocina</option>
+            <option value="Habitación">Habitación</option>
+            <option value="Decoración">Decoración</option>
+          </select>
+        </div>
+      
+        <!-- Grilla de regalos -->
+        <div id="listaRegalos" class="regalos-grid"></div>
+        
+        <div style="height: 3rem;"></div>
 
-</section>
-
-<div id="mensajeFinal" class="mensaje-final hidden">
-  🎉 ¡Gracias por tu elección, nos vemos pronto! 🥳
-</div>
-
-  
   </section>
+
+  <!-- Cuarta parte: invitación -->
+  <section id="screen4" class="screen">
+        <div class="inv-wrapper" aria-live="polite">
+            <div class="inv-card" role="region" aria-label="Invitación">
+              <!-- Portada -->
+              <button class="inv-cover" id="openInvite" aria-label="Abrir invitación" onclick="openInvite()" >
+                <div class="cover-stars"></div>
+                <div class="cover-title">
+                  <span class="cover-kicker">Invitación</span>
+                  <h2>¡Te esperamos!</h2>
+                  <p>Toca para abrir</p>
+                </div>
+              </button>
+
+              <!-- Interior -->
+              <section class="inv-inner" aria-hidden="true">
+                <header class="inv-head">
+                  <h3 id="guestName"></h3>
+                </header>
+
+                <ul class="inv-meta">
+                  <li>
+                    <span class="inv-ico">📅</span>
+                    <span id="inviteDate">Sábado 15 de mayo de 2025 · 4:00 p.m.</span>
+                  </li>
+                  <li>
+                    <span class="inv-ico">📍</span>
+                    <span id="invitePlace">Apto 304 · Torre Verde · Ciudad Verde (Soacha)</span>
+                  </li>
+                  <li>
+                    <span class="inv-ico">🎁</span>
+                    <span id="inviteGift">Regalo elegido: Cafetera premium</span>
+                  </li>
+                </ul>
+
+                <p class="inv-msg" id="inviteMsg">
+                  Gracias por hacer parte de este momento especial. ¡Tu presencia es nuestro mejor regalo!
+                </p>
+
+                <footer class="inv-foot">
+                  <small>Compartir / Guardar</small>
+                </footer>
+              </section>
+            </div>
+        </div>
+  </section>
+
+  <!-- Mensaje final -->
+  <div id="mensajeFinal" class="mensaje-final hidden">
+    🎉 ¡Gracias por tu elección, nos vemos pronto! 🥳
+  </div>
+
   
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/particles.js"></script>
   <div id="particles-js"></div>
-  <script src="js/app.js" defer></script>
+
 
 <script>
     window.addEventListener('DOMContentLoaded', () => {
-      const title = document.getElementById('mainTitle');
+      const title = document.getElementById('mainTitle1');
       const subTitle = document.getElementById('subTitle');
       const additional = document.getElementById('additionalContent');
   

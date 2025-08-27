@@ -170,9 +170,10 @@ function toggleScreens(id) {
 
   // 🟣 Actualiza progreso visual
   const stepMap = {
-    screen1: "step1",
+    screen: "step1",
     screen2: "step2",
-    screen3: "step3"
+    screen3: "step3",
+    screen4: "step4"
   };
 
   document.querySelectorAll('.progress-bubble .step-icon').forEach(step => {
@@ -292,7 +293,6 @@ function filterNames() {
     confirmBox.classList.add("hidden");
     // Oculta nombre y elementos relacionados
     document.getElementById("mensajeGuia").style.display = "none";
-    document.querySelector('label[for="nombre"]').style.display = "none";
     document.getElementById("nombre").style.display = "none";
     document.getElementById("suggestions").style.display = "none";
   
@@ -436,8 +436,36 @@ function filterNames() {
     }, duracion);
   }
   
-  
-  
+// --- Función para habilitar la apertura de la invitación ---
+// Abre la invitación solo cuando se llama explícitamente desde el onclick del botón
+// Mantén esta función en el scope global:
+window.openInvite = function openInvite() {
+  const btn  = document.getElementById('openInvite');
+  const card = btn ? btn.closest('.inv-card') : document.querySelector('.inv-card');
+  if (!card) { console.warn('No se encontró .inv-card'); return; }
+
+  // Evitar doble activación si ya está abierta o en transición
+  if (card.classList.contains('open') || btn?.dataset.lock === '1') return;
+
+  console.log('✅ Click en Invitación. Mostrando interior en 2s...');
+  if (btn) btn.dataset.lock = '1';           // bloquea clicks repetidos
+  if (btn) btn.setAttribute('aria-disabled', 'true');
+
+  // Delay de 2 segundos antes de abrir (tu pedido)
+  setTimeout(() => {
+    card.classList.add('open');
+
+    const inner = card.querySelector('.inv-inner');
+    if (inner) inner.setAttribute('aria-hidden', 'false');
+
+    if (btn) {
+      btn.dataset.lock = '0';
+      btn.removeAttribute('aria-disabled');
+    }
+    console.log('✨ Invitación abierta');
+  }, 1000);
+};
+
   
   window.goToNameInput = goToNameInput;
   window.filtrarRegalos = filtrarRegalos;
