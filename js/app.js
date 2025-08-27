@@ -284,7 +284,7 @@ function filterNames() {
     }
   }
   
-  function confirmarAsistencia(asistira) {
+  async function confirmarAsistencia(asistira) {
     // Oculta las opciones de asistencia con transición
     const confirmBox = document.getElementById("confirmacion");
     const mensaje = document.getElementById("mensajeRespuesta");
@@ -295,6 +295,19 @@ function filterNames() {
     document.getElementById("mensajeGuia").style.display = "none";
     document.getElementById("nombre").style.display = "none";
     document.getElementById("suggestions").style.display = "none";
+
+      // ✅ Guardar en Google Sheets
+    try {
+      const res = await fetch("/.netlify/functions/updateAttendance", {
+        method: "POST",
+        body: JSON.stringify({ nombre: nombreSeleccionado, asistencia: asistira }),
+      });
+      const data = await res.json();
+      console.log("📌 Respuesta Sheets:", data);
+      } 
+    catch (err) {
+        console.error("❌ Error al guardar asistencia:", err);
+      }
   
     // Muestra el mensaje personalizado con delay
     setTimeout(() => {
