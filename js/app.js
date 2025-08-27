@@ -12,12 +12,12 @@ async function fetchGuestList() {
   }
   
   
-  document.addEventListener("DOMContentLoaded", async () => {
-    guestList = await fetchGuestList();
-    console.log("Lista de invitados cargada:", guestList);
+  //document.addEventListener("DOMContentLoaded", async () => {
+  //  guestList = await fetchGuestList();
+  //  console.log("Lista de invitados cargada:", guestList);
 
-    await fetchGifts();
-  });
+  //  await fetchGifts();
+  //});
 
   document.getElementById("nombre").addEventListener("focus", () => {
     setTimeout(() => {
@@ -50,7 +50,6 @@ async function fetchGuestList() {
       }));
 
       console.log("🎁 Regalos cargados:", regalos);
-      mostrarRegalos(regalos);
     } catch (err) {
       console.error("❌ Error cargando regalos:", err);
     }
@@ -188,6 +187,16 @@ function toggleScreens(id) {
 
   const stepId = stepMap[id];
   if (stepId) document.getElementById(stepId).classList.add("active");
+
+  // ✅ Si el usuario entra a screen3, pintamos los regalos
+  if (id === "screen3") {
+    // Si todavía no cargamos regalos, los traemos ahora
+    if (regalos.length === 0) {
+      fetchGifts().then(() => mostrarRegalos(regalos));
+    } else {
+      mostrarRegalos(regalos);
+    }
+  }
 }
 
 function mostrarConfirmacion(nombre) {
@@ -259,7 +268,7 @@ function filterNames() {
       try {
         const res = await fetch("/.netlify/functions/updateGiftGuest", {
           method: "POST",
-          body: JSON.stringify({ id: id, reservado: reservado }),
+          body: JSON.stringify({ id: id, reservado: reservado, invitado: Invitado }),
         });
         const data = await res.json();
         console.log("📌 Respuesta Sheets:", data);
@@ -274,7 +283,6 @@ function filterNames() {
       regaloSeleccionado.disabled = false;
       regaloSeleccionado.style.backgroundColor = "";
       regaloSeleccionado.parentElement.classList.remove("selected");
-      console.log("Nombre:", nombreSeleccionado);
       actualizarEstadoRegalo(id, false, nombreSeleccionado); // libera el regalo previo
     }
   
@@ -284,7 +292,6 @@ function filterNames() {
       button.style.backgroundColor = "";
       button.parentElement.classList.remove("selected");
       regaloSeleccionado = null;
-      console.log("Nombre:", nombreSeleccionado);
       actualizarEstadoRegalo(id, false, nombreSeleccionado); // libera el regalo previo
       
     } else {
@@ -293,7 +300,6 @@ function filterNames() {
       button.style.backgroundColor = "#aaa";
       button.parentElement.classList.add("selected");
       regaloSeleccionado = button;
-      console.log("Nombre:", nombreSeleccionado);
       actualizarEstadoRegalo(id, true, nombreSeleccionado); // marca como reservado
   
       confetti({
