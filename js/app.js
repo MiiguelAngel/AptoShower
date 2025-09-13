@@ -58,80 +58,108 @@ async function fetchGuestList() {
   
   function mostrarRegalos(lista) {
 
-    function esUrlImagen(url = "") {
-      return /\.(png|jpe?g|webp|gif|bmp|svg)(\?.*)?$/i.test(url);
+  function esUrlImagen(url = "") {
+    // valida extensión común de imagen y permite querystrings
+    return /\.(png|jpe?g|webp|gif|bmp|svg)(\?.*)?$/i.test(url);
+  }
+
+  const FALLBACK_IMG = "assets/images/Cedro_logo.png";
+  const fmtCOP = new Intl.NumberFormat("es-CO", { style: "currency", currency: "COP", maximumFractionDigits: 0 });
+
+  const contenedor = document.getElementById("listaRegalos");
+  if (!contenedor) return;
+  contenedor.innerHTML = "";
+
+  lista.forEach((item = {}) => {
+    // Normaliza campos esperados
+    const id          = item.id || item.id_regalo || "";
+    const nombre      = item.nombre || "Regalo";
+    const precioNum   = typeof item.precio === "number" ? item.precio : Number(item.precio) || 0;
+    const lugar       = item.lugar || "";
+    const descripcion = item.descripcion || "";
+    const rawImg      = (item.img ?? "").toString().trim();
+    const link        = item.link || "";
+    const estado      = (item.estado || "").toLowerCase().trim();
+
+    // Decide la fuente inicial de la imagen
+    const initialImg = rawImg && esUrlImagen(rawImg) ? rawImg : (rawImg || FALLBACK_IMG);
+
+    // Tarjeta
+    const card = document.createElement("div");
+    card.className = "gift-item";
+
+    // Imagen con fallback y lazy load (creada por DOM, no innerHTML)
+    const imgEl = new Image();
+    imgEl.alt = nombre;
+    imgEl.loading = "lazy";
+    imgEl.decoding = "async";
+    imgEl.referrerPolicy = "no-referrer";
+    imgEl.src = initialImg;
+    imgEl.onerror = () => {
+      // evitar bucle si FALLBACK falla
+      if (imgEl.src.includes(FALLBACK_IMG)) return;
+      imgEl.onerror = null;
+      imgEl.src = FALLBACK_IMG;
+    };
+
+    // Título (link si existe)
+    let titleEl;
+    if (link) {
+      const a = document.createElement("a");
+      a.href = link;
+      a.target = "_blank";
+      a.rel = "noopener noreferrer";
+      a.textContent = nombre;
+      titleEl = document.createElement("strong");
+      titleEl.appendChild(a);
+    } else {
+      titleEl = document.createElement("strong");
+      titleEl.textContent = nombre;
     }
 
-    const fmtCOP = new Intl.NumberFormat("es-CO", { style: "currency", currency: "COP", maximumFractionDigits: 0 });
+    // Descripción y precio
+    const descEl = document.createElement("small");
+    descEl.textContent = descripcion;
 
-    const contenedor = document.getElementById("listaRegalos");
-    contenedor.innerHTML = "";
-  
-    lista.forEach(item => {
-      // Normaliza campos esperados
-      const id = item.id || item.id_regalo || "";
-      const nombre = item.nombre || "Regalo";
-      const precioNum = typeof item.precio === "number" ? item.precio : Number(item.precio) || 0;
-      const lugar = item.lugar || ""; 
-      const descripcion = item.descripcion || "";
-      const img = item.img || "";
-      const link = item.link || "";
-      const estado = item.estado || "";
+    const priceEl = document.createElement("span");
+    priceEl.className = "gift-price";
+    priceEl.textContent = fmtCOP.format(precioNum);
 
-      // Tarjeta
-      const card = document.createElement("div");
-      card.className = "gift-item";
-      const FALLBACK_IMG = "assets/images/Cedro_logo.png";
+    // Botón
+    const button = document.createElement("button");
+    button.textContent = "Apartar";
+    button.className = "gift-reserve-btn";
+    button.onclick = () => reserveGift(button);
 
-      // Imagen con fallback y lazy load
-      const imgHtml = `
-        <img 
-          src="${img || FALLBACK_IMG}" 
-          alt="${nombre}" 
-          loading="lazy" 
-          decoding="async"
-          referrerpolicy="no-referrer"
-          onerror="this.onerror=null;this.src='${FALLBACK_IMG}';"
-        />
-      `;
+    // Atributos data-* (usa la URL efectiva o fallback)
+    const effectiveImg = initialImg || FALLBACK_IMG;
+    button.setAttribute("data-id", id);
+    button.setAttribute("data-nombre", nombre);
+    button.setAttribute("data-precio", String(precioNum));
+    button.setAttribute("data-link", link);
+    button.setAttribute("data-imagen", effectiveImg);  // <- consistente con otros flujos
+    button.setAttribute("data-lugar", lugar);
+    button.setAttribute("data-descripcion", descripcion);
 
-      const titleHtml = link 
-      ? `<strong><a href="${link}" target="_blank" rel="noopener noreferrer">${nombre}</a></strong>`
-      : `<strong>${nombre}</strong>`;
+    // Estado reservado
+    if (estado === "reservado" || estado === "apartado") {
+      button.textContent = "Apartado ✅";
+      button.disabled = true;
+      card.classList.add("selected");
+      button.style.backgroundColor = "#aaa";
+      button.style.cursor = "not-allowed";
+    }
 
-      card.innerHTML = `
-        ${imgHtml}
-        ${titleHtml}
-        <small>${descripcion}</small>
-        <span class="gift-price">${fmtCOP.format(precioNum)}</span>
-      `;
+    // Montaje
+    card.appendChild(imgEl);
+    card.appendChild(titleEl);
+    card.appendChild(descEl);
+    card.appendChild(priceEl);
+    card.appendChild(button);
+    contenedor.appendChild(card);
+  });
+}
 
-      // botón creado por JS
-      const button = document.createElement("button");
-      button.textContent = "Apartar";
-      button.className = "gift-reserve-btn";
-      button.onclick = () => reserveGift(button);
-
-      // ✅ ahora sí, los atributos data-* reales
-      button.setAttribute("data-id", id);
-      button.setAttribute("data-nombre", nombre);
-      button.setAttribute("data-precio", precioNum);
-      button.setAttribute("data-link", link);
-      button.setAttribute("data-imagen", img);
-      button.setAttribute("data-lugar", lugar);
-      button.setAttribute("data-descripcion", descripcion);
-
-      if (estado.toLowerCase() === "reservado") {
-        button.textContent = "Apartado ✅";
-        button.disabled = false;
-        card.classList.add("selected");
-        button.style.backgroundColor = "#aaa";
-      }
-
-      card.appendChild(button);
-      contenedor.appendChild(card);
-    });
-  }
   
   
   function filtrarRegalos() {
