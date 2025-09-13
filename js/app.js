@@ -96,10 +96,10 @@ async function fetchGuestList() {
       card.className = "gift-item";
 
       card.innerHTML = `
-      <img src="${link || "https://via.placeholder.com/60?text=Regalo"}" alt="${nombre}" />
+      <img src="${imagenSrc || "https://via.placeholder.com/60?text=Regalo"}" alt="${nombre}" />
       <strong>${nombre}</strong>
       <small>${descripcion}</small>
-      <span class="gift-price">${precioNum}K COP</span>
+      <span class="gift-price">$${precioNum}.000 COP</span>
     `;
 
       // botón creado por JS
