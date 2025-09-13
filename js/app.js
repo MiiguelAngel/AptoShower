@@ -132,12 +132,11 @@ async function fetchGuestList() {
     button.onclick = () => reserveGift(button);
 
     // Atributos data-* (usa la URL efectiva o fallback)
-    const effectiveImg = initialImg || FALLBACK_IMG;
     button.setAttribute("data-id", id);
     button.setAttribute("data-nombre", nombre);
     button.setAttribute("data-precio", String(precioNum));
     button.setAttribute("data-link", link);
-    button.setAttribute("data-imagen", effectiveImg);  // <- consistente con otros flujos
+    button.setAttribute("data-imagen", imgSrc);  // <- consistente con otros flujos
     button.setAttribute("data-lugar", lugar);
     button.setAttribute("data-descripcion", descripcion);
 
