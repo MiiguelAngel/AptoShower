@@ -844,16 +844,47 @@
   }
   
   .gift-item img {
-    width: 60px;
-    height: 60px;
-    border-radius: 10px;
+    width: 120px;
+    height: 120px;
+    border-radius: 14px;
     object-fit: cover;
+    box-shadow: 0 6px 14px rgba(0,0,0,.12);
+    transition: transform .25s ease, box-shadow .25s ease;
+    margin: 0 auto; display:block;
   }
   
   .gift-item div {
     flex-grow: 1;
     margin-left: 1rem;
   }
+  /* Imagen y título clicables */
+  .gift-link{ text-align:center; display:grid; justify-items:center; gap:.5rem; cursor:pointer; }
+  .gift-link:hover img{ transform:scale(1.04); box-shadow: 0 10px 20px rgba(0,0,0,.16); }
+  .gift-link strong{
+    font-weight:700; line-height:1.2;
+    text-decoration: underline; text-underline-offset: 3px;
+    text-decoration-color: rgba(99,102,241,.6);
+  }
+  .gift-link:hover strong{ color:#4f46e5; text-decoration-color:#4f46e5; }
+
+  /* Precio */
+  .gift-price{ font-weight:700; color:#111827; text-align:center; }
+  
+  /* Botón */
+  .gift-reserve-btn{
+    appearance:none; border:0; border-radius:999px; padding:14px 20px;
+    background:#000; color:#fff; font-weight:800; letter-spacing:.3px;
+    transition: transform .15s ease, box-shadow .2s ease, background .2s ease;
+  }
+  .gift-reserve-btn:hover{ transform: translateY(-1px); box-shadow:0 6px 14px rgba(0,0,0,.2); }
+  .gift-reserve-btn:active{ transform: translateY(0); box-shadow:none; }
+  .gift-reserve-btn:focus-visible{ outline:3px solid #a78bfa; outline-offset:3px; }
+
+  /* Accesibilidad al foco del link */
+  .gift-link:focus-visible{ outline:3px solid #a78bfa; border-radius:14px; outline-offset:4px; }
+
+  /*-----------------------------------------------------------------------------*/
+
   
   #suggestions {
     list-style: none;

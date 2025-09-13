@@ -57,107 +57,121 @@ async function fetchGuestList() {
 
   
   function mostrarRegalos(lista) {
+    const FALLBACK_IMG = "assets/images/Cedro_logo.png";
+    const fmtCOP = new Intl.NumberFormat("es-CO", {
+      style: "currency",
+      currency: "COP",
+      maximumFractionDigits: 0
+    });
 
-  function esUrlImagen(url = "") {
-    // valida extensión común de imagen y permite querystrings
-    return /\.(png|jpe?g|webp|gif|bmp|svg)(\?.*)?$/i.test(url);
+    const contenedor = document.getElementById("listaRegalos");
+    if (!contenedor) return;
+    contenedor.innerHTML = "";
+
+    lista.forEach((item = {}) => {
+      // Normaliza campos
+      const id          = item.id || item.id_regalo || "";
+      const nombre      = (item.nombre ?? "Regalo").toString();
+      const precioNum   = typeof item.precio === "number" ? item.precio : Number(item.precio) || 0;
+      const lugar       = (item.lugar ?? "").toString();
+      const descripcion = (item.descripcion ?? "").toString();
+      const rawImg      = (item.img ?? item.imagen ?? item.image ?? "").toString().trim();
+      const link        = (item.link ?? "").toString().trim();
+      const estado      = (item.estado ?? "").toString().toLowerCase().trim();
+
+      // Tarjeta
+      const card = document.createElement("div");
+      card.className = "gift-item";
+
+      // Imagen con fallback y lazy load
+      const imgEl = new Image();
+      const imgSrc = rawImg || FALLBACK_IMG;
+      imgEl.src = imgSrc;
+      imgEl.alt = nombre;
+      imgEl.loading = "lazy";
+      imgEl.decoding = "async";
+      imgEl.referrerPolicy = "no-referrer";
+      imgEl.onerror = () => {
+        if (imgEl.src.includes(FALLBACK_IMG)) return; // evita bucle
+        imgEl.onerror = null;
+        imgEl.src = FALLBACK_IMG;
+      };
+
+      // Contenedor de media + título (clicable si hay link)
+      let mediaWrap;
+      if (link) {
+        mediaWrap = document.createElement("a");
+        mediaWrap.href = link;
+        mediaWrap.target = "_blank";
+        mediaWrap.rel = "noopener noreferrer";
+        mediaWrap.title = "Ver detalle";
+        mediaWrap.setAttribute("aria-label", `Abrir ${nombre}`);
+        mediaWrap.className = "gift-link";
+      } else {
+        mediaWrap = document.createElement("div");
+        mediaWrap.className = "gift-link";
+      }
+
+      mediaWrap.appendChild(imgEl);
+
+      const titleEl = document.createElement("strong");
+      titleEl.textContent = nombre;
+      mediaWrap.appendChild(titleEl);
+
+      // Descripción y precio
+      const descEl = document.createElement("small");
+      descEl.textContent = descripcion;
+
+      const priceEl = document.createElement("span");
+      priceEl.className = "gift-price";
+      priceEl.textContent = fmtCOP.format(precioNum);
+
+      // Botón
+      const button = document.createElement("button");
+      button.textContent = "Apartar";
+      button.className = "gift-reserve-btn";
+      button.addEventListener("click", (e) => {
+        e.stopPropagation(); // que no dispare el click del card
+        reserveGift(button);
+      });
+
+      // Atributos data-* (usando la imagen efectiva)
+      button.setAttribute("data-id", id);
+      button.setAttribute("data-nombre", nombre);
+      button.setAttribute("data-precio", String(precioNum));
+      button.setAttribute("data-link", link);
+      button.setAttribute("data-imagen", imgSrc);
+      button.setAttribute("data-lugar", lugar);
+      button.setAttribute("data-descripcion", descripcion);
+
+      // Estado reservado
+      if (estado === "reservado" || estado === "apartado") {
+        button.textContent = "Apartado ✅";
+        button.disabled = true;
+        card.classList.add("selected");
+        button.style.backgroundColor = "#aaa";
+        button.style.cursor = "not-allowed";
+      }
+
+      // (Opcional) Hacer toda la tarjeta clicable si hay link
+      if (link) {
+        card.style.cursor = "pointer";
+        card.addEventListener("click", (e) => {
+          // evita abrir dos veces si el click fue sobre <a> o sobre el botón
+          if (e.target.closest("a") || e.target.closest("button")) return;
+          window.open(link, "_blank", "noopener");
+        });
+      }
+
+      // Montaje
+      card.appendChild(mediaWrap);
+      if (descripcion) card.appendChild(descEl);
+      card.appendChild(priceEl);
+      card.appendChild(button);
+      contenedor.appendChild(card);
+    });
   }
 
-  const FALLBACK_IMG = "assets/images/Cedro_logo.png";
-  const fmtCOP = new Intl.NumberFormat("es-CO", { style: "currency", currency: "COP", maximumFractionDigits: 0 });
-
-  const contenedor = document.getElementById("listaRegalos");
-  if (!contenedor) return;
-  contenedor.innerHTML = "";
-
-  lista.forEach((item = {}) => {
-    // Normaliza campos esperados
-    const id          = item.id || item.id_regalo || "";
-    const nombre      = item.nombre || "Regalo";
-    const precioNum   = typeof item.precio === "number" ? item.precio : Number(item.precio) || 0;
-    const lugar       = item.lugar || "";
-    const descripcion = item.descripcion || "";
-    const rawImg      = (item.img ?? item.imagen ?? item.image ?? "").toString().trim();
-    const link        = item.link || "";
-    const estado      = (item.estado || "").toLowerCase().trim();
-
-    // Decide la fuente inicial de la imagen
-    const imgSrc = rawImg || FALLBACK_IMG;
-
-    // Tarjeta
-    const card = document.createElement("div");
-    card.className = "gift-item";
-
-    // Imagen con fallback y lazy load (creada por DOM, no innerHTML)
-    const imgEl = new Image();
-    imgEl.alt = nombre;
-    imgEl.loading = "lazy";
-    imgEl.decoding = "async";
-    imgEl.referrerPolicy = "no-referrer";
-    imgEl.src = imgSrc;
-    imgEl.onerror = () => {
-      // evitar bucle si FALLBACK falla
-      if (imgEl.src.includes(FALLBACK_IMG)) return;
-      imgEl.onerror = null;
-      imgEl.src = FALLBACK_IMG;
-    };
-
-    // Título (link si existe)
-    let titleEl;
-    if (link) {
-      const a = document.createElement("a");
-      a.href = link;
-      a.target = "_blank";
-      a.rel = "noopener noreferrer";
-      a.textContent = nombre;
-      titleEl = document.createElement("strong");
-      titleEl.appendChild(a);
-    } else {
-      titleEl = document.createElement("strong");
-      titleEl.textContent = nombre;
-    }
-
-    // Descripción y precio
-    const descEl = document.createElement("small");
-    descEl.textContent = descripcion;
-
-    const priceEl = document.createElement("span");
-    priceEl.className = "gift-price";
-    priceEl.textContent = fmtCOP.format(precioNum);
-
-    // Botón
-    const button = document.createElement("button");
-    button.textContent = "Apartar";
-    button.className = "gift-reserve-btn";
-    button.onclick = () => reserveGift(button);
-
-    // Atributos data-* (usa la URL efectiva o fallback)
-    button.setAttribute("data-id", id);
-    button.setAttribute("data-nombre", nombre);
-    button.setAttribute("data-precio", String(precioNum));
-    button.setAttribute("data-link", link);
-    button.setAttribute("data-imagen", imgSrc);  // <- consistente con otros flujos
-    button.setAttribute("data-lugar", lugar);
-    button.setAttribute("data-descripcion", descripcion);
-
-    // Estado reservado
-    if (estado === "reservado" || estado === "apartado") {
-      button.textContent = "Apartado ✅";
-      button.disabled = true;
-      card.classList.add("selected");
-      button.style.backgroundColor = "#aaa";
-      button.style.cursor = "not-allowed";
-    }
-
-    // Montaje
-    card.appendChild(imgEl);
-    card.appendChild(titleEl);
-    card.appendChild(descEl);
-    card.appendChild(priceEl);
-    card.appendChild(button);
-    contenedor.appendChild(card);
-  });
-}
 
   
   
@@ -169,9 +183,9 @@ async function fetchGuestList() {
   
     if (precio) {
       filtrados = filtrados.filter(item => {
-        if (precio === "-50") return item.precio < 50;
-        if (precio === "50-100") return item.precio >= 50 && item.precio <= 100;
-        if (precio === "100+") return item.precio > 100;
+        if (precio === "-50") return item.precio < 50000;
+        if (precio === "50-100") return item.precio >= 50000 && item.precio <= 100000;
+        if (precio === "100+") return item.precio > 100000;
       });
     }
   
