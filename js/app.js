@@ -62,14 +62,7 @@ async function fetchGuestList() {
       return /\.(png|jpe?g|webp|gif|bmp|svg)(\?.*)?$/i.test(url);
     }
 
-    function formatearCOP(valor) {
-      try {
-        // asume número; si recibes string, conviértelo antes
-        return new Intl.NumberFormat("es-CO", { style: "currency", currency: "COP", maximumFractionDigits: 0 }).format(valor || 0);
-      } catch {
-        return `$${valor}`;
-      }
-    }
+    const fmtCOP = new Intl.NumberFormat("es-CO", { style: "currency", currency: "COP", maximumFractionDigits: 0 });
 
     const contenedor = document.getElementById("listaRegalos");
     contenedor.innerHTML = "";
@@ -79,7 +72,7 @@ async function fetchGuestList() {
       const id = item.id || item.id_regalo || "";
       const nombre = item.nombre || "Regalo";
       const precioNum = typeof item.precio === "number" ? item.precio : Number(item.precio) || 0;
-      const lugar = item.lugar || "";
+      const lugar = item.lugar || ""; 
       const descripcion = item.descripcion || "";
       const img = item.img || "";
       const link = item.link || "";
