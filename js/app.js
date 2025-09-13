@@ -12,12 +12,11 @@ async function fetchGuestList() {
   }
   
   
-  //document.addEventListener("DOMContentLoaded", async () => {
-  //  guestList = await fetchGuestList();
-  //  console.log("Lista de invitados cargada:", guestList);
-
-  //  await fetchGifts();
-  //});
+  document.addEventListener("DOMContentLoaded", async () => {
+    guestList = await fetchGuestList();
+    console.log("Lista de invitados cargada:", guestList);
+    await fetchGifts();
+  });
 
   document.getElementById("nombre").addEventListener("focus", () => {
     setTimeout(() => {
@@ -45,8 +44,9 @@ async function fetchGuestList() {
         lugar: r.lugar,
         descripcion: r.descripcion,
         link : r.link || "",
-        imagen: r.img || "https://via.placeholder.com/60?text=Regalo",
-        estado: r.estado || ""
+        imagen: r.img || "",
+        estado: r.estado || "",
+        reservado_por: r.reservado_por || ""
       }));
 
       console.log("🎁 Regalos cargados:", regalos);
