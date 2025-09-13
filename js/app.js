@@ -85,20 +85,33 @@ async function fetchGuestList() {
       const link = item.link || "";
       const estado = item.estado || "";
 
-      // Decide si el link es imagen o un enlace a tienda
-      const esImagen = esUrlImagen(img);
-      const esLink = esUrlImagen(link);
-
       // Tarjeta
       const card = document.createElement("div");
       card.className = "gift-item";
+      const FALLBACK_IMG = "assets/images/Cedro_logo.png";
+
+      // Imagen con fallback y lazy load
+      const imgHtml = `
+        <img 
+          src="${img || FALLBACK_IMG}" 
+          alt="${nombre}" 
+          loading="lazy" 
+          decoding="async"
+          referrerpolicy="no-referrer"
+          onerror="this.onerror=null;this.src='${FALLBACK_IMG}';"
+        />
+      `;
+
+      const titleHtml = link 
+      ? `<strong><a href="${link}" target="_blank" rel="noopener noreferrer">${nombre}</a></strong>`
+      : `<strong>${nombre}</strong>`;
 
       card.innerHTML = `
-      <img src="${img}" alt="${nombre}" />
-      <strong>${nombre}</strong>
-      <small>${descripcion}</small>
-      <span class="gift-price">$${precioNum}.000 COP</span>
-    `;
+        ${imgHtml}
+        ${titleHtml}
+        <small>${descripcion}</small>
+        <span class="gift-price">${fmtCOP.format(precioNum)}</span>
+      `;
 
       // botón creado por JS
       const button = document.createElement("button");
@@ -110,7 +123,8 @@ async function fetchGuestList() {
       button.setAttribute("data-id", id);
       button.setAttribute("data-nombre", nombre);
       button.setAttribute("data-precio", precioNum);
-      button.setAttribute("data-imagen", link);
+      button.setAttribute("data-link", link);
+      button.setAttribute("data-imagen", img);
       button.setAttribute("data-lugar", lugar);
       button.setAttribute("data-descripcion", descripcion);
 
