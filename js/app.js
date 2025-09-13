@@ -88,15 +88,13 @@ async function fetchGuestList() {
       // Decide si el link es imagen o un enlace a tienda
       const esImagen = esUrlImagen(img);
       const esLink = esUrlImagen(link);
-      const imagenSrc = esImagen ? link : "https://via.placeholder.com/60?text=Regalo";
-      const linkSrc = esLink ? link : "";
 
       // Tarjeta
       const card = document.createElement("div");
       card.className = "gift-item";
 
       card.innerHTML = `
-      <img src="${imagenSrc || "https://via.placeholder.com/60?text=Regalo"}" alt="${nombre}" />
+      <img src="${img}" alt="${nombre}" />
       <strong>${nombre}</strong>
       <small>${descripcion}</small>
       <span class="gift-price">$${precioNum}.000 COP</span>
