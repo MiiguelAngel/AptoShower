@@ -77,12 +77,12 @@ async function fetchGuestList() {
     const precioNum   = typeof item.precio === "number" ? item.precio : Number(item.precio) || 0;
     const lugar       = item.lugar || "";
     const descripcion = item.descripcion || "";
-    const rawImg      = (item.img ?? "").toString().trim();
+    const rawImg      = (item.img ?? item.imagen ?? item.image ?? "").toString().trim();
     const link        = item.link || "";
     const estado      = (item.estado || "").toLowerCase().trim();
 
     // Decide la fuente inicial de la imagen
-    const initialImg = rawImg && esUrlImagen(rawImg) ? rawImg : (rawImg || FALLBACK_IMG);
+    const imgSrc = rawImg || FALLBACK_IMG;
 
     // Tarjeta
     const card = document.createElement("div");
@@ -94,7 +94,7 @@ async function fetchGuestList() {
     imgEl.loading = "lazy";
     imgEl.decoding = "async";
     imgEl.referrerPolicy = "no-referrer";
-    imgEl.src = initialImg;
+    imgEl.src = imgSrc;
     imgEl.onerror = () => {
       // evitar bucle si FALLBACK falla
       if (imgEl.src.includes(FALLBACK_IMG)) return;
