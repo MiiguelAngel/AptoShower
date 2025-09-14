@@ -188,6 +188,18 @@ async function fetchGuestList() {
         reserveGift(button);
       });
 
+      // Atributos data-* (usando la imagen efectiva)
+      button.setAttribute("data-id", id);
+      button.setAttribute("data-nombre", nombre);
+      button.setAttribute("data-precio", String(precioNum));
+      button.setAttribute("data-link", link);
+      button.setAttribute("data-imagen", imgSrc);
+      button.setAttribute("data-lugar", lugar);
+      button.setAttribute("data-descripcion", descripcion);
+      button.setAttribute("data-estado", estado);
+      button.setAttribute("data-reservado-por", invitado);
+      button.setAttribute("data-tipo", tipo);
+
 
       // ✅ NUEVO: pinta según reglas con el nombreSeleccionado
       const invitado       = (item.reservado_por ?? "").toString().trim();
@@ -248,24 +260,6 @@ async function fetchGuestList() {
       button.style.backgroundColor = ui.disabled ? "#aaa" : "";
       button.style.cursor = ui.disabled ? "not-allowed" : "pointer";
 
-
-      // Atributos data-* (usando la imagen efectiva)
-      button.setAttribute("data-id", id);
-      button.setAttribute("data-nombre", nombre);
-      button.setAttribute("data-precio", String(precioNum));
-      button.setAttribute("data-link", link);
-      button.setAttribute("data-imagen", imgSrc);
-      button.setAttribute("data-lugar", lugar);
-      button.setAttribute("data-descripcion", descripcion);
-
-      // Estado reservado
-      if (estado === "reservado" || estado === "apartado") {
-        button.textContent = "Apartado ✅";
-        button.disabled = true;
-        card.classList.add("selected");
-        button.style.backgroundColor = "#aaa";
-        button.style.cursor = "not-allowed";
-      }
 
       // (Opcional) Hacer toda la tarjeta clicable si hay link
       if (link) {
