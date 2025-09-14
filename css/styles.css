@@ -844,8 +844,8 @@
   }
   
   .gift-item img {
-    width: 120px;
-    height: 120px;
+    width: 200px;
+    height: 200px;
     border-radius: 14px;
     object-fit: cover;
     box-shadow: 0 6px 14px rgba(0,0,0,.12);
@@ -861,9 +861,11 @@
   .gift-link{ text-align:center; display:grid; justify-items:center; gap:.5rem; cursor:pointer; }
   .gift-link:hover img{ transform:scale(1.04); box-shadow: 0 10px 20px rgba(0,0,0,.16); }
   .gift-link strong{
-    font-weight:700; line-height:1.2;
-    text-decoration: underline; text-underline-offset: 3px;
-    text-decoration-color: rgba(99,102,241,.6);
+    font-weight:700; 
+    line-height:1.2;
+    /*text-decoration: underline; 
+    text-underline-offset: 3px;
+    text-decoration-color: rgba(99,102,241,.6);*/
   }
   .gift-link:hover strong{ color:#4f46e5; text-decoration-color:#4f46e5; }
 
@@ -885,7 +887,7 @@
 
   /*-----------------------------------------------------------------------------*/
 
-  
+
   #suggestions {
     list-style: none;
     padding: 0;
@@ -1167,15 +1169,6 @@
   
   .gift-item:hover {
     transform: scale(1.03);
-  }
-  
-  .gift-item img {
-    width: 80px;
-    height: 80px;
-    object-fit: cover;
-    border-radius: 12px;
-    margin-bottom: 1rem;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
   }
   
   .gift-item strong {

@@ -104,7 +104,7 @@ async function fetchGuestList() {
         mediaWrap.href = link;
         mediaWrap.target = "_blank";
         mediaWrap.rel = "noopener noreferrer";
-        mediaWrap.title = "Ver detalle";
+        mediaWrap.title = "Link para comprar";
         mediaWrap.setAttribute("aria-label", `Abrir ${nombre}`);
         mediaWrap.className = "gift-link";
       } else {
