@@ -1,5 +1,19 @@
 let guestList = [];
 
+let syncTimer = null;
+
+async function syncNow() {
+  await fetchGifts(true); // true = bust cache
+  mostrarRegalos(regalos);
+}
+
+// Al recuperar foco de la pestaña, sincroniza una vez
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "visible") {
+    syncNow();
+  }
+});
+
 async function fetchGuestList() {
     try {
       const res = await fetch('/.netlify/functions/getGuests');
@@ -32,10 +46,13 @@ async function fetchGuestList() {
   let regalos = [];
   let nombreSeleccionado = "";
 
-  async function fetchGifts() {
+  async function fetchGifts(noCache = false) {
     try {
-      const res = await fetch("/.netlify/functions/getGifts");
+       const url = "/.netlify/functions/getGifts" + (noCache ? `?t=${Date.now()}` : "");
+      const res = await fetch(url, { cache: "no-store" });
       const data = await res.json();
+      //const res = await fetch("/.netlify/functions/getGifts");
+      //const data = await res.json();
 
       // Normaliza al formato que ya usa tu UI
       regalos = data.map(r => ({
@@ -279,8 +296,6 @@ async function fetchGuestList() {
       contenedor.appendChild(card);
     });
   }
-
-
   
   
   function filtrarRegalos() {
@@ -351,6 +366,16 @@ function toggleScreens(id) {
       mostrarRegalos(regalos);
     }
   }
+
+  if (id === "screen3") {
+    if (syncTimer) clearInterval(syncTimer);
+      // Primer sync rápido
+      syncNow();
+      // Polling cada 6s (ajústalo si quieres)
+      syncTimer = setInterval(syncNow, 6000);
+    } else {
+      if (syncTimer) { clearInterval(syncTimer); syncTimer = null; }
+  }
 }
 
 function mostrarConfirmacion(nombre) {
@@ -414,64 +439,117 @@ function filterNames() {
   let regaloSeleccionado = null; // nueva variable global
 
   async function reserveGift(button) {
+    if (!button) return;
     const id = button.dataset.id;
     const item = regalos.find(r => (r.id || r.id_regalo) === id);
     if (!item) return;
 
-    const ui = computeGiftUiState(item, nombreSeleccionado);
+    // helpers
+    const toList = (s="") => s.split(",").map(x => x.trim()).filter(Boolean);
+    const eq = (a="", b="") => a.toLowerCase() === b.toLowerCase();
 
-    // Decide acción deseada en función de la etiqueta actual/estado
-    const { isReservado, invitado } = parseGift(item);
-    const soyElMismo = invitado && nombreSeleccionado &&
-                      invitado.toLowerCase() === nombreSeleccionado.toLowerCase();
+    const tipo = (item.tipo || "").toLowerCase();
+    const yo   = (nombreSeleccionado || "").trim();
+    if (!yo) { mostrarToast("Primero confirma tu nombre.", "warning"); return; }
 
-    let action = null;
+    // --- CASO 1: VARIOS -> columna I es lista de nombres ---
+    if (tipo === "varios") {
+      let lista = toList(item.reservado_por);
+      const yaEstoy = lista.some(n => eq(n, yo));
+
+      // Elegir acción
+      const reservar = !yaEstoy;     // si no estoy, agrego; si estoy, libero
+
+      try {
+        const res = await fetch("/.netlify/functions/updateGiftGuest", {
+          method: "POST",
+          body: JSON.stringify({
+            id,
+            reservado: reservar,     // true = agregarme | false = quitarme
+            invitado: yo
+          })
+        });
+        const data = await res.json();
+
+        if (res.status === 409 || res.status === 403) {
+          mostrarToast(data?.error || "Conflicto de reserva.", "warning");
+          // refresco opcional si implementaste syncNow()
+          if (typeof syncNow === "function") await syncNow();
+          return;
+        }
+        if (!res.ok) throw new Error(data?.error || "Error de servidor");
+
+        // Actualiza modelo local
+        if (reservar) {
+          if (!yaEstoy) lista.push(yo);
+          item.estado = "Reservado";
+        } else {
+          lista = lista.filter(n => !eq(n, yo));
+          item.estado = lista.length ? "Reservado" : "Disponible";
+        }
+        item.reservado_por = lista.join(", ");
+
+        if (reservar) confetti({ particleCount: 200, spread: 70, origin: { y: 0.6 } });
+        mostrarRegalos(regalos);
+      } catch (err) {
+        console.error("❌ Error (varios):", err);
+        mostrarToast("No se pudo actualizar el regalo.", "error");
+      }
+      return;
+    }
+
+    // --- CASO 2: ÚNICO (o vacío => tratamos como Único por seguridad) ---
+    const estado = (item.estado || "").toLowerCase();
+    const invitado = (item.reservado_por || "").trim();
+    const isReservado =
+      estado === "reservado" || estado === "apartado" ||
+      estado === "sí" || estado === "si" || estado === "true" || estado === "1";
+    const soyElMismo = invitado && eq(invitado, yo);
+
+    // decidir acción
+    let action = null; // "reservar" | "liberar"
     if (!isReservado) action = "reservar";
     else if (soyElMismo) action = "liberar";
-    else action = null;
-
-    if (action === "reservar" && !ui.canReservar) {
-      mostrarToast(ui.hint || "No puedes reservar este regalo.", "warning");
-      return;
-    }
-    if (action === "liberar" && !ui.canLiberar) {
-      mostrarToast(ui.hint || "No puedes liberar este regalo.", "warning");
-      return;
-    }
-    if (!action) {
-      mostrarToast(ui.hint || "Este regalo está reservado por otra persona.", "warning");
+    else {
+      mostrarToast(`Este regalo está reservado por ${invitado || "otra persona"}.`, "warning");
       return;
     }
 
-    // Persistir en Sheets
     try {
       const res = await fetch("/.netlify/functions/updateGiftGuest", {
         method: "POST",
         body: JSON.stringify({
           id,
           reservado: action === "reservar",
-          invitado: action === "reservar" ? nombreSeleccionado : ""
+          invitado: action === "reservar" ? yo : ""
         })
       });
       const data = await res.json();
+
+      if (res.status === 409 || res.status === 403) {
+        mostrarToast(data?.error || "Conflicto de reserva.", "warning");
+        if (typeof syncNow === "function") await syncNow();
+        return;
+      }
       if (!res.ok) throw new Error(data?.error || "Error de servidor");
 
-      // Actualiza el item en memoria
-      item.estado = action === "reservar" ? "Reservado" : "Disponible";
-      item.reservado_por = action === "reservar" ? nombreSeleccionado : "";
-
-      // Feedback UI inmediato
+      // Actualiza modelo local
       if (action === "reservar") {
+        item.estado = "Reservado";
+        item.reservado_por = yo;
         confetti({ particleCount: 200, spread: 70, origin: { y: 0.6 } });
+      } else {
+        item.estado = "Disponible";
+        item.reservado_por = "";
       }
-      // Re-pinta la grilla para reflejar deshabilitados/hints
-      mostrarRegalos(regalos);
 
+      mostrarRegalos(regalos);
     } catch (err) {
-      console.error("❌ Error al actualizar regalo:", err);
-      mostrarToast("No se pudo actualizar el regalo. Intenta de nuevo.", "error");
+      console.error("❌ Error (único):", err);
+      mostrarToast("No se pudo actualizar el regalo.", "error");
     }
   }
+
 
   
   async function confirmarAsistencia(asistira) {
