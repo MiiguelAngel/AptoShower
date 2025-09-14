@@ -137,6 +137,35 @@ async function fetchGuestList() {
     }
   }
 
+  function getVisualState(item, nombreSeleccionado) {
+    const yo = (nombreSeleccionado || "").trim().toLowerCase();
+    const tipo = String(item.tipo || "").trim().toLowerCase();
+    const estado = String(item.estado || "").trim().toLowerCase();
+    const invitadoRaw = (item.reservado_por ?? "").toString();
+
+    // Listita para "Varios"
+    const invitadoList = invitadoRaw
+      .split(",")
+      .map(s => s.trim())
+      .filter(Boolean);
+
+    const estadoEsReservado =
+      estado === "reservado" || estado === "apartado" ||
+      estado === "sí" || estado === "si" || estado === "true" || estado === "1";
+
+    if (tipo === "varios") {
+      if (invitadoList.length === 0 && !estadoEsReservado) return "none";
+      const estoy = invitadoList.some(n => n.toLowerCase() === yo);
+      return estoy ? "mine" : "others";
+    }
+
+    // Único (o vacío => tratamos como único)
+    if (!estadoEsReservado) return "none";
+    const invitado = invitadoRaw.trim().toLowerCase();
+    return invitado && yo && invitado === yo ? "mine" : "others";
+  }
+
+
 
   
   function mostrarRegalos(lista) {
@@ -307,6 +336,27 @@ async function fetchGuestList() {
           window.open(link, "_blank", "noopener");
         });
       }
+
+      // Aplica UI al botón
+      button.textContent = ui.label;
+      button.disabled = !!ui.disabled;
+      if (ui.hint) button.title = ui.hint;
+
+      // 👉 Estado visual de la tarjeta
+      const vstate = getVisualState(item, nombreSeleccionado);
+      card.classList.toggle("selected", vstate === "mine");
+      card.classList.toggle("selected-others", vstate === "others");
+
+      // Estética del botón
+      button.style.backgroundColor = ui.disabled ? "#aaa" : "";
+      button.style.cursor = ui.disabled ? "not-allowed" : "pointer";
+
+      // Limpia borde por foco tras el clic
+      button.addEventListener("click", (e) => {
+        e.stopPropagation();
+        Promise.resolve(reserveGift(button)).finally(() => button.blur());
+      });
+
 
       // Montaje
       card.appendChild(mediaWrap);

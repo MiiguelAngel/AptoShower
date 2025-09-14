@@ -829,19 +829,38 @@
     }
   } 
 
+  /* Estado base: nadie lo ha apartado */
   .gift-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 1rem;
-    border-bottom: 3px solid #eee;
-    padding-bottom: 1rem;
+    border: 2px solid #e5e7eb; /* gris claro */
+    border-radius: 16px;
+    transition: border-color .2s ease, box-shadow .2s ease, transform .15s ease;
   }
 
+  /* Apartado por mí */
   .gift-item.selected {
-    border: 2px solid #b388ff;
-    box-shadow: 0 0 10px rgba(179, 136, 255, 0.3);
+    border-color: #ec4899; /* rosado */
+    box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.18);
   }
+
+  /* Apartado por otros */
+  .gift-item.selected-others {
+    border-color: #8b5cf6; /* morado */
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.18);
+  }
+
+  /* Evita borde por foco cuando no está seleccionado */
+  .gift-item:focus-within:not(.selected):not(.selected-others) {
+    outline: none;
+    box-shadow: none;
+    border-color: #e5e7eb;
+  }
+
+  /* (Opcional) sutil hover cuando está libre */
+  .gift-item:not(.selected):not(.selected-others):hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(0,0,0,.06);
+  }
+
   
   .gift-item img {
     width: 200px;
