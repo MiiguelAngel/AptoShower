@@ -180,7 +180,16 @@ async function fetchGuestList() {
       priceEl.textContent = fmtCOP.format(precioNum);
 
       // Botón
-            // ✅ NUEVO: pinta según reglas con el nombreSeleccionado
+
+      const button = document.createElement("button");
+      button.className = "gift-reserve-btn";
+      button.addEventListener("click", (e) => {
+        e.stopPropagation();
+        reserveGift(button);
+      });
+
+
+      // ✅ NUEVO: pinta según reglas con el nombreSeleccionado
       const invitado       = (item.reservado_por ?? "").toString().trim();
       const tipo           = (item.tipo ?? "").toString().trim();
 
