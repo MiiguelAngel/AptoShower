@@ -76,36 +76,46 @@ async function fetchGuestList() {
 
   function parseGift(item = {}) {
     const estado = String(item.estado ?? "").trim().toLowerCase();
-    const invitado = (item.reservado_por ?? "").toString().trim();
+    const invitadoRaw = (item.reservado_por ?? "").toString();
     const tipo = String(item.tipo ?? "").trim().toLowerCase();
 
-    const isReservado =
-      estado === "reservado" ||
-      estado === "apartado" ||
-      estado === "sí" || estado === "si" ||
-      estado === "true" || estado === "1";
+    const toList = (s = "") => s.split(",").map(x => x.trim()).filter(Boolean);
 
+    const invitadoList = toList(invitadoRaw);
     const isVarios = tipo === "varios";
     const isUnico  = tipo === "único" || tipo === "unico";
 
-    return { isReservado, invitado, isVarios, isUnico };
+    // Reservado:
+    // - Varios: si hay al menos un nombre en la lista, o el estado ya dice "reservado"
+    // - Único : igual que antes
+    const estadoEsReservado =
+      estado === "reservado" || estado === "apartado" ||
+      estado === "sí" || estado === "si" ||
+      estado === "true" || estado === "1";
+
+    const isReservado = isVarios ? (invitadoList.length > 0 || estadoEsReservado) : estadoEsReservado;
+
+    return { isReservado, invitadoRaw, invitadoList, isVarios, isUnico };
   }
 
+
   function computeGiftUiState(item, nombre) {
-    const { isReservado, invitado, isVarios, isUnico } = parseGift(item);
-    const yo = (nombre ?? "").toString().trim();
+    const { isReservado, invitadoList, isVarios, isUnico } = parseGift(item);
+    const yo = (nombre ?? "").toString().trim().toLowerCase();
 
     if (isVarios) {
+      const estoy = invitadoList.some(n => n.toLowerCase() === yo);
       return {
         disabled: false,
-        label: isReservado && invitado.toLowerCase() === yo.toLowerCase() ? "Liberar" : "Apartar",
-        canReservar: true,
-        canLiberar: invitado.toLowerCase() === yo.toLowerCase(),
-        hint: "Este regalo permite varias selecciones."
+        label: estoy ? "Liberar" : "Apartar",
+        canReservar: !estoy,
+        canLiberar: estoy,
+        hint: estoy ? "Ya lo apartaste. Puedes liberarlo." : "Este regalo permite varias selecciones.",
+        selected: invitadoList.length > 0
       };
     }
 
-    // Por defecto tratamos como Único si K está vacío
+    // Tratar vacío/desconocido como Único por seguridad
     const unico = isUnico || !isVarios;
 
     if (unico) {
@@ -115,15 +125,18 @@ async function fetchGuestList() {
           label: "Apartar",
           canReservar: true,
           canLiberar: false,
-          hint: "Disponible para reservar."
+          hint: "Disponible para reservar.",
+          selected: false
         };
       }
-      const mio = invitado && yo && invitado.toLowerCase() === yo.toLowerCase();
+      const invitado = (item.reservado_por ?? "").toString().trim().toLowerCase();
+      const mio = invitado && yo && invitado === yo;
       return mio
-        ? { disabled: false, label: "Liberar", canReservar: false, canLiberar: true, hint: "Lo reservaste tú. Puedes liberarlo." }
-        : { disabled: true,  label: "Apartado ✅", canReservar: false, canLiberar: false, hint: `Reservado por ${invitado || "otra persona"}.` };
+        ? { disabled: false, label: "Liberar", canReservar: false, canLiberar: true, hint: "Lo reservaste tú. Puedes liberarlo.", selected: true }
+        : { disabled: true,  label: "Apartado ✅", canReservar: false, canLiberar: false, hint: `Reservado por ${item.reservado_por || "otra persona"}.`, selected: true };
     }
   }
+
 
   
   function mostrarRegalos(lista) {
@@ -263,7 +276,7 @@ async function fetchGuestList() {
         return { disabled: false, label: "Apartar", hint: "", selected: false };
       }
 
-      const ui = decideUi();
+      const ui = computeGiftUiState(item, nombreSeleccionado);  
 
       // Aplica UI
       button.textContent = ui.label;
