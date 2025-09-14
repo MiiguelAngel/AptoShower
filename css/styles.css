@@ -829,39 +829,120 @@
     }
   } 
 
-  /* Estado base: nadie lo ha apartado */
-  .gift-item {
-    border: 2px solid #e5e7eb; /* gris claro */
-    border-radius: 16px;
-    transition: border-color .2s ease, box-shadow .2s ease, transform .15s ease;
+  /*-----------------------------------------------------------------------------*/
+    /* ====== Base ====== */
+  .gift-item{
+    position: relative;
+    border: 2px solid #e5e7eb;          /* gris claro */
+    border-radius: 18px;
+    background: #fff;
+    transition: border-color .2s ease, box-shadow .2s ease, transform .15s ease, background .2s ease;
+    overflow: hidden;                    /* para overlays */
   }
 
-  /* Apartado por mí */
-  .gift-item.selected {
-    border-color: #ec4899; /* rosado */
-    box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.18);
+  .gift-item .gift-link img{
+    transition: filter .25s ease, transform .2s ease, opacity .2s ease;
+    will-change: filter, transform;
   }
 
-  /* Apartado por otros */
-  .gift-item.selected-others {
-    border-color: #8b5cf6; /* morado */
-    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.18);
+  /* Hover sutil cuando está libre */
+  .gift-item:not(.selected):not(.selected-others):hover{
+    transform: translateY(-1px);
+    box-shadow: 0 8px 22px rgba(0,0,0,.06);
   }
 
-  /* Evita borde por foco cuando no está seleccionado */
-  .gift-item:focus-within:not(.selected):not(.selected-others) {
+  /* ====== Apartado por MÍ (selected) – positivo ====== */
+  /* Borde con gradiente + brillo suave */
+  .gift-item.selected{
+    /* “borde” con glow verde/rosa que se siente celebratorio */
+    box-shadow:
+      0 0 0 2px rgba(16,185,129,.18),    /* verde (#10b981) */
+      0 8px 28px rgba(16,185,129,.20);
+    border-color: transparent;
+    background:
+      linear-gradient(#fff, #fff) padding-box,
+      linear-gradient(135deg, #10b981, #22d3ee, #ec4899) border-box; /* verde → cian → rosa */
+    border: 2px solid transparent;
+  }
+
+  /* Sutil “pulse” (respeto accesibilidad) */
+  @media (prefers-reduced-motion: no-preference){
+    .gift-item.selected{
+      animation: celebratePulse 1.8s ease-in-out 1;
+    }
+  }
+  @keyframes celebratePulse{
+    0%   { box-shadow: 0 0 0 0 rgba(16,185,129,.28); }
+    60%  { box-shadow: 0 0 0 10px rgba(16,185,129,0); }
+    100% { box-shadow:
+            0 0 0 2px rgba(16,185,129,.18),
+            0 8px 28px rgba(16,185,129,.20); }
+  }
+
+  /* Badge de check arriba a la derecha */
+  .gift-item.selected::after{
+    content: "✅";
+    position: absolute;
+    top: 10px; right: 12px;
+    font-size: 1.1rem;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,.2));
+  }
+
+  /* Botón cuando es mío */
+  .gift-item.selected .gift-reserve-btn{
+    background: #10b981;      /* verde */
+    color: #fff;
+  }
+  .gift-item.selected .gift-reserve-btn:hover{
+    filter: brightness(1.06);
+  }
+
+  /* ====== Apartado por OTROS (selected-others) – no seleccionable ====== */
+  .gift-item.selected-others{
+    border-color: #8b5cf6;              /* morado para coherencia con tu UI */
+    background: #f5f5f7;                 /* gris más oscuro */
+    box-shadow: 0 0 0 2px rgba(139,92,246,.16) inset;
+    cursor: not-allowed;
+  }
+
+  /* Oscurecer + desenfocar imagen y reducir saturación */
+  .gift-item.selected-others .gift-link img{
+    filter: grayscale(70%) blur(1.5px) brightness(.85);
+  }
+
+  /* Overlay oscuro con candado */
+  .gift-item.selected-others::before{
+    content: "🔒 Reservado";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(17,17,17,.20), rgba(17,17,17,.35));
+    color: #fff;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-end;
+    padding: 10px 12px;
+    font-size: .92rem;
+    letter-spacing: .2px;
+    pointer-events: none; /* no bloquea clicks del botón si lo habilitas para liberar al dueño */
+  }
+
+  /* Botón gris, sin interacción visual */
+  .gift-item.selected-others .gift-reserve-btn{
+    background: #cfcfd6 !important;
+    color: #2b2b2b !important;
+    cursor: not-allowed !important;
+    opacity: .9;
+  }
+
+  /* Evita que el foco deje “borde morado” si no está seleccionado por mí */
+  .gift-item:focus-within:not(.selected):not(.selected-others){
     outline: none;
     box-shadow: none;
     border-color: #e5e7eb;
   }
 
-  /* (Opcional) sutil hover cuando está libre */
-  .gift-item:not(.selected):not(.selected-others):hover {
-    transform: translateY(-1px);
-    box-shadow: 0 6px 18px rgba(0,0,0,.06);
-  }
+  /*-----------------------------------------------------------------------------*/
 
-  
   .gift-item img {
     width: 200px;
     height: 200px;
