@@ -200,9 +200,11 @@ async function fetchGuestList() {
 
       const button = document.createElement("button");
       button.className = "gift-reserve-btn";
+      
+      // ✅ Al click, blurea para que no quede :focus-within encendido
       button.addEventListener("click", (e) => {
         e.stopPropagation();
-        reserveGift(button);
+        Promise.resolve(reserveGift(button)).finally(() => button.blur());
       });
 
       // Atributos data-* (usando la imagen efectiva)
@@ -267,6 +269,11 @@ async function fetchGuestList() {
       button.textContent = ui.label;
       button.disabled = !!ui.disabled;
       if (ui.hint) button.title = ui.hint;
+
+      // Estilos de tarjeta/btn según estado
+      card.classList.toggle("selected", ui.selected); // ✅ aquí
+      button.style.backgroundColor = ui.disabled ? "#aaa" : "";
+      button.style.cursor = ui.disabled ? "not-allowed" : "pointer";
 
       // Estilos de tarjeta/btn según estado
       if (ui.selected) {
