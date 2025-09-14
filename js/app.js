@@ -197,8 +197,8 @@ async function fetchGuestList() {
       button.setAttribute("data-lugar", lugar);
       button.setAttribute("data-descripcion", descripcion);
       button.setAttribute("data-estado", estado);
-      button.setAttribute("data-reservado-por", invitado);
-      button.setAttribute("data-tipo", tipo);
+      button.setAttribute("data-reservado-por", item.reservado_por ?? "");
+      button.setAttribute("data-tipo", item.tipo ?? "");
 
 
       // ✅ NUEVO: pinta según reglas con el nombreSeleccionado
