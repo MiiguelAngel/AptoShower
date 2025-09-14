@@ -1550,7 +1550,7 @@
 }
 
 /* Contenido del modal */
-.modal-content {
+.modal-content-welcome {
   position: relative;
   background: #fff;
   color: #111;
@@ -1560,6 +1560,7 @@
   border-radius: 20px;
   box-shadow: 0 15px 40px rgba(0,0,0,.2);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  height: 30rem;
 }
 
 /* Botón de cerrar estilo Apple */
@@ -1576,6 +1577,7 @@
   font-size: 1.1rem;
   cursor: pointer;
   transition: background .2s ease;
+  padding: 0px;
 }
 .modal-close:hover {
   background: #ddd;
