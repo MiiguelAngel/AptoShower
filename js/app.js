@@ -138,12 +138,11 @@ async function fetchGuestList() {
   }
 
   function getVisualState(item, nombreSeleccionado) {
-    const yo = (nombreSeleccionado || "").trim().toLowerCase();
+    const yo   = (nombreSeleccionado || "").trim().toLowerCase();
     const tipo = String(item.tipo || "").trim().toLowerCase();
     const estado = String(item.estado || "").trim().toLowerCase();
     const invitadoRaw = (item.reservado_por ?? "").toString();
 
-    // Listita para "Varios"
     const invitadoList = invitadoRaw
       .split(",")
       .map(s => s.trim())
@@ -153,17 +152,20 @@ async function fetchGuestList() {
       estado === "reservado" || estado === "apartado" ||
       estado === "sí" || estado === "si" || estado === "true" || estado === "1";
 
+    // ⬇️ Regla especial para VARIOS:
+    // - Si YO lo aparté -> "mine"
+    // - Si NO lo aparté -> "none" (aunque otros lo hayan apartado)
     if (tipo === "varios") {
-      if (invitadoList.length === 0 && !estadoEsReservado) return "none";
       const estoy = invitadoList.some(n => n.toLowerCase() === yo);
-      return estoy ? "mine" : "others";
+      return estoy ? "mine" : "none";
     }
 
-    // Único (o vacío => tratamos como único)
+    // ÚNICO (o desconocido => tratamos como único)
     if (!estadoEsReservado) return "none";
     const invitado = invitadoRaw.trim().toLowerCase();
     return invitado && yo && invitado === yo ? "mine" : "others";
   }
+
 
 
 
