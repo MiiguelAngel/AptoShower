@@ -38,7 +38,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    max-height: 90vh;
+    max-height: 99vh;
     overflow-x: hidden;
     padding-top: 0rem;
   }
@@ -154,7 +154,7 @@
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
     width: 90%;                     /* ocupa el ancho máximo permitido */
     align-self: center; /* ← centra el contenido horizontalmente */
-    height: 76vh;;
+    height: 80vh;;
 
 
     /* Scroll local */

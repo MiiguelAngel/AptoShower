@@ -30,6 +30,7 @@ async function fetchGuestList() {
   
 
   let regalos = [];
+  let nombreSeleccionado = "";
 
   async function fetchGifts() {
     try {
@@ -46,12 +47,64 @@ async function fetchGuestList() {
         link : r.link || "",
         imagen: r.img || "",
         estado: r.estado || "",
-        reservado_por: r.reservado_por || ""
+        reservado_por: r.reservado_por || "",
+        tipo: r.tipo || "" 
       }));
 
       console.log("🎁 Regalos cargados:", regalos);
     } catch (err) {
       console.error("❌ Error cargando regalos:", err);
+    }
+  }
+
+  function parseGift(item = {}) {
+    const estado = String(item.estado ?? "").trim().toLowerCase();
+    const invitado = (item.reservado_por ?? "").toString().trim();
+    const tipo = String(item.tipo ?? "").trim().toLowerCase();
+
+    const isReservado =
+      estado === "reservado" ||
+      estado === "apartado" ||
+      estado === "sí" || estado === "si" ||
+      estado === "true" || estado === "1";
+
+    const isVarios = tipo === "varios";
+    const isUnico  = tipo === "único" || tipo === "unico";
+
+    return { isReservado, invitado, isVarios, isUnico };
+  }
+
+  function computeGiftUiState(item, nombre) {
+    const { isReservado, invitado, isVarios, isUnico } = parseGift(item);
+    const yo = (nombre ?? "").toString().trim();
+
+    if (isVarios) {
+      return {
+        disabled: false,
+        label: isReservado && invitado.toLowerCase() === yo.toLowerCase() ? "Liberar" : "Apartar",
+        canReservar: true,
+        canLiberar: invitado.toLowerCase() === yo.toLowerCase(),
+        hint: "Este regalo permite varias selecciones."
+      };
+    }
+
+    // Por defecto tratamos como Único si K está vacío
+    const unico = isUnico || !isVarios;
+
+    if (unico) {
+      if (!isReservado) {
+        return {
+          disabled: false,
+          label: "Apartar",
+          canReservar: true,
+          canLiberar: false,
+          hint: "Disponible para reservar."
+        };
+      }
+      const mio = invitado && yo && invitado.toLowerCase() === yo.toLowerCase();
+      return mio
+        ? { disabled: false, label: "Liberar", canReservar: false, canLiberar: true, hint: "Lo reservaste tú. Puedes liberarlo." }
+        : { disabled: true,  label: "Apartado ✅", canReservar: false, canLiberar: false, hint: `Reservado por ${invitado || "otra persona"}.` };
     }
   }
 
@@ -127,13 +180,65 @@ async function fetchGuestList() {
       priceEl.textContent = fmtCOP.format(precioNum);
 
       // Botón
-      const button = document.createElement("button");
-      button.textContent = "Apartar";
-      button.className = "gift-reserve-btn";
-      button.addEventListener("click", (e) => {
-        e.stopPropagation(); // que no dispare el click del card
-        reserveGift(button);
-      });
+            // ✅ NUEVO: pinta según reglas con el nombreSeleccionado
+      const invitado       = (item.reservado_por ?? "").toString().trim();
+      const tipo           = (item.tipo ?? "").toString().trim();
+
+      const yo = (typeof nombreSeleccionado === "string" ? nombreSeleccionado : "").trim();
+      const isReservado =
+        estado === "reservado" || estado === "apartado" ||
+        estado === "sí" || estado === "si" ||
+        estado === "true" || estado === "1";
+
+      const isVarios = tipo.toLowerCase() === "varios";
+      const isUnico  = tipo.toLowerCase() === "único" || tipo.toLowerCase() === "unico";
+
+      // Función auxiliar inline para decidir UI (si ya agregaste computeGiftUiState, puedes usarla aquí)
+      function decideUi() {
+        if (isVarios) {
+          const mio = invitado && yo && invitado.toLowerCase() === yo.toLowerCase();
+          return {
+            disabled: false,
+            label: mio && isReservado ? "Liberar" : "Apartar",
+            hint: "Este regalo permite varias selecciones.",
+            selected: isReservado
+          };
+        }
+
+        // Tratar vacío/desconocido como Único por seguridad
+        const unico = isUnico || !isVarios;
+
+        if (unico) {
+          if (!isReservado) {
+            return { disabled: false, label: "Apartar", hint: "Disponible para reservar.", selected: false };
+          }
+          const mio = invitado && yo && invitado.toLowerCase() === yo.toLowerCase();
+          if (mio) {
+            return { disabled: false, label: "Liberar", hint: "Lo reservaste tú. Puedes liberarlo.", selected: true };
+          }
+          return { disabled: true, label: "Apartado ✅", hint: `Reservado por ${invitado || "otra persona"}.`, selected: true };
+        }
+
+        // Fallback
+        return { disabled: false, label: "Apartar", hint: "", selected: false };
+      }
+
+      const ui = decideUi();
+
+      // Aplica UI
+      button.textContent = ui.label;
+      button.disabled = !!ui.disabled;
+      if (ui.hint) button.title = ui.hint;
+
+      // Estilos de tarjeta/btn según estado
+      if (ui.selected) {
+        card.classList.add("selected");
+      } else {
+        card.classList.remove("selected");
+      }
+      button.style.backgroundColor = ui.disabled ? "#aaa" : "";
+      button.style.cursor = ui.disabled ? "not-allowed" : "pointer";
+
 
       // Atributos data-* (usando la imagen efectiva)
       button.setAttribute("data-id", id);
@@ -305,57 +410,66 @@ function filterNames() {
 
   let regaloSeleccionado = null; // nueva variable global
 
-  function reserveGift(button) {
-      // 1. Leer datos del botón seleccionado
+  async function reserveGift(button) {
     const id = button.dataset.id;
+    const item = regalos.find(r => (r.id || r.id_regalo) === id);
+    if (!item) return;
 
-    async function actualizarEstadoRegalo(id, reservado, Invitado) {
-      // ✅ Guardar en Google Sheets
-      try {
-        const res = await fetch("/.netlify/functions/updateGiftGuest", {
-          method: "POST",
-          body: JSON.stringify({ id: id, reservado: reservado, invitado: Invitado }),
-        });
-        const data = await res.json();
-        console.log("📌 Respuesta Sheets:", data);
-        } 
-      catch (err) {
-          console.error("❌ Error al guardar asistencia:", err);
-        }
+    const ui = computeGiftUiState(item, nombreSeleccionado);
+
+    // Decide acción deseada en función de la etiqueta actual/estado
+    const { isReservado, invitado } = parseGift(item);
+    const soyElMismo = invitado && nombreSeleccionado &&
+                      invitado.toLowerCase() === nombreSeleccionado.toLowerCase();
+
+    let action = null;
+    if (!isReservado) action = "reservar";
+    else if (soyElMismo) action = "liberar";
+    else action = null;
+
+    if (action === "reservar" && !ui.canReservar) {
+      mostrarToast(ui.hint || "No puedes reservar este regalo.", "warning");
+      return;
+    }
+    if (action === "liberar" && !ui.canLiberar) {
+      mostrarToast(ui.hint || "No puedes liberar este regalo.", "warning");
+      return;
+    }
+    if (!action) {
+      mostrarToast(ui.hint || "Este regalo está reservado por otra persona.", "warning");
+      return;
     }
 
-    if (regaloSeleccionado && regaloSeleccionado !== button) {
-      regaloSeleccionado.textContent = "Apartar";
-      regaloSeleccionado.disabled = false;
-      regaloSeleccionado.style.backgroundColor = "";
-      regaloSeleccionado.parentElement.classList.remove("selected");
-      actualizarEstadoRegalo(id, false, nombreSeleccionado); // libera el regalo previo
-    }
-  
-    if (regaloSeleccionado === button) {
-      button.textContent = "Apartar";
-      button.disabled = false;
-      button.style.backgroundColor = "";
-      button.parentElement.classList.remove("selected");
-      regaloSeleccionado = null;
-      actualizarEstadoRegalo(id, false, nombreSeleccionado); // libera el regalo previo
-      
-    } else {
-      button.textContent = "Apartado ✅";
-      button.disabled = false;
-      button.style.backgroundColor = "#aaa";
-      button.parentElement.classList.add("selected");
-      regaloSeleccionado = button;
-      actualizarEstadoRegalo(id, true, nombreSeleccionado); // marca como reservado
-  
-      confetti({
-        particleCount: 200,
-        spread: 70,
-        origin: { y: 0.6 }
+    // Persistir en Sheets
+    try {
+      const res = await fetch("/.netlify/functions/updateGiftGuest", {
+        method: "POST",
+        body: JSON.stringify({
+          id,
+          reservado: action === "reservar",
+          invitado: action === "reservar" ? nombreSeleccionado : ""
+        })
       });
-  
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.error || "Error de servidor");
+
+      // Actualiza el item en memoria
+      item.estado = action === "reservar" ? "Reservado" : "Disponible";
+      item.reservado_por = action === "reservar" ? nombreSeleccionado : "";
+
+      // Feedback UI inmediato
+      if (action === "reservar") {
+        confetti({ particleCount: 200, spread: 70, origin: { y: 0.6 } });
+      }
+      // Re-pinta la grilla para reflejar deshabilitados/hints
+      mostrarRegalos(regalos);
+
+    } catch (err) {
+      console.error("❌ Error al actualizar regalo:", err);
+      mostrarToast("No se pudo actualizar el regalo. Intenta de nuevo.", "error");
     }
   }
+
   
   async function confirmarAsistencia(asistira) {
     // Oculta las opciones de asistencia con transición
