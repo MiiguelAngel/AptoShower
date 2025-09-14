@@ -368,6 +368,15 @@ async function fetchGuestList() {
       contenedor.appendChild(card);
     });
   }
+
+  function abrirGiftInfo() {
+    document.getElementById("giftInfoModal").classList.remove("hidden");
+  }
+
+  function cerrarGiftInfo() {
+    document.getElementById("giftInfoModal").classList.add("hidden");
+  }
+
   
   
   function filtrarRegalos() {
@@ -408,7 +417,21 @@ function goToGifts() {
   mostrarRegalos(regalos);
 }
 
+  function ensureSelectedName() {
+    if (!nombreSeleccionado) {
+      const val = document.getElementById("nombre")?.value?.trim();
+      if (val && guestList.includes(val)) nombreSeleccionado = val;
+    }
+    return !!nombreSeleccionado;
+  }
+
 function toggleScreens(id) {
+  // 🚧 Si quieren ir a screen3 sin nombre, redirige a screen2 con toast
+  if (id === "screen3" && !ensureSelectedName()) {
+    mostrarToast("¡Queremos conocerte primero! ✨ Escribe tu nombre y confirma asistencia.", "warning");
+    id = "screen2"; // forzamos screen2
+  }
+
   document.querySelectorAll('.screen').forEach(screen => {
     screen.classList.remove('visible');
   });
@@ -429,23 +452,26 @@ function toggleScreens(id) {
   const stepId = stepMap[id];
   if (stepId) document.getElementById(stepId).classList.add("active");
 
-  // ✅ Si el usuario entra a screen3, pintamos los regalos
+  // 🔁 Manejo de sincronización (polling) según la pantalla
   if (id === "screen3") {
-    // Si todavía no cargamos regalos, los traemos ahora
-    if (regalos.length === 0) {
-      fetchGifts().then(() => mostrarRegalos(regalos));
-    } else {
-      mostrarRegalos(regalos);
-    }
-  }
+      // Abre el modal de info (si lo estás usando)
+      if (typeof abrirGiftInfo === "function") abrirGiftInfo();
 
-  if (id === "screen3") {
-    if (syncTimer) clearInterval(syncTimer);
-      // Primer sync rápido
-      syncNow();
-      // Polling cada 6s (ajústalo si quieres)
-      syncTimer = setInterval(syncNow, 6000);
+      // Carga o repinta regalos
+      if (regalos.length === 0) {
+        fetchGifts().then(() => mostrarRegalos(regalos));
+      } else {
+        mostrarRegalos(regalos);
+      }
+
+      // Inicia/renueva polling
+      if (syncTimer) clearInterval(syncTimer);
+      if (typeof syncNow === "function") syncNow();     // primer sync rápido
+      syncTimer = setInterval(() => {
+        if (typeof syncNow === "function") syncNow();
+      }, 6000);
     } else {
+      // Al salir de screen3, detén polling
       if (syncTimer) { clearInterval(syncTimer); syncTimer = null; }
   }
 }
