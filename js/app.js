@@ -1,6 +1,7 @@
 let guestList = [];
 
 let syncTimer = null;
+let syncResumeTO = null;
 let isOnScreen3 = false;      // estado actual de la vista
 let giftsAbort = null;        // AbortController para cancelar fetch en curso
 let pendingReservations = new Set(); // IDs de regalos que están siendo procesados (reservar/liberar)
@@ -11,12 +12,33 @@ async function syncNow() {
   if (isOnScreen3) mostrarRegalos(regalos);
 }
 
+function pauseSync(ms = 1200) {
+  if (syncTimer) { clearInterval(syncTimer); syncTimer = null; }
+  if (syncResumeTO) clearTimeout(syncResumeTO);
+  // reanuda el polling después de un respiro
+  syncResumeTO = setTimeout(() => {
+    if (isOnScreen3 && typeof syncNow === "function") {
+      syncNow();                               // un refresh
+      syncTimer = setInterval(syncNow, 6000);  // y retomamos
+    }
+  }, ms);
+}
+
 // Al recuperar foco de la pestaña, sincroniza una vez
 document.addEventListener("visibilitychange", () => {
   if (document.visibilityState === "visible" && isOnScreen3) {
     syncNow?.();
   }
 });
+
+// Espera al siguiente frame de pintura del browser
+const nextFrame = () => new Promise(r => requestAnimationFrame(() => r()));
+// Fuerza un repintado completo de la grilla y deja que el browser pinte
+async function repaintGifts() {
+  mostrarRegalos(filtrarRegalos(regalos));      // pinta ya con filtros/orden
+  await nextFrame();                             // deja que pinte
+  await nextFrame();                             // (doble frame = transición suave)
+}
 
 async function fetchGuestList() {
     try {
@@ -690,14 +712,15 @@ function filterNames() {
         if (reservar) {
           if (!yaEstoy) lista.push(yo);
           item.estado = "Reservado";
+          confetti({ particleCount: 200, spread: 70, origin: { y: 0.6 } });
+          mostrarRegalos(regalos);
         } else {
           lista = lista.filter(n => !eq(n, yo));
           item.estado = lista.length ? "Reservado" : "Disponible";
+          mostrarRegalos(regalos);
         }
         item.reservado_por = lista.join(", ");
-
-        if (reservar) confetti({ particleCount: 200, spread: 70, origin: { y: 0.6 } });
-        mostrarRegalos(regalos);
+          
       } catch (err) {
         console.error("❌ Error (varios):", err);
         mostrarToast("No se pudo actualizar el regalo.", "error");
@@ -748,12 +771,14 @@ function filterNames() {
         item.estado = "Reservado";
         item.reservado_por = yo;
         confetti({ particleCount: 200, spread: 70, origin: { y: 0.6 } });
+        mostrarRegalos(regalos);
       } else {
         item.estado = "Disponible";
         item.reservado_por = "";
+        mostrarRegalos(regalos);
       }
 
-      mostrarRegalos(regalos);
+      
     } catch (err) {
       console.error("❌ Error (único):", err);
       mostrarToast("No se pudo actualizar el regalo.", "error");

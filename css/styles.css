@@ -841,7 +841,7 @@
   }
 
   .gift-item .gift-link img{
-    transition: filter .25s ease, transform .2s ease, opacity .2s ease;
+    transition: filter .2s ease, transform .2s ease, opacity .2s ease;
     will-change: filter, transform;
   }
 
