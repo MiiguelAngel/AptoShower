@@ -198,16 +198,16 @@ async function fetchGuestList() {
 
     filtrados = filtrarRegalos(lista);
 
-    filtrados.forEach((item, id) => item.id = id);
+    //filtrados.forEach((item, id) => item.id = id);
 
-    filtrados.sort((a, b) => {
-      const aMine = hasAnyGiftMine([a], nombreSeleccionado);
-      const bMine = hasAnyGiftMine([b], nombreSeleccionado);
+    //filtrados.sort((a, b) => {
+    //  const aMine = hasAnyGiftMine([a], nombreSeleccionado);
+    //  const bMine = hasAnyGiftMine([b], nombreSeleccionado);
 
-      if (aMine && !bMine) return -1;  // a primero
-      if (!aMine && bMine) return 1;   // b primero
-      return a.__idx - b.__idx;        // mismo tipo → orden original
-    });
+    //  if (aMine && !bMine) return -1;  // a primero
+    //  if (!aMine && bMine) return 1;   // b primero
+    //  return a.__idx - b.__idx;        // mismo tipo → orden original
+    //});
 
 
     filtrados.forEach((item = {}) => {
