@@ -3,6 +3,7 @@ let guestList = [];
 let syncTimer = null;
 let isOnScreen3 = false;      // estado actual de la vista
 let giftsAbort = null;        // AbortController para cancelar fetch en curso
+let pendingReservations = new Set(); // IDs de regalos que están siendo procesados (reservar/liberar)
 
 async function syncNow() {
   if (!isOnScreen3) return;
@@ -402,6 +403,27 @@ async function fetchGuestList() {
     });
   }
 
+  function setBtnLoading(button, loading = true) {
+    if (!button) return;
+    if (loading) {
+      button.classList.add("is-loading");
+      button.disabled = true;
+      button.setAttribute("aria-busy", "true");
+      // Si quieres cambiar texto temporalmente:
+      if (!button.dataset._txt) button.dataset._txt = button.textContent;
+      button.textContent = "Procesando…";
+    } else {
+      button.classList.remove("is-loading");
+      button.disabled = false;
+      button.removeAttribute("aria-busy");
+      if (button.dataset._txt) {
+        button.textContent = button.dataset._txt;
+        delete button.dataset._txt;
+      }
+    }
+  }
+
+
   document.getElementById("continueBtn")?.addEventListener("click", () => {
     // Guard extra: no dejes pasar sin nombre válido
     if (!nombreSeleccionado || !guestList.includes(nombreSeleccionado)) {
@@ -622,6 +644,13 @@ function filterNames() {
     const item = regalos.find(r => (r.id || r.id_regalo) === id);
     if (!item) return;
 
+    // 🚫 Si ya se está procesando este regalo, ignorar el nuevo clic
+    if (pendingReservations.has(id)) return;
+
+    // Marcar como en proceso (estado global + spinner en botón)
+    pendingReservations.add(id);
+    setBtnLoading(button, true);
+
     // helpers
     const toList = (s="") => s.split(",").map(x => x.trim()).filter(Boolean);
     const eq = (a="", b="") => a.toLowerCase() === b.toLowerCase();
@@ -672,6 +701,9 @@ function filterNames() {
       } catch (err) {
         console.error("❌ Error (varios):", err);
         mostrarToast("No se pudo actualizar el regalo.", "error");
+      } finally {
+        pendingReservations.delete(id);
+        setBtnLoading(button, false);
       }
       return;
     }
@@ -725,6 +757,9 @@ function filterNames() {
     } catch (err) {
       console.error("❌ Error (único):", err);
       mostrarToast("No se pudo actualizar el regalo.", "error");
+    } finally {
+      pendingReservations.delete(id);
+      setBtnLoading(button, false);
     }
   }
 

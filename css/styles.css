@@ -124,9 +124,9 @@
     box-shadow:
     0 10px 20px rgba(0, 0, 0, 0.4),
     0 4px 6px rgba(0, 0, 0, 0.3);
-    height: 90vh;
+    height: 100vh;
     min-height: 76vh;
-    overflow: hidden;
+    overflow: overlay;
     display: none;
     flex-direction: column;
     align-items: center;
@@ -977,7 +977,9 @@
     appearance:none; border:0; border-radius:999px; padding:14px 20px;
     background:#000; color:#fff; font-weight:800; letter-spacing:.3px;
     transition: transform .15s ease, box-shadow .2s ease, background .2s ease;
+    position: relative;
   }
+
   .gift-reserve-btn:hover{ transform: translateY(-1px); box-shadow:0 6px 14px rgba(0,0,0,.2); }
   .gift-reserve-btn:active{ transform: translateY(0); box-shadow:none; }
   .gift-reserve-btn:focus-visible{ outline:3px solid #a78bfa; outline-offset:3px; }
@@ -1637,5 +1639,27 @@
 }
 .continue-btn:hover{ filter: brightness(1.06); transform: translateY(-1px); }
 .continue-btn:active{ transform: translateY(0); }
+
+/*-----------------------------------------------------------------------------*/
+
+.gift-reserve-btn.is-loading{
+  pointer-events: none;
+  opacity: .85;
+}
+.gift-reserve-btn.is-loading::after{
+  content: "";
+  position: absolute;
+  left: 14px;               /* bolita al inicio del botón */
+  top: 50%;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid #fff;   /* ajusta si tu botón no es oscuro */
+  border-right-color: transparent;
+  border-bottom-color: transparent;
+  transform: translateY(-50%);
+  animation: spin .8s linear infinite;
+}
+@keyframes spin { to { transform: translateY(-50%) rotate(360deg); } }
 
 /*-----------------------------------------------------------------------------*/
