@@ -360,7 +360,7 @@
   right: -20px;
   z-index: -2; /* Envía el pseudo-elemento detrás del botón */
   border-radius: 20px;
-  background: linear-gradient(-45deg, #ff5ecf, #6368f6);
+  background: linear-gradient(135deg, #000000, #0B3D91, #1B2A49, #050A30);
   /*animation: rotBGimg 3s linear infinite;
   transition: all 0.2s linear;*/
 }
@@ -652,7 +652,7 @@
   border-radius: 40px;
   font-size: 1.1rem;
   font-weight: 600;
-  background: linear-gradient(90deg, #ff80b5, #9089fc);
+  background: linear-gradient(135deg, #000000, #0B3D91, #1B2A49, #050A30);
   color: white;
   border: none;
   box-shadow: 0 8px 20px rgba(255, 128, 181, 0.4);
@@ -683,7 +683,7 @@
 /*-----------------------------------------------------------------------------*/
   
   .btn-personalizado {
-    background: linear-gradient(90deg, #ff80ab, #b388ff);
+    background: linear-gradient(135deg, #000000, #0B3D91, #1B2A49, #050A30);
     color: white;
     font-weight: 600;
     border: none;
@@ -1561,6 +1561,7 @@
   box-shadow: 0 15px 40px rgba(0,0,0,.2);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   height: 30rem;
+  align-content: center;
 }
 
 /* Botón de cerrar estilo Apple */
@@ -1612,12 +1613,12 @@
   border: 1px solid rgba(0,0,0,.06);
   border-radius: 16px;
   box-shadow: 0 12px 40px rgba(0,0,0,.18);
-  padding: 12px;
   display: flex;
   justify-content: center;
   align-items: center;
   backdrop-filter: blur(6px);
   z-index: 9999;
+  margin-bottom: 3rem;
 }
 .continue-bar.hidden{ display: none; }
 
@@ -1629,9 +1630,10 @@
   font-weight: 600;
   cursor: pointer;
   color: #fff;
-  background: linear-gradient(90deg, #ec4899, #8b5cf6);
+  background: linear-gradient(135deg, #000000, #0B3D91, #1B2A49, #050A30);
   box-shadow: 0 6px 18px rgba(139,92,246,.35);
   transition: transform .12s ease, filter .2s ease;
+  margin: 0.1rem;
 }
 .continue-btn:hover{ filter: brightness(1.06); transform: translateY(-1px); }
 .continue-btn:active{ transform: translateY(0); }

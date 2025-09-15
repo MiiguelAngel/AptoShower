@@ -196,7 +196,21 @@ async function fetchGuestList() {
     if (!contenedor) return;
     contenedor.innerHTML = "";
 
-    lista.forEach((item = {}) => {
+    filtrados = filtrarRegalos(lista);
+
+    filtrados.forEach((item, id) => item.id = id);
+
+    filtrados.sort((a, b) => {
+      const aMine = hasAnyGiftMine([a], nombreSeleccionado);
+      const bMine = hasAnyGiftMine([b], nombreSeleccionado);
+
+      if (aMine && !bMine) return -1;  // a primero
+      if (!aMine && bMine) return 1;   // b primero
+      return a.__idx - b.__idx;        // mismo tipo → orden original
+    });
+
+
+    filtrados.forEach((item = {}) => {
       // Normaliza campos
       const id          = item.id || item.id_regalo || "";
       const nombre      = (item.nombre ?? "Regalo").toString();
@@ -373,7 +387,7 @@ async function fetchGuestList() {
         Promise.resolve(reserveGift(button)).finally(() => button.blur());
       });
 
-
+    
       // Montaje
       card.appendChild(mediaWrap);
       if (descripcion) card.appendChild(descEl);
@@ -436,11 +450,11 @@ async function fetchGuestList() {
 
   
   
-  function filtrarRegalos() {
+  function filtrarRegalos(regalos_lista) {
     const precio = document.getElementById("filtroPrecio").value;
     const lugar = document.getElementById("filtroLugar").value;
   
-    let filtrados = regalos;
+    let filtrados = regalos_lista;
   
     if (precio) {
       filtrados = filtrados.filter(item => {
@@ -454,7 +468,7 @@ async function fetchGuestList() {
       filtrados = filtrados.filter(item => item.lugar === lugar);
     }
   
-    mostrarRegalos(filtrados);
+    return filtrados;
   }
   
 
