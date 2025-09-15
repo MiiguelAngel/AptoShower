@@ -121,10 +121,11 @@
   
   
   .screen {
+    box-sizing: border-box;
     box-shadow:
     0 10px 20px rgba(0, 0, 0, 0.4),
     0 4px 6px rgba(0, 0, 0, 0.3);
-    height: 100vh;
+    height: 100dvh;
     min-height: 76vh;
     overflow: overlay;
     display: none;
