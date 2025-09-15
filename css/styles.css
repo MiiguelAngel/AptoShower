@@ -1601,3 +1601,39 @@
   display: none !important;
 }
 /*-----------------------------------------------------------------------------*/
+
+/* Barra inferior fija */
+.continue-bar{
+  position: fixed;
+  left: 0; right: 0; bottom: 12px;
+  margin: 0 auto;
+  width: min(960px, 92%);
+  background: rgba(255,255,255,.9);
+  border: 1px solid rgba(0,0,0,.06);
+  border-radius: 16px;
+  box-shadow: 0 12px 40px rgba(0,0,0,.18);
+  padding: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  backdrop-filter: blur(6px);
+  z-index: 9999;
+}
+.continue-bar.hidden{ display: none; }
+
+.continue-btn{
+  width: 100%;
+  padding: 14px 18px;
+  border: 0;
+  border-radius: 999px;
+  font-weight: 600;
+  cursor: pointer;
+  color: #fff;
+  background: linear-gradient(90deg, #ec4899, #8b5cf6);
+  box-shadow: 0 6px 18px rgba(139,92,246,.35);
+  transition: transform .12s ease, filter .2s ease;
+}
+.continue-btn:hover{ filter: brightness(1.06); transform: translateY(-1px); }
+.continue-btn:active{ transform: translateY(0); }
+
+/*-----------------------------------------------------------------------------*/

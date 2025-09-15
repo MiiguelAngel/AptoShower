@@ -1,16 +1,19 @@
 let guestList = [];
 
 let syncTimer = null;
+let isOnScreen3 = false;      // estado actual de la vista
+let giftsAbort = null;        // AbortController para cancelar fetch en curso
 
 async function syncNow() {
-  await fetchGifts(true); // true = bust cache
-  mostrarRegalos(regalos);
+  if (!isOnScreen3) return;
+  await fetchGifts(true);
+  if (isOnScreen3) mostrarRegalos(regalos);
 }
 
 // Al recuperar foco de la pestaña, sincroniza una vez
 document.addEventListener("visibilitychange", () => {
-  if (document.visibilityState === "visible") {
-    syncNow();
+  if (document.visibilityState === "visible" && isOnScreen3) {
+    syncNow?.();
   }
 });
 
@@ -47,6 +50,17 @@ async function fetchGuestList() {
   let nombreSeleccionado = "";
 
   async function fetchGifts(noCache = false) {
+    
+    // Si no estamos en screen3, no hagas nada
+    if (!isOnScreen3) return;
+    
+    // Cancela fetch anterior (si quedaba en vuelo)
+    if (giftsAbort) {
+      giftsAbort.abort();
+    }
+    giftsAbort = new AbortController();
+    const { signal } = giftsAbort;
+
     try {
        const url = "/.netlify/functions/getGifts" + (noCache ? `?t=${Date.now()}` : "");
       const res = await fetch(url, { cache: "no-store" });
@@ -366,8 +380,51 @@ async function fetchGuestList() {
       card.appendChild(priceEl);
       card.appendChild(button);
       contenedor.appendChild(card);
+
+      updateContinueBar();
     });
   }
+
+  document.getElementById("continueBtn")?.addEventListener("click", () => {
+    // Guard extra: no dejes pasar sin nombre válido
+    if (!nombreSeleccionado || !guestList.includes(nombreSeleccionado)) {
+      mostrarToast("¡Queremos conocerte primero! ✨ Confirma tu nombre.", "warning");
+      toggleScreens("screen2");
+      return;
+    }
+    toggleScreens("screen4");
+  });
+
+  function normalizeList(csv=""){
+    return csv.split(",").map(s=>s.trim()).filter(Boolean);
+  }
+
+  function hasAnyGiftMine(lista, nombre) {
+    const me = (nombre || "").trim().toLowerCase();
+    if (!me) return false;
+
+    return lista.some(item => {
+      const tipo = String(item.tipo || "").toLowerCase();
+      const estado = String(item.estado || "").toLowerCase();
+      const invitadosRaw = (item.reservado_por || "").toString();
+
+      if (tipo === "varios") {
+        const list = normalizeList(invitadosRaw);
+        return list.some(n => n.toLowerCase() === me);
+      } else {
+        const reservado = ["reservado","apartado","sí","si","true","1"].includes(estado);
+        return reservado && invitadosRaw.trim().toLowerCase() === me;
+      }
+    });
+  }
+
+  function updateContinueBar() {
+    const bar = document.getElementById("continueBar");
+    if (!bar) return;
+    const show = hasAnyGiftMine(regalos, nombreSeleccionado);
+    bar.classList.toggle("hidden", !show);
+  }
+
 
   function abrirGiftInfo() {
     document.getElementById("giftInfoModal").classList.remove("hidden");
@@ -454,6 +511,9 @@ function toggleScreens(id) {
 
   // 🔁 Manejo de sincronización (polling) según la pantalla
   if (id === "screen3") {
+      isOnScreen3 = true;
+      updateContinueBar();
+
       // Abre el modal de info (si lo estás usando)
       if (typeof abrirGiftInfo === "function") abrirGiftInfo();
 
@@ -471,8 +531,11 @@ function toggleScreens(id) {
         if (typeof syncNow === "function") syncNow();
       }, 6000);
     } else {
+      isOnScreen3 = false;
+      document.getElementById("continueBar")?.classList.add("hidden");
       // Al salir de screen3, detén polling
       if (syncTimer) { clearInterval(syncTimer); syncTimer = null; }
+      if (giftsAbort) { giftsAbort.abort(); giftsAbort = null; }
   }
 }
 
