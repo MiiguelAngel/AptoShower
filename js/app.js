@@ -196,23 +196,26 @@ async function fetchGuestList() {
     if (!contenedor) return;
     contenedor.innerHTML = "";
 
-    filtrados = filtrarRegalos(lista);
+    // 1) Filtra SIEMPRE, y clona cada item para no tocar referencias del array original
+    const base = Array.isArray(lista) ? lista : [];
+    const filtrados = filtrarRegalos(base).map((it, idx) => ({
+      ...it,            // 👈 clon superficial (no muta el original)
+      __idx: idx        // 👈 orden visual estable (del resultado filtrado)
+    }));
 
-    //filtrados.forEach((item, id) => item.id = id);
-
-    //filtrados.sort((a, b) => {
-    //  const aMine = hasAnyGiftMine([a], nombreSeleccionado);
-    //  const bMine = hasAnyGiftMine([b], nombreSeleccionado);
-
-    //  if (aMine && !bMine) return -1;  // a primero
-    //  if (!aMine && bMine) return 1;   // b primero
-    //  return a.__idx - b.__idx;        // mismo tipo → orden original
-    //});
+    // 2) Ordena: tus regalos primero, el resto queda en su orden original
+    filtrados.sort((a, b) => {
+      const aMine = hasAnyGiftMine([a], nombreSeleccionado);
+      const bMine = hasAnyGiftMine([b], nombreSeleccionado);
+      if (aMine && !bMine) return -1;
+      if (!aMine && bMine) return 1;
+      return a.__idx - b.__idx; // desempate: orden original del filtrado
+    });
 
 
     filtrados.forEach((item = {}) => {
       // Normaliza campos
-      const id          = item.id || item.id_regalo || "";
+      const id_Real          = item.id || item.id_regalo || "";
       const nombre      = (item.nombre ?? "Regalo").toString();
       const precioNum   = typeof item.precio === "number" ? item.precio : Number(item.precio) || 0;
       const lugar       = (item.lugar ?? "").toString();
@@ -280,7 +283,7 @@ async function fetchGuestList() {
       });
 
       // Atributos data-* (usando la imagen efectiva)
-      button.setAttribute("data-id", id);
+      button.setAttribute("data-id", id_Real);
       button.setAttribute("data-nombre", nombre);
       button.setAttribute("data-precio", String(precioNum));
       button.setAttribute("data-link", link);
