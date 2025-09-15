@@ -326,7 +326,7 @@
     color: #bbbbbb;
     font-size: 1rem;
     text-align: center;
-    margin-bottom: 2rem;
+    margin-bottom: 0rem;
   }
 
 .gradient-border-btn {
@@ -728,7 +728,22 @@
     transform: translate(-50%, -50%) scale(1.4);
     max-width: 220px;
     z-index: 2;
-    animation: gifSlideUp 4s ease forwards;
+    animation: gifFadeBack 4s ease forwards;
+  }
+
+  @keyframes gifFadeBack {
+    0% {
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 1;
+    }
+    70% {
+      transform: translate(-50%, -50%) scale(0.9); /* como alejándose */
+      opacity: 0.6;
+    }
+    100% {
+      transform: translate(-50%, -50%) scale(0.8);
+      opacity: 0; /* desaparece */
+    }
   }
   
   @keyframes gifSlideUp {
@@ -763,15 +778,36 @@
   }
 
   /* Clase para usar directamente */
-    .fade-in-delayed {
+    .fade-in-delayed-up {
         opacity: 0;
         transform: translateY(20px);
         animation: fadeInUp 1s ease forwards;
-        animation-delay: 4s; /* <- se espera 2 segundos antes de animar */
+        animation-delay: 4s; /* <- se espera 4 segundos antes de animar */
         background-color: rgba(255, 255, 255, 0);
         box-shadow: none;
         backdrop-filter: none;
 
+    }
+
+    .fade-in-delayed {
+      opacity: 0;
+      transform: scale(0.8); /* empieza más pequeño, como al fondo */
+      animation: fadeInBack 1s ease forwards;
+      animation-delay: 4s; /* espera 4 segundos antes de animar */
+      background-color: rgba(255, 255, 255, 0);
+      box-shadow: none;
+      backdrop-filter: none;
+    }
+
+    @keyframes fadeInBack {
+      0% {
+        opacity: 0;
+        transform: scale(0.8); /* más pequeño */
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1); /* tamaño normal, ya en frente */
+      }
     }
 
     /* Aplica efecto blur al contenido detrás del modal */
@@ -1663,4 +1699,22 @@
 }
 @keyframes spin { to { transform: translateY(-50%) rotate(360deg); } }
 
+/*-----------------------------------------------------------------------------*/
+.map-buttons{
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 8px;
+}
+.map-btn{
+  background:linear-gradient(90deg,#ec4899,#8b5cf6);
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: transform .15s ease;
+}
+.map-btn:hover{ transform: scale(1.05); }
 /*-----------------------------------------------------------------------------*/
