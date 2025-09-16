@@ -1815,27 +1815,46 @@
   .view-toggle{ display:none; }
 }
 
-/* Grilla base: 1 por fila */
+/* ====== Desktop / Tablet (layout normal) ====== */
 #listaRegalos{
-  display:grid; grid-template-columns: 3fr;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: 14px;
+  padding: 0 1rem;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
-/* Vista cuadrícula: 2 por fila */
-#listaRegalos.grid{
-  grid-template-columns: repeat(2, minmax(0,1fr));
+@media (max-width: 900px){
+  #listaRegalos{ grid-template-columns: repeat(2, 1fr); }
 }
 
-/* Ajustes visuales en cuadrícula (más compacta) */
-#listaRegalos.grid .gift-item{ padding: 10px 12px; }
-#listaRegalos.grid .gift-title{ font-size: .95rem; line-height: 1.25; }
-#listaRegalos.grid .gift-price{ font-size: .9rem; }
+@media (max-width: 600px){
+  /* Móvil: por defecto 1 columna (vista lista) */
+  #listaRegalos{ grid-template-columns: 1fr; }
 
-/* Imagen más pequeña en cuadrícula */
-.gift-link img{ height: 190px; width: 100%; object-fit: cover; border-radius: 14px; }
-#listaRegalos.grid .gift-link img{ height: 120px; }
+  /* Toggle a 2 columnas cuando se añade .mobile-grid */
+  #listaRegalos.mobile-grid{ grid-template-columns: repeat(2, minmax(0,1fr)); }
 
-/* Botón compacto en cuadrícula */
-#listaRegalos.grid .gift-reserve-btn{ padding: 10px 12px; font-size: .95rem; }
+  /* Toggle a 1 columna explícita cuando se añade .mobile-list */
+  #listaRegalos.mobile-list{ grid-template-columns: 1fr; }
+
+  /* Ajustes SOLO cuando está en cuadrícula móvil */
+  #listaRegalos.mobile-grid .gift-item{ padding: 10px 12px; }
+  #listaRegalos.mobile-grid .gift-title{ font-size: .95rem; line-height: 1.25; }
+  #listaRegalos.mobile-grid .gift-price{ font-size: .9rem; }
+
+  /* Imagen base y variante compacta en cuadrícula móvil */
+  #listaRegalos .gift-link img{
+    height: 190px; width: 100%; object-fit: cover; border-radius: 14px;
+  }
+  #listaRegalos.mobile-grid .gift-link img{ height: 120px; }
+
+  /* Botón compacto solo en cuadrícula móvil */
+  #listaRegalos.mobile-grid .gift-reserve-btn{
+    padding: 10px 12px; font-size: .95rem;
+  }
+}
 
 /*-----------------------------------------------------------------------------*/

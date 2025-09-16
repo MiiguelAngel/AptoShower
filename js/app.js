@@ -20,7 +20,10 @@ function applyMobileView() {
   if (window.innerWidth <= 600) {
     grid.classList.add(mobileView === "grid" ? "mobile-grid" : "mobile-list");
   }
+
+  
 }
+
 function applyGiftView() {
   const cont = document.getElementById("listaRegalos");
   if (!cont) return;
