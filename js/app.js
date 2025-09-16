@@ -609,11 +609,11 @@ function goToGifts() {
 function toggleScreens(id) {
 
   if (id === "screen4" && card) {
-    card.style.transform = "rotateY(0deg)";
+    closeInvite();
   }
 
   if (id !== "screen4" && card) {
-    card.style.transform = "rotateY(0deg)";
+    closeInvite();
   }
   // 🚧 Si quieren ir a screen3 sin nombre, redirige a screen2 con toast
   if (id === "screen3" && !ensureSelectedName()) {
@@ -1035,6 +1035,9 @@ function filterNames() {
     }, duracion);
   }
   
+// Guardar el timeout de open para poder cancelarlo si cambiamos de screen
+let _openInviteTO = null;
+
 // --- Función para habilitar la apertura de la invitación ---
 // Abre la invitación solo cuando se llama explícitamente desde el onclick del botón
 // Mantén esta función en el scope global:
@@ -1051,18 +1054,35 @@ window.openInvite = function openInvite() {
   if (btn) btn.setAttribute('aria-disabled', 'true');
 
   // Delay de 2 segundos antes de abrir (tu pedido)
-  setTimeout(() => {
+  _openInviteTO = setTimeout(() => {
     card.classList.add('open');
-
-    const inner = card.querySelector('.inv-inner');
-    if (inner) inner.setAttribute('aria-hidden', 'false');
-
-    if (btn) {
-      btn.dataset.lock = '0';
-      btn.removeAttribute('aria-disabled');
-    }
+    card.querySelector('.inv-inner')?.setAttribute('aria-hidden','false');
+    if (btn) { btn.dataset.lock = '0'; btn.removeAttribute('aria-disabled'); }
+    _openInviteTO = null;
     console.log('✨ Invitación abierta');
   }, 1000);
+};
+
+window.closeInvite = function closeInvite() {
+  const card = document.querySelector('.inv-card');
+  if (!card) return;
+
+  // Si había un open pendiente, cancelarlo
+  if (_openInviteTO) {
+    clearTimeout(_openInviteTO);
+    _openInviteTO = null;
+  }
+
+  // Quitar estado "open" y restaurar accesibilidad/transform
+  card.classList.remove('open');
+  card.querySelector('.inv-inner')?.setAttribute('aria-hidden','true');
+  const cover = card.querySelector('.inv-cover');
+  if (cover) {
+    // volver a la posición de portada (tu CSS ya tiene transition)
+    cover.style.transform = 'rotateY(0deg)';
+    cover.style.opacity = ''; // por si quedó en 0 durante la transición
+    cover.style.pointerEvents = ''; 
+  }
 };
 
   
