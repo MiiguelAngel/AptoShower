@@ -607,6 +607,14 @@ function goToGifts() {
   }
 
 function toggleScreens(id) {
+
+  if (id === "screen4" && card) {
+    card.style.transform = "rotateY(0deg)";
+  }
+
+  if (id !== "screen4" && card) {
+    card.style.transform = "rotateY(0deg)";
+  }
   // 🚧 Si quieren ir a screen3 sin nombre, redirige a screen2 con toast
   if (id === "screen3" && !ensureSelectedName()) {
     mostrarToast("¡Queremos conocerte primero! ✨ Escribe tu nombre y confirma asistencia.", "warning");
