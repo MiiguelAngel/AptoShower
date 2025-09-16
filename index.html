@@ -181,6 +181,13 @@
             <option value="Decoración">Decoración</option>
           </select>
         </div>
+
+        <!-- Toggle de vista (solo móvil) -->
+        <div id="viewToggle" class="view-toggle" aria-label="Cambiar vista">
+          <button id="btnList" class="vt-btn is-active" data-view="list" title="Vista lista">≡</button>
+          <button id="btnGrid" class="vt-btn" data-view="grid" title="Vista cuadrícula">▦</button>
+        </div>
+
       
         <!-- Grilla de regalos -->
         <div id="listaRegalos" class="regalos-grid"></div>
@@ -240,7 +247,7 @@
   <div id="giftInfoModal" class="modal-overlay hidden">
     <div class="modal-content-welcome">
       <button class="modal-close" onclick="cerrarGiftInfo()">✕</button>
-      <h2 class="modal-title">¡Bienvenid@ a nuestra lista de regalos! 🎉</h2>
+      <h2 class="modal-title">¡Bienvenid@ a nuestra lista de regalos! 🎁🎀</h2>
       
       <p class="modal-text">
         Cada detalle aquí fue pensado con cariño para evitar duplicados y hacer más fácil tu elección. 
@@ -255,7 +262,7 @@
       
       <p class="modal-text">
         🙏 Gracias por acompañarnos en este momento tan especial. 
-        Tu presencia, tu energía y tu detalle hacen de este ApartaShower algo único e inolvidable. 💫
+        <strong>Tu presencia y tu energía</strong> hacen de este <strong>House Warming</strong> algo único e inolvidable. 💫
       </p>
     </div>
   </div>

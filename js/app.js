@@ -6,6 +6,24 @@ let isOnScreen3 = false;      // estado actual de la vista
 let giftsAbort = null;        // AbortController para cancelar fetch en curso
 let pendingReservations = new Set(); // IDs de regalos que están siendo procesados (reservar/liberar)
 let isNameLocked = false;
+let giftView = localStorage.getItem("giftView") || "list"; // Estado de vista (persistente)
+
+function applyGiftView() {
+  const cont = document.getElementById("listaRegalos");
+  if (!cont) return;
+  cont.classList.toggle("grid", giftView === "grid");
+  document.getElementById("btnList")?.classList.toggle("is-active", giftView === "list");
+  document.getElementById("btnGrid")?.classList.toggle("is-active", giftView === "grid");
+}
+
+// Toggle por clicks
+document.getElementById("viewToggle")?.addEventListener("click", (e) => {
+  const btn = e.target.closest(".vt-btn");
+  if (!btn) return;
+  giftView = btn.dataset.view;                 // "list" | "grid"
+  localStorage.setItem("giftView", giftView);
+  applyGiftView();
+});
 
 function lockGuestName(lock = true) {
   const input = document.getElementById("nombre");
@@ -438,6 +456,7 @@ async function fetchGuestList() {
       contenedor.appendChild(card);
 
       updateContinueBar();
+      applyGiftView();
     });
   }
 
@@ -590,6 +609,7 @@ function toggleScreens(id) {
   if (id === "screen3") {
       isOnScreen3 = true;
       updateContinueBar();
+      applyGiftView();
 
       // Abre el modal de info (si lo estás usando)
       if (typeof abrirGiftInfo === "function") abrirGiftInfo();
