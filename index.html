@@ -48,6 +48,9 @@
   <section id="screen" class="screen visible welcome-section">
         <h1 id="mainTitle1" class="main-title">Bienvenidos a mi</h1>
         <h1 id="mainTitle2" class="main-title hidden">ApartaShower!</h1>
+        <div id="date_event" class="event-date-badge hidden">
+          📅 29 de noviembre de 2025
+        </div>
         <p id="subTitle" class="hidden sub-title" style="animation-delay: 1s;">¡Celebremos juntos este momento especial!</p>
         
         <div id="additionalContent" class="hidden">
@@ -60,9 +63,12 @@
               </p>
               <div class="address-links">
                 <div class="map-buttons">
-                  <a class="map-btn" href="https://www.google.com/maps/dir//Cedro+Novaterra+Conjunto+residencial,+Carrera+3A+%23+17+sur+99,+Mosquera-La+Mesa+%23Km+1,+Mosquera,+Cundinamarca/@4.702346,-74.2350266,15z/data=!4m9!4m8!1m0!1m5!1m1!1s0x8e3f77a8c2af9a4f:0xd3fe8c991ced0738!2m2!1d-74.2386129!2d4.6972513!3e0?entry=ttu&g_ep=EgoyMDI1MDkxMC4wIKXMDSoASAFQAw%3D%3D" target="_blank">Google Maps</a>
-                  <a class="map-btn" href="https://maps.apple.com/directions?destination=4.6972513%2C+-74.2386129&mode=driving" target="_blank">Apple Maps</a>
-                  <a class="map-btn" href="https://waze.com/ul?ll=4.6972513%2C-74.2386129&navigate=yes" target="_blank">Waze</a>
+                  <a class="map-btn map-btn--gmaps" href="https://www.google.com/maps/dir//Cedro+Novaterra+Conjunto+residencial,+Carrera+3A+%23+17+sur+99,+Mosquera-La+Mesa+%23Km+1,+Mosquera,+Cundinamarca/@4.702346,-74.2350266,15z/data=!4m9!4m8!1m0!1m5!1m1!1s0x8e3f77a8c2af9a4f:0xd3fe8c991ced0738!2m2!1d-74.2386129!2d4.6972513!3e0?entry=ttu&g_ep=EgoyMDI1MDkxMC4wIKXMDSoASAFQAw%3D%3D" target="_blank">
+                    <img src="assets/images/google_maps.png" alt="Google Maps" class="map-icon"> Google Maps</a>
+                  <a class="map-btn map-btn--apple" href="https://maps.apple.com/directions?destination=4.6972513%2C+-74.2386129&mode=driving" target="_blank">
+                    <img src="assets/images/apple_maps.png" alt="Apple Maps" class="map-icon"> Apple Maps</a>
+                  <a class="map-btn map-btn--waze" href="https://waze.com/ul?ll=4.6972513%2C-74.2386129&navigate=yes" target="_blank">
+                    <img src="assets/images/waze.png" alt="Waze" class="map-icon"> Waze</a>
                 </div>
                 <p class="address-text">
                   
@@ -259,32 +265,6 @@
   <script src="https://cdn.jsdelivr.net/npm/particles.js"></script>
   <div id="particles-js"></div>
 
-
-<script>
-    window.addEventListener('DOMContentLoaded', () => {
-      const title = document.getElementById('mainTitle1');
-      const subTitle = document.getElementById('subTitle');
-      const additional = document.getElementById('additionalContent');
-  
-      // Aparece el título
-      setTimeout(() => {
-        title.classList.add('shrink');
-      }, 1400);
-  
-      // Aparece el subtítulo
-      setTimeout(() => {
-        subTitle.classList.remove('hidden');
-        subTitle.classList.add('visible-content');
-      }, 2500);
-  
-      // Aparece el resto del contenido
-      setTimeout(() => {
-        additional.classList.remove('hidden');
-        additional.classList.add('visible-content');
-      }, 3100);
-    });
-
-  </script>
   
   <script>
     const blobs = document.querySelectorAll('.blob');
@@ -317,6 +297,9 @@
     window.addEventListener('DOMContentLoaded', () => {
       const title1 = document.getElementById('mainTitle1');
       const title2 = document.getElementById('mainTitle2');
+      const date_event = document.getElementById('date_event');
+      const additional = document.getElementById('additionalContent');
+      const subTitle = document.getElementById('subTitle');
   
       // Paso 1: mostrar título 1
       setTimeout(() => {
@@ -333,11 +316,23 @@
         title2.classList.remove('hidden');
         title2.classList.add('visible');
       }, 2000);
+
+      // Aparece el subtítulo
+      setTimeout(() => {
+        date_event.classList.remove('hidden');
+        date_event.classList.add('visible-content');
+      }, 2500);
   
       // Paso 4: agrandar título 2
       setTimeout(() => {
         title2.classList.add('grow');
       }, 3600);
+  
+      // Aparece el resto del contenido
+      setTimeout(() => {
+        additional.classList.remove('hidden');
+        additional.classList.add('visible-content');
+      }, 3300);
     });
   </script>
   

@@ -293,7 +293,7 @@
     align-items: center;
     transition: opacity 2s ease;
     gap: 1rem; /* Espaciado entre elementos */
-    margin-top: 1.5rem;
+    margin-top: 1rem;
   }
   
   #additionalContent.visible-content {
@@ -323,13 +323,14 @@
   }
 
   .address-text {
-    color: #bbbbbb;
+    color: #E5E7EB;
     font-size: 1rem;
     text-align: center;
     margin-bottom: 0rem;
   }
 
 .gradient-border-btn {
+  background: white;
   position: relative;
   display: flex;
   place-content: center;
@@ -361,7 +362,7 @@
   right: -20px;
   z-index: -2; /* Envía el pseudo-elemento detrás del botón */
   border-radius: 20px;
-  background: linear-gradient(135deg, #000000, #0B3D91, #1B2A49, #050A30);
+  background: white;
   /*animation: rotBGimg 3s linear infinite;
   transition: all 0.2s linear;*/
 }
@@ -384,7 +385,6 @@
   right: 0;
   margin: 3px;
   border-radius: 999px;
-  background-color: white; /* El centro blanco del botón */
   z-index: -1; /* También detrás del texto, pero delante del ::before */
   transition: background-color 0.3s ease; /* Para posibles efectos hover */
 }
@@ -1701,20 +1701,94 @@
 
 /*-----------------------------------------------------------------------------*/
 .map-buttons{
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-  margin-top: 8px;
+  display:flex; gap:14px; justify-content:center; flex-wrap:wrap;
 }
+
+/* Base pill */
 .map-btn{
-  background:linear-gradient(90deg,#ec4899,#8b5cf6);
-  color: #fff;
-  padding: 8px 14px;
-  border-radius: 999px;
-  font-size: 0.9rem;
-  font-weight: 500;
-  text-decoration: none;
-  transition: transform .15s ease;
+  display:inline-flex; align-items:center; gap:.5rem;
+  padding:10px 16px; border-radius:999px; font-weight:600;
+  text-decoration:none; line-height:1; transition:transform .12s ease, box-shadow .2s ease, filter .2s;
+  box-shadow: 0 6px 16px rgba(0,0,0,.18);
 }
-.map-btn:hover{ transform: scale(1.05); }
+.map-btn:focus{ outline:none; box-shadow:0 0 0 3px rgba(255,255,255,.6), 0 6px 16px rgba(0,0,0,.18); }
+.map-btn:hover{ transform: translateY(-1px); filter: brightness(1.05); }
+.map-btn:active{ transform: translateY(0); }
+
+/* Google Maps — rojo/amarillo/verde/azul */
+.map-btn--gmaps{
+  color:#fff;
+  /*background: linear-gradient(135deg,#1a73e8 0%, #0f9d58 55%, #fbbc05 80%, #ea4335 100%);*/
+  background: #121A2A;
+  border:1px solid #e5e7eb;
+}
+
+.map-btn--gmaps:hover{
+  background: linear-gradient(135deg,#1a73e8 0%, #0f9d58 55%, #fbbc05 80%, #ea4335 100%);
+  transform: translateY(-1px); filter: brightness(1.05);
+}
+
+/* Apple Maps — blanco/negro con leve degradado gris (look Apple) */
+.map-btn--apple{
+  color:white;
+  background: #121A2A;
+  border:1px solid #e5e7eb;
+}
+
+.map-btn--apple:hover{
+  background: linear-gradient(180deg, #ffffff 0%, #f3f4f6 100%);
+  transform: translateY(-1px); filter: brightness(1.05);
+  color:#111;
+}
+
+/* Waze — azul celeste oficial */
+.map-btn--waze{
+  color:white;                 /* texto oscuro para buen contraste */
+  background:#121A2A;            /* base */
+  border:1px solid #e5e7eb;
+}
+
+.map-btn--waze:hover{
+  background: linear-gradient(180deg,#33ccff 0%, #2abaf0 100%);
+  transform: translateY(-1px); filter: brightness(1.05);
+  color: #0b2b40;
+}
+
+/* Tema oscuro: asegura contraste del texto dentro de la UI oscura */
+@media (prefers-color-scheme: dark){
+  .map-btn--apple{ color:#111; border-color:#e5e7eb; }
+}
+
+.map-icon{
+  width:20px;
+  height:20px;
+  object-fit:contain;
+  border-radius:4px; /* opcional: redondea un poco si son cuadradas */
+}
+/*-----------------------------------------------------------------------------*/
+.event-date-badge {
+  display: inline-block;
+  
+  padding: 0.5rem 1.2rem;
+  border-radius: 999px; /* pill shape */
+  /*background: linear-gradient(90deg, #ec4899, #8b5cf6);*/
+  background: darkslateblue;
+  color: #fff;
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  animation: fadeInUp 2s ease forwards;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 /*-----------------------------------------------------------------------------*/
