@@ -21,7 +21,7 @@ function applyMobileView() {
     grid.classList.add(mobileView === "grid" ? "mobile-grid" : "mobile-list");
   }
 
-  
+  updateToggleUi();
 }
 
 function applyGiftView() {
@@ -36,10 +36,18 @@ function applyGiftView() {
 document.getElementById("viewToggle")?.addEventListener("click", (e) => {
   const btn = e.target.closest(".vt-btn");
   if (!btn) return;
-  mobileView = btn.dataset.view; // "list" o "grid"
+  mobileView = btn.dataset.view;               // "list" | "grid"
   localStorage.setItem("mobileView", mobileView);
   applyMobileView();
 });
+
+function updateToggleUi() {
+  const list = document.getElementById("btnList");
+  const grid = document.getElementById("btnGrid");
+  if (!list || !grid) return;
+  list.classList.toggle("is-active", mobileView === "list");
+  grid.classList.toggle("is-active", mobileView === "grid");
+}
 
 applyMobileView();
 window.addEventListener("resize", applyMobileView);
@@ -62,7 +70,7 @@ function lockGuestName(lock = true) {
 async function syncNow() {
   if (!isOnScreen3) return;
   await fetchGifts(true);
-  if (isOnScreen3) mostrarRegalos(regalos);
+  if (isOnScreen3) mostrarRegalos(regalos) ; applyMobileView();
 }
 
 function pauseSync(ms = 1200) {
@@ -587,6 +595,7 @@ function goToGifts() {
   }
   toggleScreens("screen3");
   mostrarRegalos(regalos);
+  applyMobileView();
 }
 
   function ensureSelectedName() {
@@ -635,9 +644,10 @@ function toggleScreens(id) {
 
       // Carga o repinta regalos
       if (regalos.length === 0) {
-        fetchGifts().then(() => mostrarRegalos(regalos));
+        fetchGifts().then(() => mostrarRegalos(regalos) && applyMobileView());
       } else {
         mostrarRegalos(regalos);
+        applyMobileView();
       }
 
       // Inicia/renueva polling
@@ -770,10 +780,12 @@ function filterNames() {
           item.estado = "Reservado";
           confetti({ particleCount: 200, spread: 70, origin: { y: 0.6 } });
           mostrarRegalos(regalos);
+          applyMobileView();
         } else {
           lista = lista.filter(n => !eq(n, yo));
           item.estado = lista.length ? "Reservado" : "Disponible";
           mostrarRegalos(regalos);
+          applyMobileView();
         }
         item.reservado_por = lista.join(", ");
 
@@ -828,10 +840,12 @@ function filterNames() {
         item.reservado_por = yo;
         confetti({ particleCount: 200, spread: 70, origin: { y: 0.6 } });
         mostrarRegalos(regalos);
+        applyMobileView();
       } else {
         item.estado = "Disponible";
         item.reservado_por = "";
         mostrarRegalos(regalos);
+        applyMobileView();
       }
 
       
