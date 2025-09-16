@@ -1478,7 +1478,7 @@
   box-shadow: inset 0 1px 0 rgba(255,255,255,.12);
   overflow:hidden;
   z-index: 3;  /* 🚩 se apila sobre el interior */
-  background-image: url("assets\images\inv_apt_photo.jpeg");
+  background-image: url("assets/images/inv_apt_photo.jpeg");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
