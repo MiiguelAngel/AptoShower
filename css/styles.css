@@ -1119,8 +1119,8 @@
     flex-wrap: wrap;
     gap: 1rem;
     justify-content: center;
-    margin-bottom: 1.2rem;
-    padding-bottom: 1rem;
+    margin-bottom: 0rem;
+    padding-bottom: 0rem;
     border-bottom: 1px solid #eee;
   }
   
@@ -1817,7 +1817,7 @@
 
 /* Grilla base: 1 por fila */
 #listaRegalos{
-  display:grid; grid-template-columns: 1fr;
+  display:grid; grid-template-columns: 3fr;
   gap: 14px;
 }
 

@@ -7,7 +7,20 @@ let giftsAbort = null;        // AbortController para cancelar fetch en curso
 let pendingReservations = new Set(); // IDs de regalos que están siendo procesados (reservar/liberar)
 let isNameLocked = false;
 let giftView = localStorage.getItem("giftView") || "list"; // Estado de vista (persistente)
+let mobileView = localStorage.getItem("mobileView") || "list";
 
+function applyMobileView() {
+  const grid = document.querySelector(".regalos-grid");
+  if (!grid) return;
+
+  // limpia clases
+  grid.classList.remove("mobile-grid", "mobile-list");
+
+  // solo aplicar en pantallas ≤600px
+  if (window.innerWidth <= 600) {
+    grid.classList.add(mobileView === "grid" ? "mobile-grid" : "mobile-list");
+  }
+}
 function applyGiftView() {
   const cont = document.getElementById("listaRegalos");
   if (!cont) return;
@@ -20,10 +33,13 @@ function applyGiftView() {
 document.getElementById("viewToggle")?.addEventListener("click", (e) => {
   const btn = e.target.closest(".vt-btn");
   if (!btn) return;
-  giftView = btn.dataset.view;                 // "list" | "grid"
-  localStorage.setItem("giftView", giftView);
-  applyGiftView();
+  mobileView = btn.dataset.view; // "list" o "grid"
+  localStorage.setItem("mobileView", mobileView);
+  applyMobileView();
 });
+
+applyMobileView();
+window.addEventListener("resize", applyMobileView);
 
 function lockGuestName(lock = true) {
   const input = document.getElementById("nombre");
