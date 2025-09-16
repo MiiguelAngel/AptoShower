@@ -608,11 +608,11 @@ function goToGifts() {
 
 function toggleScreens(id) {
 
-  if (id === "screen4" && card) {
+  if (id === "screen4") {
     closeInvite();
   }
 
-  if (id !== "screen4" && card) {
+  if (id !== "screen4") {
     closeInvite();
   }
   // 🚧 Si quieren ir a screen3 sin nombre, redirige a screen2 con toast
