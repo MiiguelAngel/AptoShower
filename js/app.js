@@ -5,6 +5,22 @@ let syncResumeTO = null;
 let isOnScreen3 = false;      // estado actual de la vista
 let giftsAbort = null;        // AbortController para cancelar fetch en curso
 let pendingReservations = new Set(); // IDs de regalos que están siendo procesados (reservar/liberar)
+let isNameLocked = false;
+
+function lockGuestName(lock = true) {
+  const input = document.getElementById("nombre");
+  const suggestions = document.getElementById("suggestions"); // usa el id de tu lista
+
+  if (!input) return;
+  isNameLocked = lock;
+
+  // desactivar edición (readonly evita cambios pero mantiene estilos)
+  input.readOnly = lock;
+  input.classList.toggle("locked", lock);
+
+  // desactivar clics en la lista de sugerencias si existe
+  if (suggestions) suggestions.style.pointerEvents = lock ? "none" : "auto";
+}
 
 async function syncNow() {
   if (!isOnScreen3) return;
@@ -611,6 +627,7 @@ function corregirNombre() {
   document.getElementById("nombre").value = "";
   document.getElementById("confirmacion").classList.add("hidden");
   document.getElementById("nombre").focus();
+  lockGuestName(false);
 }
 
 function filterNames() {
@@ -720,7 +737,7 @@ function filterNames() {
           mostrarRegalos(regalos);
         }
         item.reservado_por = lista.join(", ");
-          
+
       } catch (err) {
         console.error("❌ Error (varios):", err);
         mostrarToast("No se pudo actualizar el regalo.", "error");
@@ -791,6 +808,7 @@ function filterNames() {
 
   
   async function confirmarAsistencia(asistira) {
+    lockGuestName(true);
     // Oculta las opciones de asistencia con transición
     const confirmBox = document.getElementById("confirmacion");
     const mensaje = document.getElementById("mensajeRespuesta");
