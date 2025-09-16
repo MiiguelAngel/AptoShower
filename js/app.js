@@ -668,7 +668,7 @@ function filterNames() {
       nombreSeleccionado = nombre;
       suggestionsList.innerHTML = "";
       mostrarConfirmacion(nombre);
-    
+      lockGuestName(true);
     };
     suggestionsList.appendChild(li);
   });
