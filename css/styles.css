@@ -1505,7 +1505,7 @@
 
 .cover-title{
   position:absolute; inset:auto 0 0 0; 
-  padding:0px 0px 26px;
+  padding:0rem 0px 1rem;
   text-align:center;
   background: #ffffff40;
   display: grid;
@@ -1516,7 +1516,11 @@
   color:var(--silver-200); opacity:.85;
 }
 .inv-cover h2{
-  margin:.25rem 0 .35rem; font-size:1.8rem; font-weight:800; color:#fff;
+  margin:.25rem 0 .35rem; 
+  font-size:1.8rem; 
+  font-weight:800; color:#fff;
+  margin-top: 1rem;
+  margin-bottom: 4rem;
 }
 .inv-cover p{ opacity:1; color:black; }
 
@@ -1573,6 +1577,57 @@
   transition: transform .9s cubic-bezier(.22,.65,.15,1),
               opacity .5s ease .5s;
 }
+
+/* Capa base: puntitos suaves */
+.inv-inner::before{
+  content:"";
+  position:absolute; inset:0; pointer-events:none; border-radius:22px;
+  background:
+    radial-gradient(1.2px 1.2px at 18% 32%, rgba(255,255,255,.45) 60%, transparent 61%),
+    radial-gradient(1.2px 1.2px at 72% 64%, rgba(255,255,255,.35) 60%, transparent 61%),
+    radial-gradient(1.2px 1.2px at 42% 82%, rgba(255,255,255,.28) 60%, transparent 61%),
+    radial-gradient(1.2px 1.2px at 86% 22%, rgba(255,255,255,.33) 60%, transparent 61%);
+  opacity:.35;
+  z-index: 0;
+}
+
+/* Dos estrellas fugaces muy sutiles */
+.inv-inner::after{
+  content:"";
+  position:absolute; inset:0; pointer-events:none; border-radius:22px;
+  background:
+    linear-gradient(90deg, rgba(255,255,255,.0) 0%, rgba(255,255,255,.65) 45%, rgba(255,255,255,.0) 100%) 0 0 / 80px 2px no-repeat,
+    linear-gradient(90deg, rgba(255,255,255,.0) 0%, rgba(255,255,255,.5) 45%, rgba(255,255,255,.0) 100%) 0 0 / 60px 2px no-repeat;
+  transform: rotate(-20deg);
+  animation: shooting1 7.5s linear 1.4s infinite, shooting2 9s linear 3.1s infinite;
+  opacity:.25;
+  z-index: 0;
+}
+
+@keyframes shooting1{
+  0%   { background-position: -120px 18%, -200px 70%; }
+  100% { background-position: 120% 18%, 120% 70%; }
+}
+@keyframes shooting2{
+  0%   { background-position: -160px 42%, -260px 86%; }
+  100% { background-position: 120% 42%, 120% 86%; }
+}
+
+@media (prefers-reduced-motion: reduce){
+  .inv-inner::after{ animation: none; }
+}
+
+.invite-guest{
+  font-weight: 800;
+  font-size: 1rem;
+  letter-spacing: .3px;
+  color:#A9C8FF;
+  text-transform: uppercase;
+  opacity:.95;
+  margin-bottom: 6px;
+}
+
+
 .inv-card.open .inv-inner{
   opacity:1; transform: translateY(0);
   /* opcional: borde resplandor breve al abrir */
@@ -1592,6 +1647,27 @@
   .inv-card.open .inv-cover{ transform:none; display:none; }
   .inv-card.open .inv-inner{ opacity:1; transform:none; }
 }
+
+/* Glow sutil al aparecer y luego latido muy suave */
+.inv-card.open .inv-inner{
+  animation: innerGlowIn .9s ease .15s both, innerGlowIdle 6s ease-in-out 1.2s infinite;
+}
+
+@keyframes innerGlowIn{
+  0%   { box-shadow: 0 0 0 rgba(37,99,235,0); }
+  35%  { box-shadow: 0 0 32px rgba(93, 157, 255, .28); }
+  100% { box-shadow: inset 0 1px 0 rgba(255,255,255,.06), 0 0 0 rgba(37,99,235,0); }
+}
+
+@keyframes innerGlowIdle{
+  0%,100% { box-shadow: inset 0 1px 0 rgba(255,255,255,.06), 0 0 0 rgba(93,157,255,0); }
+  50%     { box-shadow: inset 0 1px 0 rgba(255,255,255,.06), 0 0 22px rgba(93,157,255,.15); }
+}
+
+@media (prefers-reduced-motion: reduce){
+  .inv-card.open .inv-inner{ animation: none; }
+}
+
 
   /*-----------------------------------------------------------------------------*/
   /* Fondo oscurecido */
@@ -1876,7 +1952,8 @@
   transform: translateX(-50%);
   display:inline-flex; align-items:center; gap:.5rem;
   padding:8px 14px;
-  background:#fff; color:#111;
+  background: linear-gradient(135deg, #0E1A2B 0%, #06B6D4 100%); 
+  color:#ffffff;
   border-radius:999px;
   font-weight:600; font-size:.98rem; letter-spacing:.2px;
   box-shadow:0 8px 22px rgba(0,0,0,.18);

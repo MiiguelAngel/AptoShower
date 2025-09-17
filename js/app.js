@@ -606,10 +606,25 @@ function goToGifts() {
     return !!nombreSeleccionado;
   }
 
+function setInviteGuestName() {
+  const el = document.getElementById("inviteGuestName");
+  if (!el) return;
+  const n = (nombreSeleccionado || "").trim();
+  el.textContent = n ? n : "";
+  el.style.display = n ? "block" : "none";
+}
+
 function toggleScreens(id) {
+
+  // 🚧 Si quieren ir a screen3 sin nombre, redirige a screen2 con toast
+  if (id === "screen4" && !ensureSelectedName()) {
+    mostrarToast("¡Queremos conocerte primero! ✨ Escribe tu nombre y confirma asistencia.", "warning");
+    id = "screen2"; // forzamos screen2
+  }
 
   if (id === "screen4") {
     closeInvite();
+    setInviteGuestName();
   }
 
   if (id !== "screen4") {
