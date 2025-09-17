@@ -1694,9 +1694,15 @@
   border-radius: 20px;
   box-shadow: 0 15px 40px rgba(0,0,0,.2);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  height: 33rem;
+  height: 27rem;
   align-content: center;
 }
+
+  @media (max-width: 600px) {
+    .modal-content-welcome {
+      height: 33rem;
+    }
+  }
 
 /* Botón de cerrar estilo Apple */
 .modal-close {
