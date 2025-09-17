@@ -734,7 +734,7 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%) scale(1.4);
-    max-width: 420px;
+    max-width: 450px;
     z-index: 2;
     animation: gifFadeBack 4s ease forwards;
   }
