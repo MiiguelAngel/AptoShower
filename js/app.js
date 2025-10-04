@@ -893,9 +893,11 @@ function filterNames() {
     confirmBox.classList.add("hidden");
     // Oculta nombre y elementos relacionados
     document.getElementById("mensajeGuia").style.display = "none";
+    document.getElementById("mensajeGuia2").style.display = "none";
     document.getElementById("nombre").style.display = "none";
     document.getElementById("suggestions").style.display = "none";
     document.querySelector(".input-wrapper").style.display = "none";
+    document.getElementById("btnCorregirNombre").classList.remove("hidden");
 
     // ✅ Guardar en Google Sheets
     try {
