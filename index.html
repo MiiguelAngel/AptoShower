@@ -168,22 +168,27 @@
       
         <!-- Filtros -->
         <!-- Filtros (chips) -->
-        <div class="filters" id="giftFilters">
+        <!-- Filtros minimal -->
+        <div class="filters filters--minimal" id="giftFilters">
           <div class="filter-group" data-group="price">
-            <span class="filter-label">Precio:</span>
-            <button class="filter-chip active" data-filter="price" data-value="all" aria-pressed="true">Ver todo</button>
-            <button class="filter-chip" data-filter="price" data-value="lt50" aria-pressed="false">$ -50k</button>
-            <button class="filter-chip" data-filter="price" data-value="50-100" aria-pressed="false">$ 50k–100k</button>
-            <button class="filter-chip" data-filter="price" data-value="gt100" aria-pressed="false">$ +100k</button>
+            <span class="filter-label">Precio</span>
+            <div class="filter-row">
+              <button class="filter-chip active" data-filter="price" data-value="all" aria-pressed="true">Ver todo</button>
+              <button class="filter-chip" data-filter="price" data-value="lt50" aria-pressed="false">$ -50k</button>
+              <button class="filter-chip" data-filter="price" data-value="50-100" aria-pressed="false">$ 50k–100k</button>
+              <button class="filter-chip" data-filter="price" data-value="gt100" aria-pressed="false">$ +100k</button>
+            </div>
           </div>
 
           <div class="filter-group" data-group="place">
-            <span class="filter-label">Lugar:</span>
-            <button class="filter-chip active" data-filter="place" data-value="all" aria-pressed="true">Ver todo</button>
-            <button class="filter-chip" data-filter="place" data-value="Sala" aria-pressed="false">Sala</button>
-            <button class="filter-chip" data-filter="place" data-value="Cocina" aria-pressed="false">Cocina</button>
-            <button class="filter-chip" data-filter="place" data-value="Habitación" aria-pressed="false">Habitación</button>
-            <button class="filter-chip" data-filter="place" data-value="Decoración" aria-pressed="false">Decoración</button>
+            <span class="filter-label">Lugar</span>
+            <div class="filter-row">
+              <button class="filter-chip active" data-filter="place" data-value="all" aria-pressed="true">Ver todo</button>
+              <button class="filter-chip" data-filter="place" data-value="Sala" aria-pressed="false">Sala</button>
+              <button class="filter-chip" data-filter="place" data-value="Cocina" aria-pressed="false">Cocina</button>
+              <button class="filter-chip" data-filter="place" data-value="Habitación" aria-pressed="false">Habitación</button>
+              <button class="filter-chip" data-filter="place" data-value="Decoración" aria-pressed="false">Decoración</button>
+            </div>
           </div>
         </div>
 

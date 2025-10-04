@@ -10,6 +10,15 @@
     --cyan-400:#06B6D4;
     --silver-200:#E6EEF7;
     --text:#F7F9FC;
+    --chip-bg: #f7f7f8;
+    --chip-border: #e6e6ea;
+    --chip-text: #111;
+    --chip-hover-bg: #efeff1;
+    --chip-active-bg: #111;   /* cambia a #0f172a si prefieres navy */
+    --chip-active-text: #fff;
+    --chip-active-border: #111;
+    --label: #6b7280;
+    --divider: #ededf0;
 }
   
   * {
@@ -2008,53 +2017,65 @@
 /*-----------------------------------------------------------------------------*/
 
 /* ===================== Filter chips ===================== */
-.filters {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  margin: 0 0 16px 0;
-  padding-bottom: 10px;
-  border-bottom: 1px solid #eee;
+.filters.filters--minimal{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  margin:0 0 12px 0;
+  padding:8px 0 12px;
+  border-bottom:1px solid var(--divider);
 }
 
-.filter-group {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  align-items: center;
+.filters .filter-group{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
 }
 
-.filter-label {
-  font-weight: 600;
-  margin-right: 8px;
-  color: #555;
-  font-size: 0.95rem;
+.filters .filter-label{
+  font-size:.9rem;
+  font-weight:600;
+  color:var(--label);
+  letter-spacing:.01em;
 }
 
-.filter-chip {
-  border: none;
-  padding: 8px 16px;
-  border-radius: 20px;
-  background: #f5f5f5;
-  color: #333;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 6px rgba(0,0,0,.06);
+.filters .filter-row{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
 }
 
-.filter-chip:hover { background: #e5e5e5; }
-.filter-chip:active { transform: translateY(1px); }
-
-.filter-chip.active {
-  background: linear-gradient(135deg, #6366f1, #9333ea);
-  color: #fff;
-  font-weight: 600;
-  box-shadow: 0 4px 10px rgba(147, 51, 234, 0.3);
+.filter-chip{
+  appearance:none;
+  border:1px solid var(--chip-border);
+  background:var(--chip-bg);
+  color:var(--chip-text);
+  padding:6px 12px;
+  border-radius:999px;
+  font-size:.9rem;
+  line-height:1;
+  cursor:pointer;
+  transition:background .15s ease, border-color .15s ease, color .15s ease, transform .02s ease;
 }
 
-/* (Opcional) comprime un poco la grilla cuando hay filtros visibles */
-#screen3 .regalos-grid { margin-top: 4px; }
+.filter-chip:hover{ background:var(--chip-hover-bg); }
+.filter-chip:active{ transform:translateY(1px); }
+.filter-chip:focus-visible{
+  outline:2px solid var(--chip-active-bg);
+  outline-offset:2px;
+}
+
+.filter-chip.active{
+  background:var(--chip-active-bg);
+  color:var(--chip-active-text);
+  border-color:var(--chip-active-border);
+}
+
+/* Compacto en pantallas pequeñas */
+@media (max-width: 420px){
+  .filters.filters--minimal{ gap:10px; }
+  .filter-chip{ padding:6px 10px; font-size:.88rem; }
+}
 
 /*-----------------------------------------------------------------------------*/
 
