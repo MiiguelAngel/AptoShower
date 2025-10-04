@@ -532,14 +532,22 @@
   }
     
   .asistencia-titulo {
-    font-size: 2rem;
-    font-weight: 600;
+    font-size: 1.2rem;
+    font-weight: 700;
     background: linear-gradient(90deg, #fff, #d6d6d6);
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: black;
     text-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
     margin-bottom: 1rem;
+
+  }
+
+  .asistencia-subtitulo {
+    font-size: 0.95rem;
+    font-weight: 400;
+    color: #ccc;
+    margin-bottom: 0.5rem;
   }
   
   
@@ -1700,7 +1708,7 @@
 
   @media (max-width: 600px) {
     .modal-content-welcome {
-      height: 33rem;
+      height: 37rem;
     }
   }
 
