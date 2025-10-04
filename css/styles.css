@@ -2020,7 +2020,7 @@
 .filters.filters--minimal{
   display:flex;
   flex-direction:column;
-  gap:12px;
+  gap:10px;
   margin:0 0 12px 0;
   padding:8px 0 12px;
   border-bottom:1px solid var(--divider);
@@ -2028,7 +2028,7 @@
 
 .filters .filter-group{
   display:flex;
-  flex-direction:column;
+  flex-direction:row;
   gap:6px;
 }
 
@@ -2043,6 +2043,8 @@
   display:flex;
   flex-wrap:wrap;
   gap:8px;
+  flex-direction: row;
+  height: 30px;
 }
 
 .filter-chip{
@@ -2074,7 +2076,8 @@
 /* Compacto en pantallas pequeñas */
 @media (max-width: 420px){
   .filters.filters--minimal{ gap:10px; }
-  .filter-chip{ padding:6px 10px; font-size:.88rem; }
+  .filter-chip{ padding:6px 10px; font-size:.58rem; }
+  .filters .filter-row{ gap:3px; }
 }
 
 /*-----------------------------------------------------------------------------*/
