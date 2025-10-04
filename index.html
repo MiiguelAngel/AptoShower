@@ -167,22 +167,26 @@
         <h2 class="gradient-title">Lista de Regalos</h2>
       
         <!-- Filtros -->
-        <div class="filtros-container">
-          <select id="filtroPrecio" onchange="filtrarRegalos()">
-            <option value="">Filtrar por precio</option>
-            <option value="-50">Menos de $50.000</option>
-            <option value="50-100">Entre $50.000 y $100.000</option>
-            <option value="100+">Más de $100.000</option>
-          </select>
-      
-          <select id="filtroLugar" onchange="filtrarRegalos()">
-            <option value="">Filtrar por lugar</option>
-            <option value="Sala">Sala</option>
-            <option value="Cocina">Cocina</option>
-            <option value="Habitación">Habitación</option>
-            <option value="Decoración">Decoración</option>
-          </select>
+        <!-- Filtros (chips) -->
+        <div class="filters" id="giftFilters">
+          <div class="filter-group" data-group="price">
+            <span class="filter-label">Precio:</span>
+            <button class="filter-chip active" data-filter="price" data-value="all" aria-pressed="true">Ver todo</button>
+            <button class="filter-chip" data-filter="price" data-value="lt50" aria-pressed="false">$ -50k</button>
+            <button class="filter-chip" data-filter="price" data-value="50-100" aria-pressed="false">$ 50k–100k</button>
+            <button class="filter-chip" data-filter="price" data-value="gt100" aria-pressed="false">$ +100k</button>
+          </div>
+
+          <div class="filter-group" data-group="place">
+            <span class="filter-label">Lugar:</span>
+            <button class="filter-chip active" data-filter="place" data-value="all" aria-pressed="true">Ver todo</button>
+            <button class="filter-chip" data-filter="place" data-value="Sala" aria-pressed="false">Sala</button>
+            <button class="filter-chip" data-filter="place" data-value="Cocina" aria-pressed="false">Cocina</button>
+            <button class="filter-chip" data-filter="place" data-value="Habitación" aria-pressed="false">Habitación</button>
+            <button class="filter-chip" data-filter="place" data-value="Decoración" aria-pressed="false">Decoración</button>
+          </div>
         </div>
+
 
         <!-- Toggle de vista (solo móvil) -->
         <div id="viewToggle" class="view-toggle" aria-label="Cambiar vista">
@@ -276,7 +280,7 @@
       <h2 class="modal-title">¡Bienvenid@ a nuestra lista de regalos! 🎁🎀</h2>
       
       <p class="modal-text">
-        Cada detalle fue pensado con cariño para evitar duplicados.  
+        La finalidad de esta lista es ayudarte a elegir un detalle evitando duplicados.  
         Los <strong>links, precios e imágenes</strong> son solo una referencia: puedes comprar el regalo donde prefieras.
       </p>
       
@@ -286,7 +290,7 @@
       </p>
       
       <p class="modal-text">
-        🙏 Gracias por acompañarnos en este momento tan especial.
+        🙏 Gracias por acompañarnos en este momento.
       </p>
     </div>
   </div>

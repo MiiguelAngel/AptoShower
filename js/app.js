@@ -8,6 +8,41 @@ let pendingReservations = new Set(); // IDs de regalos que están siendo procesa
 let isNameLocked = false;
 let giftView = localStorage.getItem("giftView") || "list"; // Estado de vista (persistente)
 let mobileView = localStorage.getItem("mobileView") || "list";
+// Estado de filtros UI (chips)
+let uiFilters = {
+  price: "all",   // "all" | "lt50" | "50-100" | "gt100"
+  place: "all"    // "all" | "Sala" | "Cocina" | "Habitación" | "Decoración"
+};
+
+  function setupGiftFilters() {
+    const wrap = document.getElementById("giftFilters");
+    if (!wrap) return;
+
+    wrap.addEventListener("click", (e) => {
+      const chip = e.target.closest(".filter-chip");
+      if (!chip) return;
+
+      const kind = chip.dataset.filter;   // "price" | "place"
+      const val  = chip.dataset.value;    // e.g. "lt50" or "Sala"
+      if (!kind || typeof val === "undefined") return;
+
+      // Actualiza estado
+      uiFilters[kind] = val;
+
+      // Actualiza clases activas dentro del grupo
+      const group = chip.closest(`.filter-group[data-group="${kind}"]`) || wrap.querySelector(`.filter-group[data-group="${kind}"]`);
+      (group ? group : wrap).querySelectorAll(`.filter-chip[data-filter="${kind}"]`).forEach(b => {
+        const isActive = b.dataset.value === val;
+        b.classList.toggle("active", isActive);
+        b.setAttribute("aria-pressed", isActive ? "true" : "false");
+      });
+
+      // Repinta con filtros aplicados
+      repaintGifts();
+    });
+  }
+
+
 
 function applyMobileView() {
   const grid = document.querySelector(".regalos-grid");
@@ -117,6 +152,9 @@ async function fetchGuestList() {
     guestList = await fetchGuestList();
     console.log("Lista de invitados cargada:", guestList);
     await fetchGifts();
+
+    // Inicializa chips de filtros
+    setupGiftFilters();
   });
 
   document.getElementById("nombre").addEventListener("focus", () => {
@@ -559,26 +597,41 @@ async function fetchGuestList() {
 
   
   
-  function filtrarRegalos(regalos_lista) {
-    const precio = document.getElementById("filtroPrecio").value;
-    const lugar = document.getElementById("filtroLugar").value;
-  
-    let filtrados = regalos_lista;
-  
-    if (precio) {
-      filtrados = filtrados.filter(item => {
-        if (precio === "-50") return item.precio < 50000;
-        if (precio === "50-100") return item.precio >= 50000 && item.precio <= 100000;
-        if (precio === "100+") return item.precio > 100000;
-      });
-    }
-  
-    if (lugar) {
-      filtrados = filtrados.filter(item => item.lugar === lugar);
-    }
-  
-    return filtrados;
+  function filtrarRegalos(regalos_lista = []) {
+  // 1) Si existen chips, usa uiFilters
+  const hasChips = !!document.getElementById("giftFilters");
+  let price = uiFilters.price;
+  let place = uiFilters.place;
+
+  // 2) Fallback a selects (si aún existen / legacy)
+  if (!hasChips) {
+    const precioSel = document.getElementById("filtroPrecio")?.value || "";
+    const lugarSel  = document.getElementById("filtroLugar")?.value || "";
+
+    price = (precioSel === "" ? "all" : (precioSel === "-50" ? "lt50" : (precioSel === "100+" ? "gt100" : precioSel)));
+    place = (lugarSel === "" ? "all" : lugarSel);
   }
+
+  // 3) Aplica filtros
+  let out = Array.isArray(regalos_lista) ? regalos_lista.slice() : [];
+
+  if (price && price !== "all") {
+    out = out.filter(item => {
+      const p = Number(item.precio) || 0;
+      if (price === "lt50")    return p < 50000;
+      if (price === "50-100")  return p >= 50000 && p <= 100000;
+      if (price === "gt100")   return p > 100000;
+      return true;
+    });
+  }
+
+  if (place && place !== "all") {
+    out = out.filter(item => (item.lugar || "").toString().toLowerCase() === place.toString().toLowerCase());
+  }
+
+  return out;
+}
+
   
 
   
