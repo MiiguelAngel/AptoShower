@@ -39,6 +39,7 @@ let uiFilters = {
 
       // Repinta con filtros aplicados
       repaintGifts();
+
     });
   }
 
@@ -857,17 +858,20 @@ function filterNames() {
           confetti({ particleCount: 200, spread: 70, origin: { y: 0.6 } });
           mostrarRegalos(regalos);
           applyMobileView();
+          window.scrollTo({ top: 0, behavior: "smooth" });
         } else {
           lista = lista.filter(n => !eq(n, yo));
           item.estado = lista.length ? "Reservado" : "Disponible";
           mostrarRegalos(regalos);
           applyMobileView();
+          window.scrollTo({ top: 0, behavior: "smooth" });
         }
         item.reservado_por = lista.join(", ");
 
       } catch (err) {
         console.error("❌ Error (varios):", err);
         mostrarToast("No se pudo actualizar el regalo.", "error");
+        window.scrollTo({ top: 0, behavior: "smooth" });
       } finally {
         pendingReservations.delete(id);
         setBtnLoading(button, false);
@@ -917,11 +921,13 @@ function filterNames() {
         confetti({ particleCount: 200, spread: 70, origin: { y: 0.6 } });
         mostrarRegalos(regalos);
         applyMobileView();
+        window.scrollTo({ top: 0, behavior: "smooth" });
       } else {
         item.estado = "Disponible";
         item.reservado_por = "";
         mostrarRegalos(regalos);
         applyMobileView();
+        window.scrollTo({ top: 0, behavior: "smooth" });
       }
 
       

@@ -2073,7 +2073,7 @@
 }
 
 /* Compacto en pantallas pequeñas */
-@media (max-width: 420px){
+@media (max-width: 440px){
   .filters.filters--minimal{ gap:10px; }
   .filter-chip{ padding:6px 10px; font-size:.58rem; }
   .filters .filter-row{ gap:3px; }
