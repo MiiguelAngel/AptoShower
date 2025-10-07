@@ -14,6 +14,43 @@ let uiFilters = {
   place: "all"    // "all" | "Sala" | "Cocina" | "Habitación" | "Decoración"
 };
 
+// ====== Bloqueo de pantalla para operaciones async ======
+let uiBusy = false;
+
+function lockUI(msg = "Guardando tu reserva…") {
+  if (uiBusy) return;
+  uiBusy = true;
+
+  // Evita scroll de la página
+  document.body.classList.add("is-busy");
+
+  // Overlay que captura T-O-D-O
+  const overlay = document.createElement("div");
+  overlay.id = "uiLock";
+  overlay.className = "ui-lock";
+  overlay.setAttribute("aria-busy", "true");
+  overlay.setAttribute("aria-live", "polite");
+  overlay.setAttribute("role", "status");
+  overlay.innerHTML = `
+    <div class="ui-lock__box">
+      <div class="ui-lock__spinner" aria-hidden="true"></div>
+      <p class="ui-lock__text">${msg}</p>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+}
+
+function unlockUI(delayMs = 500) {
+  // Pequeño delay para que el usuario perciba el cambio de estado
+  setTimeout(() => {
+    const overlay = document.getElementById("uiLock");
+    if (overlay) overlay.remove();
+    document.body.classList.remove("is-busy");
+    uiBusy = false;
+  }, delayMs);
+}
+
+
   function setupGiftFilters() {
     const wrap = document.getElementById("giftFilters");
     if (!wrap) return;
@@ -805,6 +842,8 @@ function filterNames() {
 
   async function reserveGift(button) {
     if (!button) return;
+    if (uiBusy) return; 
+
     const id = button.dataset.id;
     const item = regalos.find(r => (r.id || r.id_regalo) === id);
     if (!item) return;
@@ -816,13 +855,22 @@ function filterNames() {
     pendingReservations.add(id);
     setBtnLoading(button, true);
 
+    // Bloquear UI completa
+    lockUI("Guardando tu reserva…");   // 👈 NUEVO
+
     // helpers
     const toList = (s="") => s.split(",").map(x => x.trim()).filter(Boolean);
     const eq = (a="", b="") => a.toLowerCase() === b.toLowerCase();
 
     const tipo = (item.tipo || "").toLowerCase();
     const yo   = (nombreSeleccionado || "").trim();
-    if (!yo) { mostrarToast("Primero confirma tu nombre.", "warning"); return; }
+    if (!yo) {
+      mostrarToast("Primero confirma tu nombre.", "warning");
+      pendingReservations.delete(id);
+      setBtnLoading(button, false);
+      unlockUI(200);                   // 👈 asegurar desbloqueo en return temprano
+      return;
+    }
 
     // --- CASO 1: VARIOS -> columna I es lista de nombres ---
     if (tipo === "varios") {
@@ -875,6 +923,7 @@ function filterNames() {
       } finally {
         pendingReservations.delete(id);
         setBtnLoading(button, false);
+        unlockUI(600);   
       }
       return;
     }
@@ -893,6 +942,9 @@ function filterNames() {
     else if (soyElMismo) action = "liberar";
     else {
       mostrarToast(`Este regalo está reservado por ${invitado || "otra persona"}.`, "warning");
+      pendingReservations.delete(id);
+      setBtnLoading(button, false);
+      unlockUI(200); 
       return;
     }
 
@@ -937,6 +989,7 @@ function filterNames() {
     } finally {
       pendingReservations.delete(id);
       setBtnLoading(button, false);
+      unlockUI(600);   
     }
   }
 

@@ -2081,3 +2081,43 @@
 
 /*-----------------------------------------------------------------------------*/
 
+/* ===== UI Lock (overlay) ===== */
+body.is-busy { overflow: hidden; }
+
+.ui-lock {
+  position: fixed; inset: 0;
+  background: rgba(17,17,17,.28);
+  backdrop-filter: blur(2px);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 9999;      /* por encima de modales/headers */
+  cursor: wait;
+}
+
+.ui-lock__box {
+  background: #fff; color: #111;
+  border: 1px solid #e6e6ea;
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex; align-items: center; gap: 10px;
+  box-shadow: 0 6px 24px rgba(0,0,0,.12);
+  font-size: .95rem;
+}
+
+.ui-lock__spinner {
+  width: 18px; height: 18px;
+  border: 2px solid #e6e6ea;
+  border-top-color: #111;
+  border-radius: 50%;
+  animation: uiSpin .8s linear infinite;
+}
+
+@keyframes uiSpin { to { transform: rotate(360deg); } }
+
+.ui-lock__text { margin: 0; }
+
+@media (prefers-reduced-motion: reduce){
+  .ui-lock__spinner { animation: none; }
+}
+
+/*-----------------------------------------------------------------------------*/
+
