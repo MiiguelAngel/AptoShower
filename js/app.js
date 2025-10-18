@@ -1243,7 +1243,7 @@ window.closeInvite = function closeInvite() {
 const $compModal = () => document.getElementById("complementModal");
 const $compList  = () => document.getElementById("complementList");
 
-function isComplement(item){
+function esComplemento(item){
   const a = item?._categoriaNorm || "";
   if (a.includes("complemento")) return true;
   // respaldo: si por error lo pusieron en "tipo"
