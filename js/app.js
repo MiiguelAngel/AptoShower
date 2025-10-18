@@ -1244,7 +1244,7 @@ const $compModal = () => document.getElementById("complementModal");
 const $compList  = () => document.getElementById("complementList");
 
 function esComplemento(item){
-  const a = item?._categoriaNorm || "";
+  const a = item?.categoria || "";
   if (a.includes("complemento")) return true;
   // respaldo: si por error lo pusieron en "tipo"
   return (item?.tipo || "").toString().toLowerCase().includes("complemento");
