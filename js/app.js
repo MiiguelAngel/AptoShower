@@ -590,9 +590,21 @@ async function fetchGuestList() {
   function updateContinueBar() {
     const bar = document.getElementById("continueBar");
     if (!bar) return;
-    const show = hasAnyGiftMine(regalos, nombreSeleccionado);
-    bar.classList.toggle("hidden", !show);
+
+    const modal = document.getElementById("complementModal");
+    const modalOpen = modal && modal.classList.contains("show");
+
+    // ¿Tiene algún regalo reservado?
+    const tieneRegalo = typeof hasAnyGiftMine === "function"
+      ? hasAnyGiftMine(regalos, nombreSeleccionado)
+      : false;
+
+    // Mostrar solo si tiene regalo y el modal NO está abierto
+    const debeMostrar = tieneRegalo && !modalOpen;
+
+    bar.classList.toggle("hidden", !debeMostrar);
   }
+
 
 
   function abrirGiftInfo() {
@@ -1221,6 +1233,7 @@ function esComplemento(item) {
 
 function openComplementModal() {
   document.getElementById("continueBar")?.classList.add("hidden");
+  document.getElementById("continueBtn")?.classList.add("hidden");
   const modal = document.getElementById("complementModal");
   const cont  = document.getElementById("complementList");
   if (!modal || !cont) return;
@@ -1246,6 +1259,7 @@ function closeComplementModal() {
   modal.setAttribute("aria-hidden", "true"); // ok cuando está cerrado
   document.body.style.overflow = "";
   document.getElementById("continueBar")?.classList.remove("hidden");
+  document.getElementById("continueBtn")?.classList.remove("hidden");
 }
 
 
