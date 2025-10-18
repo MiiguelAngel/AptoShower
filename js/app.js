@@ -364,7 +364,15 @@ async function fetchGuestList() {
   // 1) Prepara datos
   
   let data = Array.isArray(lista) ? lista.slice() : [];
-  data = data.filter(noEsComplemento);
+    // 🔸 Excluir complementos SOLO si no se indica lo contrario (por defecto: excluir)
+  if (!opts.allowComplements) {
+    data = data.filter(noEsComplemento);
+  }
+
+    // 🔸 Aplica filtros de precio/lugar SOLO si no es modal (o si así lo decides)
+  if (!opts.bypassFilters && typeof filtrarRegalos === "function") {
+    data = filtrarRegalos(data);
+  }
 
   // Aplica filtros SOLO si no estamos en contextos especiales (modal)
   if (!opts.bypassFilters && typeof filtrarRegalos === "function") {
@@ -1272,7 +1280,7 @@ function openComplementModal() {
   console.log("Complementos:", complementos.length); // debug rápido
 
   cont.innerHTML = "";
-  mostrarRegalos(complementos, { container: cont, bypassFilters: true });
+  mostrarRegalos(complementos, { container: cont, allowComplements: true, bypassFilters: true });
 
   modal.classList.add("show");
   // 🔧 FIX ARIA: no dejes aria-hidden="true" cuando está abierto
