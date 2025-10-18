@@ -347,228 +347,190 @@ async function fetchGuestList() {
   
 
   function mostrarRegalos(lista = regalos, opts = {}) {
-    const target = opts.container || document.querySelector(".regalos-grid");
-    if (!target) return;
-    target.innerHTML = "";
-    // donde antes hacías: const grid = document.querySelector(".regalos-grid");
-    // ahora usa 'container':
-    const FALLBACK_IMG = "assets/images/Cedro_logo.png";
-    const fmtCOP = new Intl.NumberFormat("es-CO", {
-      style: "currency",
-      currency: "COP",
-      maximumFractionDigits: 0
-    });
+  const target =
+    opts.container
+    || document.getElementById("listaRegalos")
+    || document.querySelector(".regalos-grid");
 
-    const contenedor = document.getElementById("listaRegalos");
-    if (!contenedor) return;
-    contenedor.innerHTML = "";
+  if (!target) return;
 
-    // 1) Filtra SIEMPRE, y clona cada item para no tocar referencias del array original
-    const base = Array.isArray(lista) ? lista : [];
-    const filtrados = filtrarRegalos(base).map((it, idx) => ({
-      ...it,            // 👈 clon superficial (no muta el original)
-      __idx: idx        // 👈 orden visual estable (del resultado filtrado)
-    }));
+  const FALLBACK_IMG = "assets/images/Cedro_logo.png";
+  const fmtCOP = new Intl.NumberFormat("es-CO", {
+    style: "currency",
+    currency: "COP",
+    maximumFractionDigits: 0,
+  });
 
-    // 2) Ordena: tus regalos primero, el resto queda en su orden original
-    filtrados.sort((a, b) => {
+  // 1) Prepara datos
+  let data = Array.isArray(lista) ? lista.slice() : [];
+
+  // Aplica filtros SOLO si no estamos en contextos especiales (modal)
+  if (!opts.bypassFilters && typeof filtrarRegalos === "function") {
+    data = filtrarRegalos(data);
+  }
+
+  // Añade índice estable para ordenar (sin mutar original)
+  data = data.map((it, idx) => ({ ...it, __idx: idx }));
+
+  // 2) Ordena: primero los míos (si aplica), luego el orden original
+  if (typeof hasAnyGiftMine === "function") {
+    data.sort((a, b) => {
       const aMine = hasAnyGiftMine([a], nombreSeleccionado);
       const bMine = hasAnyGiftMine([b], nombreSeleccionado);
       if (aMine && !bMine) return -1;
       if (!aMine && bMine) return 1;
-      return a.__idx - b.__idx; // desempate: orden original del filtrado
+      return a.__idx - b.__idx;
     });
+  }
 
+  // 3) Limpia y renderiza
+  target.innerHTML = "";
 
-    filtrados.forEach((item = {}) => {
-      // Normaliza campos
-      const id_Real          = item.id || item.id_regalo || "";
-      const nombre      = (item.nombre ?? "Regalo").toString();
-      const precioNum   = typeof item.precio === "number" ? item.precio : Number(item.precio) || 0;
-      const lugar       = (item.lugar ?? "").toString();
-      const descripcion = (item.descripcion ?? "").toString();
-      const rawImg      = (item.img ?? item.imagen ?? item.image ?? "").toString().trim();
-      const link        = (item.link ?? "").toString().trim();
-      const estado      = (item.estado ?? "").toString().toLowerCase().trim();
+  data.forEach((item = {}) => {
+    // Normaliza campos
+    const idReal       = item.id || item.id_regalo || "";
+    const nombre       = (item.nombre ?? "Regalo").toString();
+    const precioNum    = typeof item.precio === "number" ? item.precio : Number(item.precio) || 0;
+    const lugar        = (item.lugar ?? "").toString();
+    const descripcion  = (item.descripcion ?? "").toString();
+    const rawImg       = (item.img ?? item.imagen ?? item.image ?? "").toString().trim();
+    const link         = (item.link ?? "").toString().trim();
+    const estadoRaw    = (item.estado ?? "").toString().trim();
+    const estado       = estadoRaw.toLowerCase();
+    const invitado     = (item.reservado_por ?? "").toString().trim();
+    const tipo         = (item.tipo ?? "").toString().trim();
 
-      // Tarjeta
-      const card = document.createElement("div");
-      card.className = "gift-item";
+    // Tarjeta
+    const card = document.createElement("div");
+    card.className = "gift-item";
 
-      // Imagen con fallback y lazy load
-      const imgEl = new Image();
-      const imgSrc = rawImg || FALLBACK_IMG;
-      imgEl.src = imgSrc;
-      imgEl.alt = nombre;
-      imgEl.loading = "lazy";
-      imgEl.decoding = "async";
-      imgEl.referrerPolicy = "no-referrer";
-      imgEl.onerror = () => {
-        if (imgEl.src.includes(FALLBACK_IMG)) return; // evita bucle
-        imgEl.onerror = null;
-        imgEl.src = FALLBACK_IMG;
-      };
+    // Imagen (con fallback)
+    const imgEl = new Image();
+    const imgSrc = rawImg || FALLBACK_IMG;
+    imgEl.src = imgSrc;
+    imgEl.alt = nombre;
+    imgEl.loading = "lazy";
+    imgEl.decoding = "async";
+    imgEl.referrerPolicy = "no-referrer";
+    imgEl.onerror = () => {
+      if (imgEl.src.includes(FALLBACK_IMG)) return;
+      imgEl.onerror = null;
+      imgEl.src = FALLBACK_IMG;
+    };
 
-      // Contenedor de media + título (clicable si hay link)
-      let mediaWrap;
-      if (link) {
-        mediaWrap = document.createElement("a");
-        mediaWrap.href = link;
-        mediaWrap.target = "_blank";
-        mediaWrap.rel = "noopener noreferrer";
-        mediaWrap.title = "Link para comprar";
-        mediaWrap.setAttribute("aria-label", `Abrir ${nombre}`);
-        mediaWrap.className = "gift-link";
-      } else {
-        mediaWrap = document.createElement("div");
-        mediaWrap.className = "gift-link";
-      }
+    // Wrapper media + título (clicable si hay link)
+    let mediaWrap;
+    if (link) {
+      mediaWrap = document.createElement("a");
+      mediaWrap.href = link;
+      mediaWrap.target = "_blank";
+      mediaWrap.rel = "noopener noreferrer";
+      mediaWrap.title = "Link para comprar";
+      mediaWrap.setAttribute("aria-label", `Abrir ${nombre}`);
+      mediaWrap.className = "gift-link";
+    } else {
+      mediaWrap = document.createElement("div");
+      mediaWrap.className = "gift-link";
+    }
+    mediaWrap.appendChild(imgEl);
 
-      mediaWrap.appendChild(imgEl);
+    const titleEl = document.createElement("strong");
+    titleEl.textContent = nombre;
+    mediaWrap.appendChild(titleEl);
 
-      const titleEl = document.createElement("strong");
-      titleEl.textContent = nombre;
-      mediaWrap.appendChild(titleEl);
-
-      // Descripción y precio
+    // Descripción y precio
+    if (descripcion) {
       const descEl = document.createElement("small");
       descEl.textContent = descripcion;
+      card.appendChild(descEl);
+    }
 
-      const priceEl = document.createElement("span");
-      priceEl.className = "gift-price";
-      priceEl.textContent = fmtCOP.format(precioNum);
+    const priceEl = document.createElement("span");
+    priceEl.className = "gift-price";
+    priceEl.textContent = fmtCOP.format(precioNum);
 
-      // Botón
+    // Botón
+    const button = document.createElement("button");
+    button.className = "gift-reserve-btn";
+    button.setAttribute("data-id", idReal);
+    button.setAttribute("data-nombre", nombre);
+    button.setAttribute("data-precio", String(precioNum));
+    button.setAttribute("data-link", link);
+    button.setAttribute("data-imagen", imgSrc);
+    button.setAttribute("data-lugar", lugar);
+    button.setAttribute("data-descripcion", descripcion);
+    button.setAttribute("data-estado", estado);
+    button.setAttribute("data-reservado-por", invitado);
+    button.setAttribute("data-tipo", tipo);
 
-      const button = document.createElement("button");
-      button.className = "gift-reserve-btn";
-      
-      // ✅ Al click, blurea para que no quede :focus-within encendido
-      button.addEventListener("click", (e) => {
-        e.stopPropagation();
-        Promise.resolve(reserveGift(button)).finally(() => button.blur());
-      });
+    // Click → reutiliza tu reserveGift
+    button.addEventListener("click", (e) => {
+      e.stopPropagation();
+      Promise.resolve(reserveGift(button)).finally(() => button.blur());
+    });
 
-      // Atributos data-* (usando la imagen efectiva)
-      button.setAttribute("data-id", id_Real);
-      button.setAttribute("data-nombre", nombre);
-      button.setAttribute("data-precio", String(precioNum));
-      button.setAttribute("data-link", link);
-      button.setAttribute("data-imagen", imgSrc);
-      button.setAttribute("data-lugar", lugar);
-      button.setAttribute("data-descripcion", descripcion);
-      button.setAttribute("data-estado", estado);
-      button.setAttribute("data-reservado-por", item.reservado_por ?? "");
-      button.setAttribute("data-tipo", item.tipo ?? "");
-
-
-      // ✅ NUEVO: pinta según reglas con el nombreSeleccionado
-      const invitado       = (item.reservado_por ?? "").toString().trim();
-      const tipo           = (item.tipo ?? "").toString().trim();
-
-      const yo = (typeof nombreSeleccionado === "string" ? nombreSeleccionado : "").trim();
-      const isReservado =
-        estado === "reservado" || estado === "apartado" ||
-        estado === "sí" || estado === "si" ||
-        estado === "true" || estado === "1";
-
-      const isVarios = tipo.toLowerCase() === "varios";
-      const isUnico  = tipo.toLowerCase() === "único" || tipo.toLowerCase() === "unico";
-
-      // Función auxiliar inline para decidir UI (si ya agregaste computeGiftUiState, puedes usarla aquí)
-      function decideUi() {
-        if (isVarios) {
-          const mio = invitado && yo && invitado.toLowerCase() === yo.toLowerCase();
-          return {
-            disabled: false,
-            label: mio && isReservado ? "Liberar" : "Apartar",
-            hint: "Este regalo permite varias selecciones.",
-            selected: isReservado
-          };
-        }
-
-        // Tratar vacío/desconocido como Único por seguridad
-        const unico = isUnico || !isVarios;
-
-        if (unico) {
-          if (!isReservado) {
-            return { disabled: false, label: "Apartar", hint: "Disponible para reservar.", selected: false };
+    // Estado UI (reusa tu computeGiftUiState si existe; si no, fallback simple)
+    const ui = (typeof computeGiftUiState === "function")
+      ? computeGiftUiState(item, nombreSeleccionado)
+      : (() => {
+          const yo = (typeof nombreSeleccionado === "string" ? nombreSeleccionado : "").trim().toLowerCase();
+          const isReservado =
+            estado === "reservado" || estado === "apartado" ||
+            estado === "sí" || estado === "si" || estado === "true" || estado === "1";
+          const isVarios = tipo.toLowerCase() === "varios";
+          if (isVarios) {
+            const mio = invitado && yo && invitado.toLowerCase() === yo;
+            return { disabled: false, label: mio && isReservado ? "Liberar" : "Apartar", hint: "", selected: isReservado };
           }
-          const mio = invitado && yo && invitado.toLowerCase() === yo.toLowerCase();
-          if (mio) {
-            return { disabled: false, label: "Liberar", hint: "Lo reservaste tú. Puedes liberarlo.", selected: true };
-          }
+          if (!isReservado) return { disabled: false, label: "Apartar", hint: "", selected: false };
+          const mio = invitado && yo && invitado.toLowerCase() === yo;
+          if (mio) return { disabled: false, label: "Liberar", hint: "", selected: true };
           return { disabled: true, label: "Apartado ✅", hint: `Reservado por ${invitado || "otra persona"}.`, selected: true };
-        }
+        })();
 
-        // Fallback
-        return { disabled: false, label: "Apartar", hint: "", selected: false };
-      }
+    button.textContent = ui.label;
+    button.disabled = !!ui.disabled;
+    if (ui.hint) button.title = ui.hint;
 
-      const ui = computeGiftUiState(item, nombreSeleccionado);  
-
-      // Aplica UI
-      button.textContent = ui.label;
-      button.disabled = !!ui.disabled;
-      if (ui.hint) button.title = ui.hint;
-
-      // Estilos de tarjeta/btn según estado
-      card.classList.toggle("selected", ui.selected); // ✅ aquí
-      button.style.backgroundColor = ui.disabled ? "#aaa" : "";
-      button.style.cursor = ui.disabled ? "not-allowed" : "pointer";
-
-      // Estilos de tarjeta/btn según estado
-      if (ui.selected) {
-        card.classList.add("selected");
-      } else {
-        card.classList.remove("selected");
-      }
-      button.style.backgroundColor = ui.disabled ? "#aaa" : "";
-      button.style.cursor = ui.disabled ? "not-allowed" : "pointer";
-
-
-      // (Opcional) Hacer toda la tarjeta clicable si hay link
-      if (link) {
-        card.style.cursor = "pointer";
-        card.addEventListener("click", (e) => {
-          // evita abrir dos veces si el click fue sobre <a> o sobre el botón
-          if (e.target.closest("a") || e.target.closest("button")) return;
-          window.open(link, "_blank", "noopener");
-        });
-      }
-
-      // Aplica UI al botón
-      button.textContent = ui.label;
-      button.disabled = !!ui.disabled;
-      if (ui.hint) button.title = ui.hint;
-
-      // 👉 Estado visual de la tarjeta
+    // Estado visual de la tarjeta
+    if (typeof getVisualState === "function") {
       const vstate = getVisualState(item, nombreSeleccionado);
       card.classList.toggle("selected", vstate === "mine");
       card.classList.toggle("selected-others", vstate === "others");
+    } else {
+      card.classList.toggle("selected", !!ui.selected);
+    }
 
-      // Estética del botón
-      button.style.backgroundColor = ui.disabled ? "#aaa" : "";
-      button.style.cursor = ui.disabled ? "not-allowed" : "pointer";
+    if (ui.disabled) {
+      button.style.backgroundColor = "#aaa";
+      button.style.cursor = "not-allowed";
+    } else {
+      button.style.backgroundColor = "";
+      button.style.cursor = "pointer";
+    }
 
-      // Limpia borde por foco tras el clic
-      button.addEventListener("click", (e) => {
-        e.stopPropagation();
-        Promise.resolve(reserveGift(button)).finally(() => button.blur());
+    // Tarjeta clicable si hay link (sin interferir con botón)
+    if (link) {
+      card.style.cursor = "pointer";
+      card.addEventListener("click", (e) => {
+        if (e.target.closest("a") || e.target.closest("button")) return;
+        window.open(link, "_blank", "noopener");
       });
+    }
 
-    
-      // Montaje
-      card.appendChild(mediaWrap);
-      if (descripcion) card.appendChild(descEl);
-      card.appendChild(priceEl);
-      card.appendChild(button);
-      contenedor.appendChild(card);
+    // Montaje (SIEMPRE en el target)
+    card.appendChild(mediaWrap);
+    card.appendChild(priceEl);
+    card.appendChild(button);
+    target.appendChild(card);
+  });
 
-      updateContinueBar();
-      applyGiftView();
-    });
-  }
+  // 4) Actualizaciones de UI globales una sola vez
+  if (typeof updateContinueBar === "function") updateContinueBar();
+  if (typeof applyGiftView === "function") applyGiftView();
+  if (typeof applyMobileView === "function") applyMobileView();
+}
+
 
   function setBtnLoading(button, loading = true) {
     if (!button) return;
@@ -1266,7 +1228,7 @@ function openComplementModal() {
   console.log("Complementos:", complementos.length); // debug rápido
 
   cont.innerHTML = "";
-  mostrarRegalos(complementos, { container: cont });  // ← MISMA FUNCIÓN
+  mostrarRegalos(complementos, { container: cont, bypassFilters: true });
 
   modal.classList.add("show");
   // 🔧 FIX ARIA: no dejes aria-hidden="true" cuando está abierto
