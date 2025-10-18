@@ -593,8 +593,8 @@ async function fetchGuestList() {
     if (!bar) return;
 
     const Complementmodal = document.getElementById("complementModal");
+    const ComplmodalOpen = Complementmodal && Complementmodal.classList.contains("show");
     const modal = document.getElementById("complementModal");
-    const ComplmodalOpen = Complementmodal && modal.classList.contains("show");
     const modalOpen = modal && modal.classList.contains("show");
 
     // ¿Tiene algún regalo reservado?
@@ -891,12 +891,14 @@ function filterNames() {
           confetti({ particleCount: 200, spread: 70, origin: { y: 0.6 } });
           mostrarRegalos(regalos);
           applyMobileView();
+          refreshComplementModal();
           window.scrollTo({ top: 0, behavior: "smooth" });
         } else {
           lista = lista.filter(n => !eq(n, yo));
           item.estado = lista.length ? "Reservado" : "Disponible";
           mostrarRegalos(regalos);
           applyMobileView();
+          refreshComplementModal();
           window.scrollTo({ top: 0, behavior: "smooth" });
         }
         item.reservado_por = lista.join(", ");
@@ -959,12 +961,14 @@ function filterNames() {
         confetti({ particleCount: 200, spread: 70, origin: { y: 0.6 } });
         mostrarRegalos(regalos);
         applyMobileView();
+        refreshComplementModal();
         window.scrollTo({ top: 0, behavior: "smooth" });
       } else {
         item.estado = "Disponible";
         item.reservado_por = "";
         mostrarRegalos(regalos);
         applyMobileView();
+        refreshComplementModal();
         window.scrollTo({ top: 0, behavior: "smooth" });
       }
 
@@ -1241,9 +1245,9 @@ function noEsComplemento(item) {
   .trim()
   .toLowerCase();
   const cat = norm(item?.categoria);
-  if (cat.includes("complemento")) return true;
+  if (!cat.includes("complemento")) return true;
   // respaldo por si alguien lo puso en "tipo"
-  return norm(item?.tipo).includes("complemento");
+  return !norm(item?.tipo).includes("complemento");
 }
 
 
@@ -1278,6 +1282,31 @@ function closeComplementModal() {
   document.getElementById("continueBtn")?.classList.remove("hidden");
 }
 
+function refreshComplementModal() {
+  const modal = document.getElementById("complementModal");
+  if (!modal || !modal.classList.contains("show")) return;
+
+  const cont = document.getElementById("complementList");
+  if (!cont) return;
+
+  // mismo filtro robusto que ya usas
+  const norm = (s) => (s ?? "").toString().normalize("NFD").replace(/[\u0300-\u036f]/g,"").trim().toLowerCase();
+  const esComplemento = (it) =>
+    norm(it.categoria).includes("complemento") || norm(it.tipo).includes("complemento");
+
+  const complementos = (regalos || []).filter(esComplemento);
+
+  // repinta en el CONTENEDOR DEL MODAL usando tu mismo render
+  mostrarRegalos(complementos, { container: cont, bypassFilters: true });
+
+  // aplica los mismos ajustes de vista móvil/PC
+  if (typeof applyMobileView === "function") applyMobileView();
+
+  // sincroniza visibilidad de la barra “continuar”
+  if (typeof updateContinueBar === "function") updateContinueBar();
+}
+
+//------------------------------------------------------------------------------------------
 
 
 // Cierres (X, seguir viendo, clic fuera, Esc)
