@@ -1175,6 +1175,17 @@
   .modal.show {
     display: flex;
   }
+
+  /* Contenedor del botón y emoji */
+  .modal-close-emoji {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    z-index: 10;
+  }
   
   .modal-content {
     background: #ffffff;
@@ -1778,6 +1789,9 @@
   cursor: pointer;
   transition: background .2s ease;
   padding: 0px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .modal-close:hover {
   background: #ddd;
@@ -2039,6 +2053,9 @@
   display:inline-block;
   animation: wiggle 1.2s ease-in-out infinite;
   transform-origin: 70% 70%;
+  margin-top: 1.6rem;
+  margin-right: 3.5rem;
+  font-size: 1.6rem;
 }
 
 @keyframes wiggle{

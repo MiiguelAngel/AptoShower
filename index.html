@@ -281,9 +281,12 @@
   <!-- Modal de bienvenida a regalos -->
   <div id="giftInfoModal" class="modal-overlay hidden">
     <div class="modal-content-welcome">
-      <button class="modal-close" id="closeWelcomeModal" aria-label="Cerrar">
-        <span class="tap-emoji" aria-hidden="true">👉</span> ✕
-      </button>
+      <div class="modal-close-emoji">
+          <span class="tap-emoji" aria-hidden="true">👉</span>
+          <button class="modal-close" onclick="cerrarGiftInfo()" id="closeWelcomeModal" aria-label="Cerrar">
+            ✕
+          </button>
+      </div>
       <h2 class="modal-title">¡Bienvenid@ a nuestra lista de regalos! 🎁🎀</h2>
       
       <p class="modal-text">
@@ -307,7 +310,7 @@
     <div class="modal-content-gifts" role="dialog" aria-modal="true" aria-labelledby="compTitle">
       <div class="modal-header">
         <button type="button" class="modal-close" id="closeComplementModal" aria-label="Cerrar">
-          <span class="tap-emoji" aria-hidden="true">👉</span> X
+          <span class="tap-emoji" aria-hidden="true">👉</span>
         </button>
       </div>
 
