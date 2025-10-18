@@ -1220,6 +1220,7 @@ function esComplemento(item) {
 
 
 function openComplementModal() {
+  document.getElementById("continueBar")?.classList.add("hidden");
   const modal = document.getElementById("complementModal");
   const cont  = document.getElementById("complementList");
   if (!modal || !cont) return;
@@ -1244,6 +1245,7 @@ function closeComplementModal() {
   modal.classList.remove("show");
   modal.setAttribute("aria-hidden", "true"); // ok cuando está cerrado
   document.body.style.overflow = "";
+  document.getElementById("continueBar")?.classList.remove("hidden");
 }
 
 

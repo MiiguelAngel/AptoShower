@@ -1204,6 +1204,7 @@
     position: absolute;
     animation: fadeInUp 0.4s ease;
     border: 1px solid rgba(255, 255, 255, 0.08);
+    margin-top: 9rem;
   }
   
   .modal-content h3 {
@@ -1778,7 +1779,7 @@
   position: fixed;
   left: 0; right: 0; bottom: 12px;
   margin: 0 auto;
-  width: 90%;
+  width: 80%;
   background: rgba(255,255,255,.9);
   border: 1px solid rgba(0,0,0,.06);
   border-radius: 16px;
@@ -1803,7 +1804,7 @@
   background: linear-gradient(135deg, #000000, #0B3D91, #1B2A49, #050A30);
   box-shadow: 0 6px 18px rgba(139,92,246,.35);
   transition: transform .12s ease, filter .2s ease;
-  margin: 0.1rem;
+  margin: -0.5rem;
 }
 .continue-btn:hover{ filter: brightness(1.06); transform: translateY(-1px); }
 .continue-btn:active{ transform: translateY(0); }
