@@ -1283,8 +1283,6 @@ function openComplementModal() {
   mostrarRegalos(complementos, { container: cont, allowComplements: true, bypassFilters: true });
 
   modal.classList.add("show");
-  // 🔧 FIX ARIA: no dejes aria-hidden="true" cuando está abierto
-  modal.removeAttribute("aria-hidden");
 
   document.body.style.overflow = "hidden";
   if (typeof applyMobileView === "function") applyMobileView();
@@ -1294,7 +1292,6 @@ function closeComplementModal() {
   const modal = document.getElementById("complementModal");
   if (!modal) return;
   modal.classList.remove("show");
-  modal.setAttribute("aria-hidden", "true"); // ok cuando está cerrado
   document.body.style.overflow = "";
   document.getElementById("continueBar")?.classList.remove("hidden");
   document.getElementById("continueBtn")?.classList.remove("hidden");
