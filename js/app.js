@@ -348,6 +348,8 @@ async function fetchGuestList() {
 
   function mostrarRegalos(lista = regalos, opts = {}) {
     const container = opts.container || document.querySelector(".regalos-grid"); // default: grilla principal
+    if (!grid) return;
+    grid.innerHTML = "";
     // donde antes hacías: const grid = document.querySelector(".regalos-grid");
     // ahora usa 'container':
     const grid = container;
@@ -1003,16 +1005,15 @@ function filterNames() {
     // Si el modal está abierto, vuelve a renderizar allí también
     (function refreshComplementIfOpen(){
       const m = document.getElementById("complementModal");
-      if (m && m.classList.contains("show")) {
-        const cont = document.getElementById("complementList");
-        if (cont) {
-          const complementos = (regalos || []).filter(r => String(r.categoria || "").toLowerCase() === "complemento");
-          cont.innerHTML = "";
-          mostrarRegalos(complementos, { container: cont }); // ← MISMO RENDER
-          if (typeof applyMobileView === "function") applyMobileView();
-        }
-      }
+      if (!m || !m.classList.contains("show")) return;
+      const cont = document.getElementById("complementList");
+      if (!cont) return;
+      const complementos = (regalos || []).filter(esComplemento);
+      cont.innerHTML = "";
+      mostrarRegalos(complementos, { container: cont });
+      if (typeof applyMobileView === "function") applyMobileView();
     })();
+
 
   }
 
@@ -1244,38 +1245,40 @@ const $compModal = () => document.getElementById("complementModal");
 const $compList  = () => document.getElementById("complementList");
 
 function isComplement(item){
-  return String(item.categoria || "").toLowerCase() === "complemento";
+  const a = item?._categoriaNorm || "";
+  if (a.includes("complemento")) return true;
+  // respaldo: si por error lo pusieron en "tipo"
+  return (item?.tipo || "").toString().toLowerCase().includes("complemento");
 }
 
 function openComplementModal() {
-  // 1) Filtra complementos
-  const complementos = (regalos || []).filter(isComplement);
+  const modal = document.getElementById("complementModal");
+  const cont  = document.getElementById("complementList");
+  if (!modal || !cont) return;
 
-  // 2) Renderiza con TU mostrarRegalos dentro del contenedor del modal
-  const cont = $compList();
-  if (cont) {
-    cont.innerHTML = ""; // limpiar
-    mostrarRegalos(complementos, { container: cont }); // ← REUSO TOTAL
-  }
+  const complementos = (regalos || []).filter(esComplemento);
+  console.log("Complementos:", complementos.length); // debug rápido
 
-  // 3) Mostrar modal (y bloquear scroll detrás si así lo haces en otros modales)
-  const modal = $compModal();
-  if (!modal) return;
+  cont.innerHTML = "";
+  mostrarRegalos(complementos, { container: cont });  // ← MISMA FUNCIÓN
+
   modal.classList.add("show");
-  modal.setAttribute("aria-hidden", "false");
-  document.body.style.overflow = "hidden";
+  // 🔧 FIX ARIA: no dejes aria-hidden="true" cuando está abierto
+  modal.removeAttribute("aria-hidden");
 
-  // 4) Reutiliza tu lógica de móvil/PC (screen3) si afecta estilos responsivos
+  document.body.style.overflow = "hidden";
   if (typeof applyMobileView === "function") applyMobileView();
 }
 
 function closeComplementModal() {
-  const modal = $compModal();
+  const modal = document.getElementById("complementModal");
   if (!modal) return;
   modal.classList.remove("show");
-  modal.setAttribute("aria-hidden", "true");
+  modal.setAttribute("aria-hidden", "true"); // ok cuando está cerrado
   document.body.style.overflow = "";
 }
+
+
 
 // Cierres (X, seguir viendo, clic fuera, Esc)
 document.getElementById("closeComplementModal")?.addEventListener("click", closeComplementModal);
