@@ -301,21 +301,23 @@
   </div>
 
   <!-- Modal: Complementa tu regalo -->
-  <div id="complementModal" class="modal">
+  <div id="complementModal" class="modal" aria-hidden="true">
     <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="compTitle">
       <button type="button" class="modal-close" id="closeComplementModal" aria-label="Cerrar">✕</button>
-      <h3 id="compTitle" class="modal-title">Complementa tu regalo</h3>
-      <p class="modal-text">Opcional: agrega uno de estos detalles económicos para completar tu regalo.</p>
 
-      <!-- Lista de complementos -->
-      <div id="complementList" class="gift-list" style="max-height: 45vh; overflow: auto;"></div>
+      <h3 id="compTitle" class="modal-title">Complementa tu regalo</h3>
+      <p class="modal-text">Opcional: agrega uno de estos detalles económicos para acompañar tu obsequio principal.</p>
+
+      <!-- OJO: usamos la misma clase de grilla que en screen3 -->
+      <div id="complementList" class="regalos-grid" style="max-height:45vh; overflow:auto;"></div>
 
       <div class="modal-buttons" style="margin-top: 1rem;">
         <button id="goToInviteBtn" class="btn-personalizado">Ir a la invitación</button>
-        <button id="keepBrowsingBtn">Seguir viendo</button>
+        <button id="keepBrowsingBtn" class="btn-secundario">Seguir viendo</button>
       </div>
     </div>
   </div>
+
 
 
 
