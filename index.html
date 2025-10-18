@@ -300,6 +300,24 @@
     </div>
   </div>
 
+  <!-- Modal: Complementa tu regalo -->
+  <div id="complementModal" class="modal">
+    <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="compTitle">
+      <button type="button" class="modal-close" id="closeComplementModal" aria-label="Cerrar">✕</button>
+      <h3 id="compTitle" class="modal-title">Complementa tu regalo</h3>
+      <p class="modal-text">Opcional: agrega uno de estos detalles económicos para completar tu regalo.</p>
+
+      <!-- Lista de complementos -->
+      <div id="complementList" class="gift-list" style="max-height: 45vh; overflow: auto;"></div>
+
+      <div class="modal-buttons" style="margin-top: 1rem;">
+        <button id="goToInviteBtn" class="btn-personalizado">Ir a la invitación</button>
+        <button id="keepBrowsingBtn">Seguir viendo</button>
+      </div>
+    </div>
+  </div>
+
+
 
   <!-- Barra fija de avance a la invitación -->
   <div id="continueBar" class="continue-bar hidden">

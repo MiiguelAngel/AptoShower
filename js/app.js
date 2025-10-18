@@ -239,7 +239,8 @@ async function fetchGuestList() {
         imagen: r.img || "",
         estado: r.estado || "",
         reservado_por: r.reservado_por || "",
-        tipo: r.tipo || "" 
+        tipo: r.tipo || "",
+        categoria: r.categoria || ""
       }));
 
       console.log("🎁 Regalos cargados:", regalos);
@@ -591,7 +592,8 @@ async function fetchGuestList() {
       toggleScreens("screen2");
       return;
     }
-    toggleScreens("screen4");
+    //toggleScreens("screen4");
+    openComplementModal(); 
   });
 
   function normalizeList(csv=""){
@@ -1053,8 +1055,8 @@ function filterNames() {
   
       // Personaliza botón
       boton.textContent = asistira
-      ? "Elige el regalo perfecto 🎁"
-      : "Elige un regalo si deseas enviarnos uno 💝";
+      ? "Continuar a la lista de regalos 🎁"
+      : "Puedes echar un vistazo a la lista de regalos 🎁";
 
     boton.classList.remove("hidden");
 
@@ -1213,6 +1215,98 @@ window.closeInvite = function closeInvite() {
     cover.style.pointerEvents = ''; 
   }
 };
+
+//------------------------------------------------------------------------------------------
+
+// Helpers modal
+const $compModal = () => document.getElementById("complementModal");
+const $compList  = () => document.getElementById("complementList");
+
+function getComplementos(lista = regalos) {
+  return (lista || []).filter(r => String(r.categoria || "").toLowerCase() === "complemento");
+}
+
+function closeComplementModal() {
+  $compModal()?.classList.remove("show");
+  // Permite scroll de nuevo (si lo bloqueas en modales)
+  document.body.style.overflow = "";
+}
+
+function openComplementModal() {
+  // Pintar complementos
+  renderComplementos();
+  // Mostrar modal
+  const modal = $compModal();
+  if (!modal) return;
+  modal.classList.add("show");
+  // Bloquear scroll de fondo
+  document.body.style.overflow = "hidden";
+}
+
+function renderComplementos() {
+  const cont = $compList();
+  if (!cont) return;
+  cont.innerHTML = "";
+
+  const fmtCOP = new Intl.NumberFormat("es-CO", { style: "currency", currency: "COP", maximumFractionDigits: 0 });
+  const complementos = getComplementos(regalos);
+
+  if (!complementos.length) {
+    cont.innerHTML = `<p style="text-align:center;opacity:.7">No hay complementos por ahora.</p>`;
+    return;
+  }
+
+  complementos.forEach(item => {
+    // Mini-card (reutilizamos parte del render principal pero más compacto)
+    const card = document.createElement("div");
+    card.className = "gift-item";
+    card.style.margin = "0 0 12px 0";
+
+    const title = document.createElement("h4");
+    title.textContent = item.nombre || "Complemento";
+    title.style.marginBottom = "4px";
+
+    const price = document.createElement("div");
+    price.textContent = fmtCOP.format(Number(item.precio) || 0);
+    price.className = "price";
+
+    const btn = document.createElement("button");
+    btn.className = "gift-reserve-btn";
+    btn.dataset.id = item.id || item.id_regalo;
+    btn.textContent = computeGiftUiState(item, nombreSeleccionado).label;
+
+    // Estado/disabled acorde a tu lógica actual
+    const ui = computeGiftUiState(item, nombreSeleccionado);
+    btn.disabled = !!ui.disabled;
+    if (ui.hint) btn.title = ui.hint;
+
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      reserveGift(btn); // usa tu flujo actual (bloquea, confetti, scroll top, etc.)
+    });
+
+    card.appendChild(title);
+    card.appendChild(price);
+    card.appendChild(btn);
+    cont.appendChild(card);
+  });
+}
+
+// Cierres del modal (X, fuera y botones)
+document.getElementById("closeComplementModal")?.addEventListener("click", closeComplementModal);
+document.getElementById("keepBrowsingBtn")?.addEventListener("click", closeComplementModal);
+
+// Click fuera del contenido para cerrar
+$compModal()?.addEventListener("click", (e) => {
+  if (e.target === e.currentTarget) closeComplementModal();
+});
+
+// Ir a la invitación SIN obligar a seleccionar complementos
+document.getElementById("goToInviteBtn")?.addEventListener("click", () => {
+  closeComplementModal();
+  toggleScreens("screen4");
+});
+
 
   
   window.goToNameInput = goToNameInput;

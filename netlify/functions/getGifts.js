@@ -33,7 +33,7 @@ exports.handler = async function () {
     // Mapea por índice de columna (sin encabezados)
     const data = rows
       .map((row) => {
-        const [id_regalo, nombre, precio, lugar, descripcion, link, img, estado,reservado_por, _J_ignorado, tipo] = row;
+        const [id_regalo, nombre, precio, lugar, descripcion, link, img, estado,reservado_por, categoria, tipo] = row;
         return {
           id_regalo: (id_regalo || "").toString().trim(),
           nombre: (nombre || "").toString().trim(),
@@ -44,6 +44,7 @@ exports.handler = async function () {
           img: (img || "").toString().trim(),
           estado: (estado || "").toString().trim(),
           reservado_por: (reservado_por || "").toString().trim(),
+          categoria: (categoria || "").toString().trim(),
           tipo: (tipo || "").toString().trim(),
         };
       })
