@@ -1194,17 +1194,36 @@
 
     .modal-content-gifts {
     background: #ffffff;
-    color: white;
+    color: black;
     padding: 2rem;
     border-radius: 1.5rem;
     box-shadow: 0px 0px 4px #6368f6b8;
     text-align: center;
     width: 90%;
-    height: 80%;
+    height: 75%;
     position: absolute;
     animation: fadeInUp 0.4s ease;
     border: 1px solid rgba(255, 255, 255, 0.08);
     margin-top: 9rem;
+  }
+
+/* Responsividad para modal de regalos complementos */
+  @media (max-width: 1024px) {
+    .modal-content-gifts {
+      margin-top: 9rem;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .modal-content-gifts {
+      margin-top: 6rem;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .modal-content-gifts {
+      margin-top: 6rem;
+    }
   }
   
   .modal-content h3 {
@@ -1233,6 +1252,15 @@
     display: flex;
     gap: 1rem;
     justify-content: center;
+  }
+
+    .modal-buttons-complement {
+    margin-top: 1.5rem;
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    justify-self: center;
+    width: 90%;
   }
   
   .modal-buttons button {
@@ -1766,6 +1794,14 @@
   margin-bottom: 1rem;
   line-height: 1.5;
   text-align: justify;
+}
+
+.modal-text-complement {
+  margin-bottom: 1rem;
+  line-height: 1;
+  text-align: center;
+  font-size: 0.9rem;
+
 }
 
 /* Oculto por defecto */
