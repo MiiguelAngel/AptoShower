@@ -347,12 +347,11 @@ async function fetchGuestList() {
   
 
   function mostrarRegalos(lista = regalos, opts = {}) {
-    const container = opts.container || document.querySelector(".regalos-grid"); // default: grilla principal
-    if (!grid) return;
-    grid.innerHTML = "";
+    const target = opts.container || document.querySelector(".regalos-grid");
+    if (!target) return;
+    target.innerHTML = "";
     // donde antes hacías: const grid = document.querySelector(".regalos-grid");
     // ahora usa 'container':
-    const grid = container;
     const FALLBACK_IMG = "assets/images/Cedro_logo.png";
     const fmtCOP = new Intl.NumberFormat("es-CO", {
       style: "currency",
