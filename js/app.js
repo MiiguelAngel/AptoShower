@@ -1243,12 +1243,19 @@ window.closeInvite = function closeInvite() {
 const $compModal = () => document.getElementById("complementModal");
 const $compList  = () => document.getElementById("complementList");
 
-function esComplemento(item){
-  const a = item?.categoria || "";
-  if (a.includes("complemento")) return true;
-  // respaldo: si por error lo pusieron en "tipo"
-  return (item?.tipo || "").toString().toLowerCase().includes("complemento");
+function esComplemento(item) {
+  const norm = (s) => (s ?? "")
+  .toString()
+  .normalize("NFD")
+  .replace(/[\u0300-\u036f]/g, "")
+  .trim()
+  .toLowerCase();
+  const cat = norm(item?.categoria);
+  if (cat.includes("complemento")) return true;
+  // respaldo por si alguien lo puso en "tipo"
+  return norm(item?.tipo).includes("complemento");
 }
+
 
 function openComplementModal() {
   const modal = document.getElementById("complementModal");
