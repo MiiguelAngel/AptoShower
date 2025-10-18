@@ -362,7 +362,8 @@ async function fetchGuestList() {
   });
 
   // 1) Prepara datos
-  let data = Array.isArray(lista) ? lista.slice() : [];
+  const lista_sin_complement = (lista || []).filter(noEsComplemento);
+  let data = Array.isArray(lista_sin_complement) ? lista_sin_complement.slice() : [];
 
   // Aplica filtros SOLO si no estamos en contextos especiales (modal)
   if (!opts.bypassFilters && typeof filtrarRegalos === "function") {
@@ -591,7 +592,9 @@ async function fetchGuestList() {
     const bar = document.getElementById("continueBar");
     if (!bar) return;
 
+    const Complementmodal = document.getElementById("complementModal");
     const modal = document.getElementById("complementModal");
+    const ComplmodalOpen = Complementmodal && modal.classList.contains("show");
     const modalOpen = modal && modal.classList.contains("show");
 
     // ¿Tiene algún regalo reservado?
@@ -600,7 +603,7 @@ async function fetchGuestList() {
       : false;
 
     // Mostrar solo si tiene regalo y el modal NO está abierto
-    const debeMostrar = tieneRegalo && !modalOpen;
+    const debeMostrar = tieneRegalo && !modalOpen && !ComplmodalOpen;
 
     bar.classList.toggle("hidden", !debeMostrar);
   }
@@ -1218,6 +1221,19 @@ const $compModal = () => document.getElementById("complementModal");
 const $compList  = () => document.getElementById("complementList");
 
 function esComplemento(item) {
+  const norm = (s) => (s ?? "")
+  .toString()
+  .normalize("NFD")
+  .replace(/[\u0300-\u036f]/g, "")
+  .trim()
+  .toLowerCase();
+  const cat = norm(item?.categoria);
+  if (cat.includes("complemento")) return true;
+  // respaldo por si alguien lo puso en "tipo"
+  return norm(item?.tipo).includes("complemento");
+}
+
+function noEsComplemento(item) {
   const norm = (s) => (s ?? "")
   .toString()
   .normalize("NFD")
