@@ -362,8 +362,9 @@ async function fetchGuestList() {
   });
 
   // 1) Prepara datos
-  const lista_sin_complement = (lista || []).filter(noEsComplemento);
-  let data = Array.isArray(lista_sin_complement) ? lista_sin_complement.slice() : [];
+  
+  let data = Array.isArray(lista) ? lista.slice() : [];
+  data = data.filter(noEsComplemento);
 
   // Aplica filtros SOLO si no estamos en contextos especiales (modal)
   if (!opts.bypassFilters && typeof filtrarRegalos === "function") {
@@ -911,7 +912,9 @@ function filterNames() {
         pendingReservations.delete(id);
         setBtnLoading(button, false);
         unlockUI(600);   
-
+        refreshComplementModal();  // ← clave
+        applyMobileView();
+        mostrarRegalos(regalos);
       }
       return;
     }
@@ -980,6 +983,9 @@ function filterNames() {
       pendingReservations.delete(id);
       setBtnLoading(button, false);
       unlockUI(600);   
+      refreshComplementModal();  // ← clave
+      applyMobileView();
+      mostrarRegalos(regalos);
     }
   
     // Si el modal está abierto, vuelve a renderizar allí también
@@ -1239,16 +1245,20 @@ function esComplemento(item) {
 
 function noEsComplemento(item) {
   const norm = (s) => (s ?? "")
-  .toString()
-  .normalize("NFD")
-  .replace(/[\u0300-\u036f]/g, "")
-  .trim()
-  .toLowerCase();
-  const cat = norm(item?.categoria);
-  if (!cat.includes("complemento")) return true;
-  // respaldo por si alguien lo puso en "tipo"
-  return !norm(item?.tipo).includes("complemento");
+    .toString()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .trim()
+    .toLowerCase();
+
+  const cat  = norm(item?.categoria);
+  const tipo = norm(item?.tipo);
+
+  // Excluir si aparece "complemento" en categoría O tipo
+  const esComplemento = cat.includes("complemento") || tipo.includes("complemento");
+  return !esComplemento; // ← "no es complemento"
 }
+
 
 
 function openComplementModal() {
