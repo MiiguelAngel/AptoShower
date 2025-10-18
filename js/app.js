@@ -1315,7 +1315,7 @@ function refreshComplementModal() {
   const complementos = (regalos || []).filter(esComplemento);
 
   // repinta en el CONTENEDOR DEL MODAL usando tu mismo render
-  mostrarRegalos(complementos, { container: cont, bypassFilters: true });
+  mostrarRegalos(complementos, { container: cont, allowComplements: true, bypassFilters: true });
 
   // aplica los mismos ajustes de vista móvil/PC
   if (typeof applyMobileView === "function") applyMobileView();
