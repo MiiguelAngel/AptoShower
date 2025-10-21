@@ -1815,6 +1815,44 @@
   justify-content: center;
 }
 
+/* Botón de cerrar estilo Apple */
+.modal-close-emo {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 43px;
+  height: 43px;
+  border-radius: 50%;
+  border: none;
+  background: #ffc4c4;
+  color: #111;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background .2s ease;
+  padding: 0px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 1024px) {
+    .modal-close-emo {
+      top: 0px;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .modal-close-emo {
+      top: 0px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .modal-close-emo {
+      top: 0px;
+    }
+  }
+
 .modal-close:hover {
   background: #ddd;
 }
