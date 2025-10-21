@@ -1186,6 +1186,27 @@
     gap: 4px;
     z-index: 10;
   }
+
+  @media (max-width: 1024px) {
+    .modal-close-emoji {
+      margin-top: 1rem;
+      right: 1rem;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .modal-close-emoji {
+      margin-top: -1rem;
+      right: 0rem;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .modal-close-emoji {
+      margin-top: -1rem;
+      right: 0rem;
+    }
+  }
   
   .modal-content {
     background: #ffffff;
@@ -2057,6 +2078,39 @@
   margin-right: 3.5rem;
   font-size: 1.6rem;
 }
+
+.tap-emoji-complement{
+  display:inline-block;
+  animation: wiggle 1.2s ease-in-out infinite;
+  transform-origin: 70% 70%;
+  margin-top: 1.6rem;
+  margin-right: 3.5rem;
+  font-size: 1.6rem;
+}
+
+/* Responsividad para modal de regalos complementos */
+  @media (max-width: 1024px) {
+    .tap-emoji-complement {
+      margin-top: 1.6rem;
+      margin-right: 3.5rem;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .tap-emoji-complement {
+      margin-top: 0rem;
+      margin-right: 5rem;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .tap-emoji-complement {
+      margin-top: 0rem;
+      margin-right: 5rem;
+    }
+  }
+
+
 
 @keyframes wiggle{
   0%,100%{ transform: translateX(0) rotate(0deg); }
