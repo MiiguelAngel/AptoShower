@@ -920,9 +920,16 @@ function filterNames() {
         pendingReservations.delete(id);
         setBtnLoading(button, false);
         unlockUI(600);   
-        refreshComplementModal();  // ← clave
+        // Si el modal de complementos está abierto, actualízalo correctamente
+        const modal = document.getElementById("complementModal");
+        if (modal && modal.classList.contains("show")) {
+          refreshComplementModal(); // ya usa allowComplements: true
+        } else {
+          // Si no está abierto, solo repinta la lista general
+          mostrarRegalos(regalos);
+        }
+
         applyMobileView();
-        mostrarRegalos(regalos);
       }
       return;
     }
@@ -991,9 +998,16 @@ function filterNames() {
       pendingReservations.delete(id);
       setBtnLoading(button, false);
       unlockUI(600);   
-      refreshComplementModal();  // ← clave
+      // Si el modal de complementos está abierto, actualízalo correctamente
+      const modal = document.getElementById("complementModal");
+      if (modal && modal.classList.contains("show")) {
+        refreshComplementModal(); // ya usa allowComplements: true
+      } else {
+        // Si no está abierto, solo repinta la lista general
+        mostrarRegalos(regalos);
+      }
+
       applyMobileView();
-      mostrarRegalos(regalos);
     }
   
     // Si el modal está abierto, vuelve a renderizar allí también
