@@ -1398,7 +1398,7 @@
   
   @media (max-width: 600px) {
     .regalos-grid {
-      grid-template-columns: 1fr;
+      grid-template-columns: 2fr;
     }
   }
   
@@ -2082,7 +2082,7 @@
 
 @media (max-width: 600px){
   /* Móvil: por defecto 1 columna (vista lista) */
-  #listaRegalos{ grid-template-columns: 1fr; }
+  #listaRegalos{ grid-template-columns: 2fr; }
 
   /* Toggle a 2 columnas cuando se añade .mobile-grid */
   #listaRegalos.mobile-grid{ grid-template-columns: repeat(2, minmax(0,1fr)); }

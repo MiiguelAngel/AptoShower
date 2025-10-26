@@ -101,8 +101,8 @@ function applyGiftView() {
   const cont = document.getElementById("listaRegalos");
   if (!cont) return;
   cont.classList.toggle("grid", giftView === "grid");
-  document.getElementById("btnList")?.classList.toggle("is-active", giftView === "list");
   document.getElementById("btnGrid")?.classList.toggle("is-active", giftView === "grid");
+  document.getElementById("btnList")?.classList.toggle("is-active", giftView === "list");
 }
 
 // Toggle por clicks
