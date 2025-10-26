@@ -374,11 +374,6 @@ async function fetchGuestList() {
     data = filtrarRegalos(data);
   }
 
-  // Aplica filtros SOLO si no estamos en contextos especiales (modal)
-  if (!opts.bypassFilters && typeof filtrarRegalos === "function") {
-    data = filtrarRegalos(data);
-  }
-
   // Añade índice estable para ordenar (sin mutar original)
   data = data.map((it, idx) => ({ ...it, __idx: idx }));
 
@@ -1018,7 +1013,11 @@ function filterNames() {
       if (!cont) return;
       const complementos = (regalos || []).filter(esComplemento);
       cont.innerHTML = "";
-      mostrarRegalos(complementos, { container: cont });
+      mostrarRegalos(complementos, {
+        container: cont,
+        allowComplements: true,   // ← imprescindible
+        bypassFilters: true       // ← evita chips/selects
+      });
       if (typeof applyMobileView === "function") applyMobileView();
     })();
 
