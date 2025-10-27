@@ -1788,6 +1788,24 @@
   backdrop-filter: blur(8px);
 }
 
+/* Fuerza a que el modal NO pinte hasta que JS lo abra */
+#giftInfoModal[aria-hidden="true"] {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+/* Cuando lo abramos, vuelve a ser visible */
+#giftInfoModal[aria-hidden="false"] {
+  display: flex !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
+
+#complementModal[aria-hidden="true"] { display:none !important; visibility:hidden !important; pointer-events:none !important; }
+#complementModal[aria-hidden="false"]{ display:flex !important; visibility:visible !important; pointer-events:auto !important; }
+
+
 /* Contenido del modal */
 .modal-content-welcome {
   position: relative;

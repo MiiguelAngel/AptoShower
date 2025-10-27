@@ -674,6 +674,22 @@ function goToGifts() {
     return;
   }
   toggleScreens("screen3");
+  // 2) Espera a que pinte la grilla (doble rAF = tras primer frame visible)
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      // 3) Evita reabrir si ya se mostró una vez
+      if (hasOpenedGiftInfo) return;
+
+      // 4) iOS: abrir SOLO tras el primer toque del usuario (mejora percepciones/bug focus)
+      if (isIOS) {
+        const openOnce = () => { openGiftInfo(); window.removeEventListener('touchend', openOnce, { passive: true }); };
+        window.addEventListener('touchend', openOnce, { passive: true, once: true });
+      } else {
+        // Otros navegadores: pequeño delay suave que respeta el primer paint
+        setTimeout(openGiftInfo, 450);
+      }
+    });
+  });
   mostrarRegalos(regalos);
   applyMobileView();
 }
@@ -1351,7 +1367,40 @@ document.getElementById("goToInviteBtn")?.addEventListener("click", () => {
 
 
 //------------------------------------------------------------------------------------------
+// --- Flags/Helpers globales ---
+let hasOpenedGiftInfo = false;
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || 
+              (navigator.userAgent.includes('Mac') && 'ontouchend' in document);
 
+// Lee si ya se mostró antes en esta sesión
+try {
+  hasOpenedGiftInfo = localStorage.getItem('giftInfoShown') === '1';
+} catch (e) { /* no-op */ }
+
+// Abre el modal de bienvenida de regalos
+function openGiftInfo() {
+  const modal = document.getElementById('giftInfoModal');
+  if (!modal) return;
+
+  modal.classList.remove('hidden');
+  modal.removeAttribute('inert');
+  modal.setAttribute('aria-hidden', 'false');
+  document.body.classList.add('is-busy'); // ya la usas para lock suave
+  hasOpenedGiftInfo = true;
+  try { localStorage.setItem('giftInfoShown', '1'); } catch (e) {}
+}
+
+// Cierra el modal (tu función existente puede quedar así)
+function cerrarGiftInfo() {
+  const modal = document.getElementById('giftInfoModal');
+  if (!modal) return;
+
+  modal.classList.add('hidden');
+  modal.setAttribute('aria-hidden', 'true');
+  modal.setAttribute('inert', '');
+  document.body.classList.remove('is-busy');
+}
+//------------------------------------------------------------------------------------------
 
   
   window.goToNameInput = goToNameInput;

@@ -279,7 +279,9 @@
   </section>
 
   <!-- Modal de bienvenida a regalos -->
-  <div id="giftInfoModal" class="modal-overlay hidden">
+  <div id="giftInfoModal" class="modal-overlay hidden" aria-hidden="true" aria-modal="true" role="dialog"
+  inert>
+
     <div class="modal-content-welcome">
       <div class="modal-close-emoji">
           <span class="tap-emoji" aria-hidden="true">👉</span>
@@ -306,7 +308,7 @@
   </div>
 
   <!-- Modal: Complementa tu regalo -->
-  <div id="complementModal" class="modal" aria-hidden="true">
+  <div id="complementModal" class="modal" aria-hidden="true" aria-modal="true" role="dialog" inert>
     <div class="modal-content-gifts" role="dialog" aria-modal="true" aria-labelledby="compTitle">
       <div class="modal-close-emoji">
         <span class="tap-emoji-complement" aria-hidden="true">👉</span>
