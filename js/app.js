@@ -760,6 +760,18 @@ function setInviteGuestName() {
   el.style.display = n ? "block" : "none";
 }
 
+// “Ir a la invitación”
+document.getElementById("goToInviteFromScreen4")?.addEventListener("click", () => {
+  toggleScreens("screen5");
+});
+
+// “Seguir viendo” → simplemente oculta la barra hasta el próximo cambio de pantalla
+document.getElementById("stayBrowsingBtn")?.addEventListener("click", () => {
+  const cta = document.getElementById("compCta");
+  if (cta) cta.style.display = "none";
+});
+
+
 function toggleScreens(id) {
 
   // 🚧 Si quieren ir a screen3 sin nombre, redirige a screen2 con toast

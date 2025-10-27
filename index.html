@@ -220,9 +220,14 @@
     <!-- Reusa exactamente la misma grilla -->
     <div id="complementListScreen" class="regalos-grid" aria-live="polite"></div>
 
-    <div class="comp-actions" style="margin-top:1rem; display:flex; gap:.5rem; justify-content:center;">
-      <button id="goToInviteFromScreen4" class="btn-personalizado">Ir a la invitación</button>
-      <button id="backToGiftsFromScreen4" class="btn-secundario">Volver a regalos</button>
+    <!-- Barra flotante tipo continue bar (solo screen4) -->
+    <div id="compCta" class="float-cta" aria-hidden="true">
+      <button id="goToInviteFromScreen4" class="btn-cta btn-primary">
+        Ir a la invitación ✨
+      </button>
+      <button id="stayBrowsingBtn" class="btn-cta btn-ghost">
+        Seguir viendo
+      </button>
     </div>
 
     <div style="height:3rem;"></div>

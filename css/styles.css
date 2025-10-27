@@ -2366,3 +2366,87 @@ body.is-busy { overflow: hidden; }
 }
 
 /*-----------------------------------------------------------------------------*/
+
+/* Variables útiles */
+:root{
+  --safe-b: env(safe-area-inset-bottom, 0px);
+  --cta-radius: 28px;
+}
+
+/* Deja espacio para que la barra no tape el contenido */
+#screen4 { padding-bottom: 120px; }
+
+/* ====== Barra flotante tipo continue bar ====== */
+.float-cta{
+  position: fixed;
+  left: 50%;
+  bottom: calc(var(--safe-b) + 16px);
+  transform: translateX(-50%);
+  z-index: 1000;
+  display: flex;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 9999px;
+  background: rgba(10, 16, 28, .55);
+  box-shadow:
+    0 10px 30px rgba(0,0,0,.35),
+    0 0 40px rgba(124, 58, 237, .25); /* halo suave */
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  pointer-events: none;         /* la barra no capta eventos… */
+  opacity: 0;                   /* …hasta que screen4 esté visible */
+  transition: opacity .25s ease, transform .25s ease;
+}
+
+/* Solo visible cuando screen4 está activo */
+#screen4.visible #compCta{
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+  pointer-events: auto;         /* …pero los botones sí */
+}
+
+/* ====== Botones de la barra ====== */
+.btn-cta{
+  all: unset;
+  cursor: pointer;
+  border-radius: var(--cta-radius);
+  padding: 12px 18px;
+  font-weight: 700;
+  line-height: 1;
+  font-size: 14px;
+  letter-spacing: .2px;
+  user-select: none;
+  transition: transform .15s ease, box-shadow .15s ease, background .2s ease;
+  white-space: nowrap;
+}
+
+/* Principal (azules, combina con tu tema) */
+.btn-primary{
+  color: #fff;
+  background: linear-gradient(135deg, #0ea5e9 0%, #6366f1 55%, #7c3aed 100%);
+  box-shadow:
+    0 6px 14px rgba(14,165,233,.25),
+    inset 0 0 0 1px rgba(255,255,255,.06);
+}
+.btn-primary:hover{ transform: translateY(-2px); }
+.btn-primary:active{ transform: translateY(0); }
+
+/* Secundario: antes era blanco y se perdía. Ahora “ghost” con borde claro. */
+.btn-ghost{
+  color: #e2e8f0;                               /* texto claro */
+  background: rgba(255,255,255,.06);            /* leve relleno para contraste */
+  border: 1.5px solid rgba(226,232,240,.35);    /* borde visible */
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.05);
+}
+.btn-ghost:hover{
+  background: rgba(255,255,255,.12);
+  transform: translateY(-2px);
+}
+.btn-ghost:active{ transform: translateY(0); }
+
+/* Para pantallas muy pequeñas, evita que los botones se peguen a los bordes */
+@media (max-width: 380px){
+  .float-cta { padding: 8px; gap: 8px; }
+  .btn-cta { padding: 11px 14px; font-size: 13px; }
+}
+/*-----------------------------------------------------------------------------*/
