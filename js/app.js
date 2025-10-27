@@ -809,6 +809,7 @@ function toggleScreens(id) {
   }); 
 
   const stepId = stepMap[id];
+  const cta = document.getElementById('compCta');
   if (stepId) document.getElementById(stepId).classList.add("active");
 
   if (id === "screen4") {
