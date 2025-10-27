@@ -177,6 +177,29 @@
     overflow-y: auto;
     padding-bottom: 2rem;
   }
+
+    #screen4 {
+    display: none;
+    background-color: #ffffff;
+    position: relative;
+    z-index: 1;
+    margin: 6rem auto;               /* ← centra horizontalmente */
+    border-radius: 30px;
+    flex-direction: column;
+    align-items: center;
+    scroll-behavior: smooth;
+    padding: 1.5rem 1rem;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    width: 90%;                     /* ocupa el ancho máximo permitido */
+    align-self: center; /* ← centra el contenido horizontalmente */
+    height: 80vh;;
+
+
+    /* Scroll local */
+    max-height: 100vh;
+    overflow-y: auto;
+    padding-bottom: 2rem;
+  }
   
   .visible {
     display: flex !important;
