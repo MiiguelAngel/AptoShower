@@ -213,7 +213,7 @@ async function fetchGuestList() {
   async function fetchGifts(noCache = false) {
     
     // Si no estamos en screen3, no hagas nada
-    if (!isOnScreen3) return;
+    if (!isOnScreen3 && !isOnScreen4) return;
     
     // Cancela fetch anterior (si quedaba en vuelo)
     if (giftsAbort) {
@@ -789,7 +789,7 @@ function toggleScreens(id) {
     screen2: "step2",
     screen3: "step3",
     screen4: "step4",
-    screen4: "step5"
+    screen5: "step5"
   };
 
   document.querySelectorAll('.progress-bubble .step-icon').forEach(step => {
@@ -801,7 +801,7 @@ function toggleScreens(id) {
 
   // 🔁 Manejo de sincronización (polling) según la pantalla
   if (id === "screen3" || id === "screen4") {
-      isOnScreen3 = true;  isOnScreen4 = false;
+      isOnScreen3 = true;  isOnScreen4 = true;
       updateContinueBar();
       applyGiftView();
       
@@ -825,6 +825,7 @@ function toggleScreens(id) {
       }, 6000);
     } else {
       isOnScreen3 = false;
+      isOnScreen4 = false;
       document.getElementById("continueBar")?.classList.add("hidden");
       // Al salir de screen3, detén polling
       if (syncTimer) { clearInterval(syncTimer); syncTimer = null; }
