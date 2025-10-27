@@ -2377,25 +2377,30 @@ body.is-busy { overflow: hidden; }
 #screen4 { padding-bottom: 120px; }
 
 /* ====== Barra flotante tipo continue bar ====== */
+/* Barra flotante */
 .float-cta{
   position: fixed;
   left: 50%;
-  bottom: calc(var(--safe-b) + 16px);
-  transform: translateX(-50%);
-  z-index: 1000;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 16px);
+  transform: translateX(-50%) translateY(10px);
+  z-index: 10000;
   display: flex;
   gap: 12px;
   padding: 10px 12px;
   border-radius: 9999px;
-  background: rgba(10, 16, 28, .55);
-  box-shadow:
-    0 10px 30px rgba(0,0,0,.35),
-    0 0 40px rgba(124, 58, 237, .25); /* halo suave */
+  background: rgba(10,16,28,.55);
+  box-shadow: 0 10px 30px rgba(0,0,0,.35), 0 0 40px rgba(124,58,237,.25);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  pointer-events: none;         /* la barra no capta eventos… */
-  opacity: 0;                   /* …hasta que screen4 esté visible */
+  pointer-events: none;   /* la barra no toma eventos… */
+  opacity: 0;             /* …hasta que la activemos */
   transition: opacity .25s ease, transform .25s ease;
+}
+
+.float-cta.show{
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+  pointer-events: auto;   /* …pero los botones sí */
 }
 
 /* Solo visible cuando screen4 está activo */

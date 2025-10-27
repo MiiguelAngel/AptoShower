@@ -811,6 +811,12 @@ function toggleScreens(id) {
   const stepId = stepMap[id];
   if (stepId) document.getElementById(stepId).classList.add("active");
 
+  if (id === "screen4") {
+    cta?.classList.add('show');
+  } else {
+    cta?.classList.remove('show');
+  }
+
   // 🔁 Manejo de sincronización (polling) según la pantalla
   if (id === "screen3" || id === "screen4") {
       isOnScreen3 = true;  isOnScreen4 = true;
