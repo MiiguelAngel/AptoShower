@@ -140,8 +140,7 @@
     0 4px 6px rgba(0, 0, 0, 0.3);
     height: auto;
     min-height: 100svh;
-    min-height: 76vh;
-    overflow: overlay;
+    overflow: auto;
     display: none;
     flex-direction: column;
     align-items: center;
