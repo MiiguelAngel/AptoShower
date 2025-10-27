@@ -1004,6 +1004,7 @@ function filterNames() {
           confetti({ particleCount: 200, spread: 70, origin: { y: 0.6 } });
           mostrarRegalos(regalos);
           applyMobileView();
+          renderComplementScreen(); 
           //refreshComplementModal();
           window.scrollTo({ top: 0, behavior: "smooth" });
         } else {
@@ -1012,6 +1013,7 @@ function filterNames() {
           mostrarRegalos(regalos);
           applyMobileView();
           //refreshComplementModal();
+          renderComplementScreen(); 
           window.scrollTo({ top: 0, behavior: "smooth" });
         }
         item.reservado_por = lista.join(", ");
@@ -1032,6 +1034,7 @@ function filterNames() {
         } else {
           // Si no está abierto, solo repinta la lista general
           mostrarRegalos(regalos);
+          renderComplementScreen(); 
         }
 
         applyMobileView();
@@ -1084,6 +1087,8 @@ function filterNames() {
         confetti({ particleCount: 200, spread: 70, origin: { y: 0.6 } });
         mostrarRegalos(regalos);
         applyMobileView();
+
+        renderComplementScreen(); 
         //refreshComplementModal();
         window.scrollTo({ top: 0, behavior: "smooth" });
       } else {
@@ -1092,6 +1097,7 @@ function filterNames() {
         mostrarRegalos(regalos);
         applyMobileView();
         //refreshComplementModal();
+        renderComplementScreen(); 
         window.scrollTo({ top: 0, behavior: "smooth" });
       }
 
@@ -1111,6 +1117,7 @@ function filterNames() {
       } else {
         // Si no está abierto, solo repinta la lista general
         mostrarRegalos(regalos);
+        renderComplementScreen(); 
       }
 
       applyMobileView();
