@@ -765,10 +765,15 @@ document.getElementById("goToInviteFromScreen4")?.addEventListener("click", () =
   toggleScreens("screen5");
 });
 
-// “Seguir viendo” → simplemente oculta la barra hasta el próximo cambio de pantalla
-document.getElementById("stayBrowsingBtn")?.addEventListener("click", () => {
+document.getElementById("stayBrowsingBtn")?.addEventListener("click", (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+
   const cta = document.getElementById("compCta");
-  if (cta) cta.style.display = "none";
+  if (cta) cta.classList.remove("show");
+
+  // Redirige a la Screen 3 (lista principal de regalos)
+  toggleScreens("screen3");
 });
 
 

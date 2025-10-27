@@ -2395,6 +2395,7 @@ body.is-busy { overflow: hidden; }
   pointer-events: none;   /* la barra no toma eventos… */
   opacity: 0;             /* …hasta que la activemos */
   transition: opacity .25s ease, transform .25s ease;
+  margin-bottom: 4rem; /* espacio extra para que no tape contenido */
 }
 
 .float-cta.show{
