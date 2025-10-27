@@ -3,6 +3,7 @@ let guestList = [];
 let syncTimer = null;
 let syncResumeTO = null;
 let isOnScreen3 = false;      // estado actual de la vista
+let isOnScreen4 = false;      // estado actual de la vista
 let giftsAbort = null;        // AbortController para cancelar fetch en curso
 let pendingReservations = new Set(); // IDs de regalos que están siendo procesados (reservar/liberar)
 let isNameLocked = false;
@@ -557,6 +558,31 @@ async function fetchGuestList() {
     }
   }
 
+  function getComplementos() {
+    const norm = s => (s ?? "").toString().normalize("NFD").replace(/[\u0300-\u036f]/g,"").trim().toLowerCase();
+    return (regalos || []).filter(it => {
+      const cat  = norm(it.categoria);
+      const tipo = norm(it.tipo);
+      return cat.includes("complemento") || tipo.includes("complemento");
+    });
+  }
+
+  function renderComplementScreen() {
+    const cont = document.getElementById("complementListScreen");
+    if (!cont) return;
+    const complementos = getComplementos();
+    cont.innerHTML = "";
+    // Reutilizamos tu renderer con opciones para no filtrar ni mezclar:
+    mostrarRegalos(complementos, { container: cont, allowComplements: true, bypassFilters: true });
+  }
+
+  document.getElementById("goToInviteFromScreen4")?.addEventListener("click", () => {
+    toggleScreens("screen5");
+  });
+  document.getElementById("backToGiftsFromScreen4")?.addEventListener("click", () => {
+    toggleScreens("screen3");
+  });
+
 
   document.getElementById("continueBtn")?.addEventListener("click", () => {
     // Guard extra: no dejes pasar sin nombre válido
@@ -565,9 +591,17 @@ async function fetchGuestList() {
       toggleScreens("screen2");
       return;
     }
-    //toggleScreens("screen4");
-    openComplementModal(); 
+    toggleScreens("screen4");
+    //openComplementModal(); 
   });
+  
+  document.getElementById("goToInviteFromScreen4")?.addEventListener("click", () => {
+    toggleScreens("screen5");
+  });
+  document.getElementById("backToGiftsFromScreen4")?.addEventListener("click", () => {
+    toggleScreens("screen3");
+  });
+
 
   function normalizeList(csv=""){
     return csv.split(",").map(s=>s.trim()).filter(Boolean);
@@ -596,9 +630,9 @@ async function fetchGuestList() {
     const bar = document.getElementById("continueBar");
     if (!bar) return;
 
-    const Complementmodal = document.getElementById("complementModal");
-    const ComplmodalOpen = Complementmodal && Complementmodal.classList.contains("show");
-    const modal = document.getElementById("complementModal");
+    //const Complementmodal = document.getElementById("complementModal");
+    //const ComplmodalOpen = Complementmodal && Complementmodal.classList.contains("show");
+    const modal = document.getElementById("giftInfoModal");
     const modalOpen = modal && modal.classList.contains("show");
 
     // ¿Tiene algún regalo reservado?
@@ -607,7 +641,7 @@ async function fetchGuestList() {
       : false;
 
     // Mostrar solo si tiene regalo y el modal NO está abierto
-    const debeMostrar = tieneRegalo && !modalOpen && !ComplmodalOpen;
+    const debeMostrar = tieneRegalo && !modalOpen && isOnScreen3 && !isOnScreen4;;
 
     bar.classList.toggle("hidden", !debeMostrar);
   }
@@ -713,24 +747,20 @@ function setInviteGuestName() {
 function toggleScreens(id) {
 
   // 🚧 Si quieren ir a screen3 sin nombre, redirige a screen2 con toast
-  if (id === "screen4" && !ensureSelectedName()) {
+   
+  if ((id === "screen3" || id === "screen4" || id === "screen5") && !ensureSelectedName()) {
     mostrarToast("¡Queremos conocerte primero! ✨ Escribe tu nombre y confirma asistencia.", "warning");
-    id = "screen2"; // forzamos screen2
+    id = "screen2";
   }
 
-  if (id === "screen4") {
+    // Si entras a la invitación, refresca el nombre
+  if (id === "screen5") {
     closeInvite();
     setInviteGuestName();
-  }
-
-  if (id !== "screen4") {
+  } else {
     closeInvite();
   }
-  // 🚧 Si quieren ir a screen3 sin nombre, redirige a screen2 con toast
-  if (id === "screen3" && !ensureSelectedName()) {
-    mostrarToast("¡Queremos conocerte primero! ✨ Escribe tu nombre y confirma asistencia.", "warning");
-    id = "screen2"; // forzamos screen2
-  }
+
 
   document.querySelectorAll('.screen').forEach(screen => {
     screen.classList.remove('visible');
@@ -742,7 +772,8 @@ function toggleScreens(id) {
     screen: "step1",
     screen2: "step2",
     screen3: "step3",
-    screen4: "step4"
+    screen4: "step4",
+    screen4: "step5"
   };
 
   document.querySelectorAll('.progress-bubble .step-icon').forEach(step => {
@@ -753,10 +784,11 @@ function toggleScreens(id) {
   if (stepId) document.getElementById(stepId).classList.add("active");
 
   // 🔁 Manejo de sincronización (polling) según la pantalla
-  if (id === "screen3") {
-      isOnScreen3 = true;
+  if (id === "screen3" || id === "screen4") {
+      isOnScreen3 = true;  isOnScreen4 = false;
       updateContinueBar();
       applyGiftView();
+      
 
       // Abre el modal de info (si lo estás usando)
       if (typeof abrirGiftInfo === "function") abrirGiftInfo();
@@ -770,7 +802,7 @@ function toggleScreens(id) {
       }
 
       // Inicia/renueva polling
-      if (syncTimer) clearInterval(syncTimer);
+    if (syncTimer) clearInterval(syncTimer);
       if (typeof syncNow === "function") syncNow();     // primer sync rápido
       syncTimer = setInterval(() => {
         if (typeof syncNow === "function") syncNow();
@@ -781,6 +813,26 @@ function toggleScreens(id) {
       // Al salir de screen3, detén polling
       if (syncTimer) { clearInterval(syncTimer); syncTimer = null; }
       if (giftsAbort) { giftsAbort.abort(); giftsAbort = null; }
+  }
+
+  // Screen 4 (complementos)
+  if (id === "screen4") {
+    isOnScreen4 = true;
+    // Asegura tener data: si no, carga; si sí, pinta
+    if (regalos.length === 0) {
+      fetchGifts(true).then(() => { renderComplementScreen(); applyMobileView(); });
+    } else {
+      renderComplementScreen(); applyMobileView();
+    }
+    return;
+  } else {
+    isOnScreen4 = false;
+  }
+
+  // Screen 5 (invitación)
+  if (id === "screen5") {
+    setInviteGuestName();
+    return;
   }
 }
 
@@ -911,14 +963,14 @@ function filterNames() {
           confetti({ particleCount: 200, spread: 70, origin: { y: 0.6 } });
           mostrarRegalos(regalos);
           applyMobileView();
-          refreshComplementModal();
+          //refreshComplementModal();
           window.scrollTo({ top: 0, behavior: "smooth" });
         } else {
           lista = lista.filter(n => !eq(n, yo));
           item.estado = lista.length ? "Reservado" : "Disponible";
           mostrarRegalos(regalos);
           applyMobileView();
-          refreshComplementModal();
+          //refreshComplementModal();
           window.scrollTo({ top: 0, behavior: "smooth" });
         }
         item.reservado_por = lista.join(", ");
@@ -932,9 +984,10 @@ function filterNames() {
         setBtnLoading(button, false);
         unlockUI(600);   
         // Si el modal de complementos está abierto, actualízalo correctamente
-        const modal = document.getElementById("complementModal");
+        const modal = document.getElementById("giftInfoModal");
         if (modal && modal.classList.contains("show")) {
-          refreshComplementModal(); // ya usa allowComplements: true
+          //refreshComplementModal(); // ya usa allowComplements: true
+          pass;
         } else {
           // Si no está abierto, solo repinta la lista general
           mostrarRegalos(regalos);
@@ -990,14 +1043,14 @@ function filterNames() {
         confetti({ particleCount: 200, spread: 70, origin: { y: 0.6 } });
         mostrarRegalos(regalos);
         applyMobileView();
-        refreshComplementModal();
+        //refreshComplementModal();
         window.scrollTo({ top: 0, behavior: "smooth" });
       } else {
         item.estado = "Disponible";
         item.reservado_por = "";
         mostrarRegalos(regalos);
         applyMobileView();
-        refreshComplementModal();
+        //refreshComplementModal();
         window.scrollTo({ top: 0, behavior: "smooth" });
       }
 
@@ -1010,9 +1063,10 @@ function filterNames() {
       setBtnLoading(button, false);
       unlockUI(600);   
       // Si el modal de complementos está abierto, actualízalo correctamente
-      const modal = document.getElementById("complementModal");
+      const modal = document.getElementById("giftInfoModal");
       if (modal && modal.classList.contains("show")) {
-        refreshComplementModal(); // ya usa allowComplements: true
+        //refreshComplementModal(); // ya usa allowComplements: true
+        pass;
       } else {
         // Si no está abierto, solo repinta la lista general
         mostrarRegalos(regalos);
@@ -1022,20 +1076,20 @@ function filterNames() {
     }
   
     // Si el modal está abierto, vuelve a renderizar allí también
-    (function refreshComplementIfOpen(){
-      const m = document.getElementById("complementModal");
-      if (!m || !m.classList.contains("show")) return;
-      const cont = document.getElementById("complementList");
-      if (!cont) return;
-      const complementos = (regalos || []).filter(esComplemento);
-      cont.innerHTML = "";
-      mostrarRegalos(complementos, {
-        container: cont,
-        allowComplements: true,   // ← imprescindible
-        bypassFilters: true       // ← evita chips/selects
-      });
-      if (typeof applyMobileView === "function") applyMobileView();
-    })();
+    //(function refreshComplementIfOpen(){
+    //  const m = document.getElementById("complementModal");
+    //  if (!m || !m.classList.contains("show")) return;
+    //  const cont = document.getElementById("complementList");
+    //  if (!cont) return;
+    //  const complementos = (regalos || []).filter(esComplemento);
+    //  cont.innerHTML = "";
+    //  mostrarRegalos(complementos, {
+    //    container: cont,
+    //    allowComplements: true,   // ← imprescindible
+    //    bypassFilters: true       // ← evita chips/selects
+    //  });
+    //  if (typeof applyMobileView === "function") applyMobileView();
+    //})();
 
 
   }
@@ -1264,106 +1318,6 @@ window.closeInvite = function closeInvite() {
 //------------------------------------------------------------------------------------------
 
 // --- Helpers de modal ---
-const $compModal = () => document.getElementById("complementModal");
-const $compList  = () => document.getElementById("complementList");
-
-function esComplemento(item) {
-  const norm = (s) => (s ?? "")
-  .toString()
-  .normalize("NFD")
-  .replace(/[\u0300-\u036f]/g, "")
-  .trim()
-  .toLowerCase();
-  const cat = norm(item?.categoria);
-  if (cat.includes("complemento")) return true;
-  // respaldo por si alguien lo puso en "tipo"
-  return norm(item?.tipo).includes("complemento");
-}
-
-function noEsComplemento(item) {
-  const norm = (s) => (s ?? "")
-    .toString()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .trim()
-    .toLowerCase();
-
-  const cat  = norm(item?.categoria);
-  const tipo = norm(item?.tipo);
-
-  // Excluir si aparece "complemento" en categoría O tipo
-  const esComplemento = cat.includes("complemento") || tipo.includes("complemento");
-  return !esComplemento; // ← "no es complemento"
-}
-
-
-
-function openComplementModal() {
-  document.getElementById("continueBar")?.classList.add("hidden");
-  document.getElementById("continueBtn")?.classList.add("hidden");
-  const modal = document.getElementById("complementModal");
-  const cont  = document.getElementById("complementList");
-  if (!modal || !cont) return;
-
-  const complementos = (regalos || []).filter(esComplemento);
-  console.log("Complementos:", complementos.length); // debug rápido
-
-  cont.innerHTML = "";
-  mostrarRegalos(complementos, { container: cont, allowComplements: true, bypassFilters: true });
-
-  modal.classList.add("show");
-
-  document.body.style.overflow = "hidden";
-  if (typeof applyMobileView === "function") applyMobileView();
-}
-
-function closeComplementModal() {
-  const modal = document.getElementById("complementModal");
-  if (!modal) return;
-  modal.classList.remove("show");
-  document.body.style.overflow = "";
-  document.getElementById("continueBar")?.classList.remove("hidden");
-  document.getElementById("continueBtn")?.classList.remove("hidden");
-}
-
-function refreshComplementModal() {
-  const modal = document.getElementById("complementModal");
-  if (!modal || !modal.classList.contains("show")) return;
-
-  const cont = document.getElementById("complementList");
-  if (!cont) return;
-
-  // mismo filtro robusto que ya usas
-  const norm = (s) => (s ?? "").toString().normalize("NFD").replace(/[\u0300-\u036f]/g,"").trim().toLowerCase();
-  const esComplemento = (it) =>
-    norm(it.categoria).includes("complemento") || norm(it.tipo).includes("complemento");
-
-  const complementos = (regalos || []).filter(esComplemento);
-
-  // repinta en el CONTENEDOR DEL MODAL usando tu mismo render
-  mostrarRegalos(complementos, { container: cont, allowComplements: true, bypassFilters: true });
-
-  // aplica los mismos ajustes de vista móvil/PC
-  if (typeof applyMobileView === "function") applyMobileView();
-
-  // sincroniza visibilidad de la barra “continuar”
-  if (typeof updateContinueBar === "function") updateContinueBar();
-}
-
-//------------------------------------------------------------------------------------------
-
-
-// Cierres (X, seguir viendo, clic fuera, Esc)
-document.getElementById("closeComplementModal")?.addEventListener("click", closeComplementModal);
-document.getElementById("keepBrowsingBtn")?.addEventListener("click", closeComplementModal);
-$compModal()?.addEventListener("click", (e) => { if (e.target === e.currentTarget) closeComplementModal(); });
-document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeComplementModal(); });
-
-// Ir a la invitación (sin obligar a elegir complementos)
-document.getElementById("goToInviteBtn")?.addEventListener("click", () => {
-  closeComplementModal();
-  toggleScreens("screen4");
-});
 
 
 //------------------------------------------------------------------------------------------

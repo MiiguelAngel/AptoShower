@@ -1802,8 +1802,6 @@
   pointer-events: auto !important;
 }
 
-#complementModal[aria-hidden="true"] { display:none !important; visibility:hidden !important; pointer-events:none !important; }
-#complementModal[aria-hidden="false"]{ display:flex !important; visibility:visible !important; pointer-events:auto !important; }
 
 
 /* Contenido del modal */

@@ -40,9 +40,14 @@
           </span>
           <span class="arrow">➔</span>
           <span class="step-wrapper">
-            <span id="step4" onclick="toggleScreens('screen4')" class="step-icon" title="Invitacion">📩</span>
+            <span id="step4" onclick="toggleScreens('screen4')" class="step-icon" title="Complementos">🧩</span>
+          </span>
+          <span class="arrow">➔</span>
+          <span class="step-wrapper">
+            <span id="step4" onclick="toggleScreens('screen5')" class="step-icon" title="Invitacion">📩</span>
           </span>
   </div>
+  
   
   <!-- Primera parte: introducción -->
   <section id="screen" class="screen visible welcome-section">
@@ -207,8 +212,25 @@
 
   </section>
 
-  <!-- Cuarta parte: invitación -->
+  <!-- Quinta parte: complementa tu regalo -->
   <section id="screen4" class="screen">
+    <h2 class="gradient-title">Complementa tu regalo</h2>
+    <p class="asistencia-subtitulo">Opcional: añade un detalle extra que combine con tu obsequio principal.</p>
+
+    <!-- Reusa exactamente la misma grilla -->
+    <div id="complementListScreen" class="regalos-grid" aria-live="polite"></div>
+
+    <div class="comp-actions" style="margin-top:1rem; display:flex; gap:.5rem; justify-content:center;">
+      <button id="goToInviteFromScreen4" class="btn-personalizado">Ir a la invitación</button>
+      <button id="backToGiftsFromScreen4" class="btn-secundario">Volver a regalos</button>
+    </div>
+
+    <div style="height:3rem;"></div>
+  </section>
+
+
+  <!-- Cuarta parte: invitación -->
+  <section id="screen5" class="screen">
         <div class="inv-wrapper" aria-live="polite">
             <div class="inv-card" role="region" aria-label="Invitación">
               <!-- Portada -->
@@ -308,27 +330,7 @@
   </div>
 
   <!-- Modal: Complementa tu regalo -->
-  <div id="complementModal" class="modal" aria-hidden="true" aria-modal="true" role="dialog" inert>
-    <div class="modal-content-gifts" role="dialog" aria-modal="true" aria-labelledby="compTitle">
-      <div class="modal-close-emoji">
-        <span class="tap-emoji-complement" aria-hidden="true">👉</span>
-        <button type="button" class="modal-close-emo" id="closeComplementModal" aria-label="Cerrar">
-         X
-        </button>
-      </div>
-
-      <h3 id="compTitle" class="modal-title">Complementa tu regalo</h3>
-      <p class="modal-text-complement">Opcional: agrega uno de estos detalles para acompañar tu obsequio principal.</p>
-
-      <!-- OJO: usamos la misma clase de grilla que en screen3 -->
-      <div id="complementList" class="regalos-grid" style="max-height:45vh; overflow:auto;"></div>
-
-      <div class="modal-buttons" style="margin-top: 1rem;">
-        <button id="goToInviteBtn" class="btn-personalizado">Ir a la invitación</button>
-        <button id="keepBrowsingBtn" class="btn-secundario">Seguir viendo</button>
-      </div>
-    </div>
-  </div>
+  
 
 
 
