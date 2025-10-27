@@ -626,6 +626,22 @@ async function fetchGuestList() {
     });
   }
 
+  function noEsComplemento(item) {
+    const norm = (s) => (s ?? "")
+      .toString()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .trim()
+      .toLowerCase();
+
+    const cat  = norm(item?.categoria);
+    const tipo = norm(item?.tipo);
+
+    // Excluir si aparece "complemento" en categoría O tipo
+    const esComplemento = cat.includes("complemento") || tipo.includes("complemento");
+    return !esComplemento; // ← "no es complemento"
+  }
+
   function updateContinueBar() {
     const bar = document.getElementById("continueBar");
     if (!bar) return;
